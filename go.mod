@@ -29,6 +29,7 @@ require (
 	github.com/ysmood/goob v0.3.0 // indirect
 	github.com/ysmood/gson v0.6.4 // indirect
 	github.com/ysmood/leakless v0.7.0 // indirect
+	go.etcd.io/bbolt v1.3.6 // indirect
 	golang.org/x/crypto v0.0.0-20220131195533-30dcbda58838 // indirect
 	golang.org/x/sys v0.0.0-20220128215802-99c3d69c2c27 // indirect
 	golang.org/x/text v0.3.7 // indirect

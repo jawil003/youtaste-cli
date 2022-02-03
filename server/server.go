@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bs-to-scrapper/server/router"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-contrib/cors"
@@ -49,6 +50,8 @@ func main() {
 	r.GET("/new/*other", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{})
 	})
+
+	router.Register(r)
 
 	err := r.Run(":3000")
 	if err != nil {

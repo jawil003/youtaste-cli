@@ -10,7 +10,7 @@ export interface Props {}
  */
 export const Background: React.FC<Props> = ({ children }) => {
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-screen h-screen overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-full z-0">
         <Logo className="absolute top-4 left-6" />
         <BurgerLogo />
