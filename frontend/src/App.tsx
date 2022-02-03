@@ -5,9 +5,13 @@ import { CreateOrderView } from "./views/create-order";
 import { ErrorView } from "./views/error";
 import { Routes as NRoutes } from "./enums/routes.enum";
 import { Background } from "./components/background/background";
+import { Helmet } from "react-helmet";
 function App() {
   return (
     <Background>
+      <Helmet>
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+      </Helmet>
       <BrowserRouter>
         <Routes>
           <Route path={NRoutes.NEW} element={<CreateNewUserView />} />
