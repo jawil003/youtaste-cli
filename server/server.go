@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/go-rod/rod"
@@ -12,7 +13,9 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/urfave/cli/v2"
 	"io/ioutil"
+	"net/http"
 	"os"
+	"time"
 )
 
 type OrderWithRes struct {
@@ -28,9 +31,26 @@ type Product struct {
 func main() {
 
 	r := gin.Default()
-	r.Use(static.Serve("/", static.LocalFile("./public", true)))
 
-	err := r.Run()
+	r.Use(cors.New(cors.Config{
+		AllowMethods:     []string{"PUT", "PATCH", "POST", "GET", "DELETE"},
+		AllowHeaders:     []string{"Origin"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			return true
+		},
+		MaxAge: 12 * time.Hour,
+	}))
+
+	r.Use(static.Serve("/", static.LocalFile("./frontend/build", true)))
+
+	r.LoadHTMLFiles("frontend/build/index.html")
+	r.GET("/new/*other", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", gin.H{})
+	})
+
+	err := r.Run(":3000")
 	if err != nil {
 		return
 	}
