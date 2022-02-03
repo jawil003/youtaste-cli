@@ -1,20 +1,18 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/gin-gonic/contrib/static"
+	"github.com/gin-gonic/gin"
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/input"
 	"github.com/go-rod/rod/lib/launcher"
 	"github.com/go-rod/rod/lib/proto"
-	"github.com/go-rod/rod/lib/utils"
 	"github.com/joho/godotenv"
 	"github.com/urfave/cli/v2"
 	"io/ioutil"
-	"log"
 	"os"
-	"time"
 )
 
 type OrderWithRes struct {
@@ -29,25 +27,20 @@ type Product struct {
 
 func main() {
 
-	app := &cli.App{Name: "youtaste", Usage: "Place an order.json in the current dir and run", Authors: []*cli.Author{{
-		Name:  "Jannik Will",
-		Email: "jw19980309@gmail.com",
-	}},
-	}
+	r := gin.Default()
+	r.Use(static.Serve("/", static.LocalFile("./public", true)))
 
-	app.Action = func(c *cli.Context) error {
-		run()
-		return nil
-	}
-
-	err := app.Run(os.Args)
+	err := r.Run()
 	if err != nil {
-		log.Fatal(err)
+		return
 	}
 
 }
 
-func run() {
+func run(c *cli.Context) {
+
+	shouldAuth := c.Bool("auth")
+
 	var order OrderWithRes
 
 	jsonFile, err := os.Open("order.json")
@@ -59,11 +52,6 @@ func run() {
 		return
 	}
 
-	err = godotenv.Load()
-	if err != nil {
-		return
-	}
-
 	u := launcher.NewUserMode().
 		MustLaunch()
 
@@ -71,37 +59,34 @@ func run() {
 
 	page := controller.MustConnect().NoDefaultDevice().MustPage("https://youtaste.com/")
 
-	sleeper := func() utils.Sleeper {
-		return func(context.Context) error {
-			time.Sleep(time.Second / 2)
-			return nil
+	if shouldAuth {
+
+		err = godotenv.Load()
+		if err != nil {
+			return
 		}
+
+		err = page.MustElementR("#navigation a", "Einloggen").Click(proto.InputMouseButtonLeft)
+		if err != nil {
+			return
+		}
+
+		page.MustWaitNavigation()
+
+		phoneInput := page.MustElement("input[placeholder=\"Telefonnummer\"]")
+		phoneNumber := os.Getenv("PHONE")
+		phoneInput.MustInput(phoneNumber)
+
+		passwordInput := page.MustElement("input[placeholder=\"Passwort\"]")
+		passwordInput.MustInput(os.Getenv("PASSWORD"))
+
+		err = page.MustElementR("button", "Anmelden").Click(proto.InputMouseButtonLeft)
+		if err != nil {
+			return
+		}
+
+		page.MustWaitNavigation()
 	}
-
-	element, err := page.Sleeper(sleeper).ElementR("#navigation a", "Einloggen")
-
-	print(element.Object.ClassName)
-
-	err = page.MustElementR("#navigation a", "Einloggen").Click(proto.InputMouseButtonLeft)
-	if err != nil {
-		return
-	}
-
-	page.MustWaitNavigation()
-
-	phoneInput := page.MustElement("input[placeholder=\"Telefonnummer\"]")
-	phoneNumber := os.Getenv("PHONE")
-	phoneInput.MustInput(phoneNumber)
-
-	passwordInput := page.MustElement("input[placeholder=\"Passwort\"]")
-	passwordInput.MustInput(os.Getenv("PASSWORD"))
-
-	err = page.MustElementR("button", "Anmelden").Click(proto.InputMouseButtonLeft)
-	if err != nil {
-		return
-	}
-
-	page.MustWaitNavigation()
 
 	searchInput := page.MustElement("input#search-restaurant-input")
 
