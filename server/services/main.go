@@ -1,7 +1,7 @@
 package services
 
-import "bs-to-scrapper/server/services/database"
+import "bs-to-scrapper/server/services/db"
 
-func DB() *database.Database {
-	return database.Init()
+func DB() db.ServiceCollection {
+	return db.ServiceCollection{}
 }

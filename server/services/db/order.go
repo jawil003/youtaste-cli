@@ -1,16 +1,21 @@
-package database
+package db
 
 import (
-	"bs-to-scrapper/server/services"
 	bolt "go.etcd.io/bbolt"
 	"strings"
 )
 
-type Order struct {
+func (_ ServiceCollection) Order() OrderService {
+	return OrderService{}
 }
 
-func (o *Order) GetOrdersByUser(user string) (*[]string, error) {
-	db, err := services.DB().Init()
+type OrderService struct {
+}
+
+func (o *OrderService) GetOrdersByUser(user string) (*[]string, error) {
+
+	db, err := OpenDbConnection()
+
 	if err != nil {
 		return nil, err
 	}
@@ -31,24 +36,25 @@ func (o *Order) GetOrdersByUser(user string) (*[]string, error) {
 		return nil, err
 	}
 
-	defer func(database *Database) {
-		err := database.Close()
+	defer func(db *bolt.DB) {
+		err := db.Close()
 		if err != nil {
 			panic(err)
 		}
-	}(services.DB())
+	}(db)
 
 	return &arrayRes, nil
 
 }
 
-func (o Order) Create(orders []string, user string) error {
-	init, err := services.DB().Init()
+func (o OrderService) Create(orders []string, user string) error {
+	db, err := OpenDbConnection()
+
 	if err != nil {
 		return err
 	}
 
-	err = init.Update(func(tx *bolt.Tx) error {
+	err = db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("orders"))
 
 		value := b.Get([]byte(user))
