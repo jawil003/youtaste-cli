@@ -19,6 +19,7 @@ func (o OrderService) GetOrdersByUser(user string) (*[]models.Order, error) {
 	db, err := OpenDbConnection()
 
 	if err != nil {
+		CloseConnection(db)
 		return nil, err
 	}
 
@@ -29,9 +30,11 @@ func (o OrderService) GetOrdersByUser(user string) (*[]models.Order, error) {
 
 		value := b.Get([]byte(user))
 
+		valueString := string(value)
+
 		var arrayRes []string
 
-		arrayRes = strings.Split(string(value), ",")
+		arrayRes = strings.Split(valueString, ",")
 
 		if len(arrayRes) == 0 {
 			orderArray = []models.Order{}
@@ -57,15 +60,11 @@ func (o OrderService) GetOrdersByUser(user string) (*[]models.Order, error) {
 	})
 
 	if err != nil {
+		CloseConnection(db)
 		return nil, err
 	}
 
-	defer func(db *bolt.DB) {
-		err := db.Close()
-		if err != nil {
-			panic(err)
-		}
-	}(db)
+	CloseConnection(db)
 
 	return &orderArray, nil
 
@@ -75,6 +74,7 @@ func (o OrderService) Create(orders []models.Order, user string) error {
 	db, err := OpenDbConnection()
 
 	if err != nil {
+		CloseConnection(db)
 		return err
 	}
 
@@ -116,6 +116,13 @@ func (o OrderService) Create(orders []models.Order, user string) error {
 
 		return nil
 	})
+
+	CloseConnection(db)
+
+	if err != nil {
+		return err
+	}
+
 	if err != nil {
 		return err
 	}

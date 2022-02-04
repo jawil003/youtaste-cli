@@ -28,3 +28,14 @@ func OpenDbConnection() (*bolt.DB, error) {
 
 	return open, nil
 }
+
+func CloseConnection(db *bolt.DB) {
+	defer func(db *bolt.DB) {
+		err := db.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(db)
+
+	return
+}
