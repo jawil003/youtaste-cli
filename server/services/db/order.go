@@ -80,6 +80,40 @@ func (o OrderService) Create(orders []models.Order, user string) error {
 
 		if len(arrayRes) > 0 {
 
+			arrayResNew := append(arrayRes)
+			ordersNew := append(orders)
+
+			for ordersElemIndex, ordersElem := range orders {
+
+				var arrayResItemFound *models.Order
+				var arrayResItemFoundIndex *int
+				for arrayResItemIndex, arrayResItem := range arrayRes {
+					if arrayResItem.Name == ordersElem.Name {
+						arrayResItemFound = &arrayResItem
+						arrayResItemFoundIndex = &arrayResItemIndex
+					}
+				}
+
+				if arrayResItemFound != nil {
+					ordersNew = append(ordersNew[:ordersElemIndex], ordersNew[ordersElemIndex+1:]...)
+					arrayResNew = append(arrayResNew[:*arrayResItemFoundIndex], arrayResNew[*arrayResItemFoundIndex+1:]...)
+
+					arrayResItemFound.Variants = append(arrayResItemFound.Variants, ordersElem.Variants...)
+
+					arrayResNew = append(arrayResNew, *arrayResItemFound)
+
+					jsonArray, err := json.Marshal(arrayResNew)
+
+					if err != nil {
+						return err
+					}
+
+					err = b.Put([]byte(user), jsonArray)
+
+					return nil
+				}
+			}
+
 			jsonArray, err := json.Marshal(append(arrayRes, orders...))
 
 			if err != nil {
