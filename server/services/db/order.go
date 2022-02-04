@@ -2,6 +2,7 @@ package db
 
 import (
 	"bs-to-scrapper/server/models"
+	"encoding/json"
 	_ "github.com/thoas/go-funk"
 	bolt "go.etcd.io/bbolt"
 	"strings"
@@ -34,7 +35,11 @@ func (o OrderService) GetOrdersByUser(user string) (*[]models.Order, error) {
 
 		var arrayRes []string
 
-		arrayRes = strings.Split(valueString, ",")
+		err = json.Unmarshal([]byte(valueString), &arrayRes)
+
+		if err != nil {
+			return err
+		}
 
 		if len(arrayRes) == 0 {
 			orderArray = []models.Order{}
@@ -100,7 +105,13 @@ func (o OrderService) Create(orders []models.Order, user string) error {
 
 			arrayRes := strings.Split(string(value), ",")
 
-			err := b.Put([]byte(user), []byte(strings.Join(append(arrayRes, jsonOrders...), ",")))
+			jsonArray, err := json.Marshal(append(arrayRes, jsonOrders...))
+
+			if err != nil {
+				return err
+			}
+
+			err = b.Put([]byte(user), []byte(jsonArray))
 
 			if err != nil {
 				return err
@@ -108,7 +119,14 @@ func (o OrderService) Create(orders []models.Order, user string) error {
 
 			return nil
 		} else {
-			err := b.Put([]byte(user), []byte(strings.Join(jsonOrders, ",")))
+
+			jsonArray, err := json.Marshal(append(jsonOrders, jsonOrders...))
+
+			if err != nil {
+				return err
+			}
+
+			err = b.Put([]byte(user), []byte(jsonArray))
 			if err != nil {
 				return err
 			}
