@@ -28,7 +28,7 @@ func Register(r *gin.Engine) {
 			return
 		}
 
-		orders, err := services.DB().Order().GetOrdersByUser(user)
+		orders, err := services.DB().Order().GetByUser(user)
 
 		if err != nil {
 			context.JSON(500, gin.H{
