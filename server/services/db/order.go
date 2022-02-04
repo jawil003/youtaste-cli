@@ -156,3 +156,66 @@ func (o OrderService) Create(orders []models.Order, user string) error {
 
 	return nil
 }
+
+func (o OrderService) Clear(user string) error {
+	db, err := OpenDbConnection()
+
+	if err != nil {
+		CloseConnection(db)
+		return err
+	}
+
+	err = db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("orders"))
+
+		err := b.Delete([]byte(user))
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	CloseConnection(db)
+
+	if err != nil {
+		return err
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o OrderService) ClearAll() error {
+	db, err := OpenDbConnection()
+
+	if err != nil {
+		CloseConnection(db)
+		return err
+	}
+
+	err = db.Update(func(tx *bolt.Tx) error {
+		err := tx.DeleteBucket([]byte("orders"))
+
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	CloseConnection(db)
+
+	if err != nil {
+		return err
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

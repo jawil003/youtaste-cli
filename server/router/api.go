@@ -86,11 +86,30 @@ func Register(r *gin.Engine) {
 		})
 	})
 
-	r.DELETE("/api/orders", func(context *gin.Context) {
+	r.DELETE("/api/orders/:user", func(context *gin.Context) {
+		user := context.Param("user")
 
+		if user == "all" {
+			err := services.DB().Order().ClearAll()
+			if err != nil {
+				context.JSON(400, gin.H{
+					"error": err.Error(),
+				})
+				return
+			}
+		}
+
+		err := services.DB().Order().Clear(user)
+		if err != nil {
+			context.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		context.JSON(200, gin.H{
+			"status": "ok",
+		})
 	})
 
-	r.PUT("/api/orders", func(context *gin.Context) {
-
-	})
 }
