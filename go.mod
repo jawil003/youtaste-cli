@@ -25,6 +25,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/russross/blackfriday/v2 v2.0.1 // indirect
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
+	github.com/thoas/go-funk v0.9.1 // indirect
 	github.com/ugorji/go/codec v1.2.6 // indirect
 	github.com/ysmood/goob v0.3.0 // indirect
 	github.com/ysmood/gson v0.6.4 // indirect

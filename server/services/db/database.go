@@ -12,5 +12,19 @@ func OpenDbConnection() (*bolt.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	err = open.Update(func(tx *bolt.Tx) error {
+		_, err := tx.CreateBucketIfNotExists([]byte("orders"))
+
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
 	return open, nil
 }

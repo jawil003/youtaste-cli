@@ -2,6 +2,7 @@ package router
 
 import (
 	"bs-to-scrapper/server/models"
+	"bs-to-scrapper/server/services"
 	"github.com/gin-gonic/gin"
 )
 
@@ -10,9 +11,34 @@ type CreateRequest struct {
 	Orders []models.Order `json:"orders"`
 }
 
-func Register(r *gin.Engine) {
-	r.GET("/api/orders", func(context *gin.Context) {
+type GetRequest struct {
+	User string `form:"user"`
+}
 
+func Register(r *gin.Engine) {
+	r.GET("/api/orders/:user", func(context *gin.Context) {
+
+		user := context.Param("user")
+
+		if user == "" {
+			context.JSON(400, gin.H{
+				"error": "user is required",
+			})
+			return
+		}
+
+		orders, err := services.DB().Order().GetOrdersByUser(user)
+
+		if err != nil {
+			context.JSON(500, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		context.JSON(200, gin.H{
+			"orders": orders,
+		})
 	})
 
 	r.POST("/api/orders", func(context *gin.Context) {
@@ -27,7 +53,7 @@ func Register(r *gin.Engine) {
 			})
 		}
 
-		/*err = services.DB().Order().Create(request.orders, request.user)
+		err = services.DB().Order().Create(request.Orders, request.User)
 		if err != nil {
 			context.JSON(500, gin.H{
 				"error": err,
@@ -36,7 +62,7 @@ func Register(r *gin.Engine) {
 
 		context.JSON(200, gin.H{
 			"message": "success",
-		})*/
+		})
 	})
 
 	r.DELETE("/api/orders", func(context *gin.Context) {
