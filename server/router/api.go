@@ -17,7 +17,10 @@ type GetRequest struct {
 }
 
 func Register(r *gin.Engine) {
-	r.GET("/api/orders/:user", func(context *gin.Context) {
+
+	api := r.Group("/api")
+
+	api.GET("/orders/:user", func(context *gin.Context) {
 
 		user := context.Param("user")
 
@@ -42,7 +45,7 @@ func Register(r *gin.Engine) {
 		})
 	})
 
-	r.GET("/api/admin", func(context *gin.Context) {
+	api.GET("/admin", func(context *gin.Context) {
 
 		clientIp := context.ClientIP()
 
@@ -62,7 +65,7 @@ func Register(r *gin.Engine) {
 		})
 	})
 
-	r.POST("/api/orders", func(context *gin.Context) {
+	api.POST("/orders", func(context *gin.Context) {
 
 		var request CreateRequest
 
@@ -86,7 +89,7 @@ func Register(r *gin.Engine) {
 		})
 	})
 
-	r.DELETE("/api/orders/:user", func(context *gin.Context) {
+	api.DELETE("/orders/:user", func(context *gin.Context) {
 		user := context.Param("user")
 
 		if user == "all" {

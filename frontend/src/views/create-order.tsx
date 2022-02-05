@@ -1,9 +1,12 @@
 import React from "react";
 import { Helmet } from "react-helmet";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
+import { useQueryClient } from "react-query";
+import { useNavigate } from "react-router-dom";
 import { Badge } from "../components/badge/badge";
 import { Button } from "../components/button/button";
 import { Input } from "../components/input/input";
+import { Routes } from "../enums/routes.enum";
 import OrderService from "../services/order.service";
 import { useStore } from "../store/store";
 
@@ -27,16 +30,33 @@ export const CreateOrderView: React.FC<Props> = () => {
 
   const { user } = useStore();
 
+  const navigate = useNavigate();
+
   const variant = useWatch({ name: "variant", control: methods.control });
   const variants = useWatch({ name: "variants", control: methods.control });
 
-  const onSubmit = (value: FormData) => {
+  const queryClient = useQueryClient();
+
+  const onSubmit = async (value: FormData) => {
     const orderService = new OrderService();
 
-    orderService.createOrUpdate(
+    await orderService.createOrUpdate(
       [{ name: value.mealName, variants }],
       `${user.firstname.toLowerCase()}_${user.lastname.toLowerCase()}`
     );
+
+    await queryClient.invalidateQueries([
+      "orders",
+      `${user.firstname.toLowerCase()}_${user.lastname.toLowerCase()}`,
+    ]);
+
+    navigate(
+      Routes.ORDER_CONFIRM.replace(
+        ":user",
+        `${user.firstname.toLowerCase()}_${user.lastname.toLowerCase()}`
+      )
+    );
+    methods.reset();
   };
 
   return (
@@ -71,7 +91,6 @@ export const CreateOrderView: React.FC<Props> = () => {
                       if (!variant) {
                         return;
                       }
-
                       methods.setValue("variants", [...variants, variant]);
                       methods.setValue("variant", "");
                     }}
@@ -97,8 +116,7 @@ export const CreateOrderView: React.FC<Props> = () => {
                   </Badge>
                 ))}
               </div>
-              <Button className="mb-2">Submit and Send</Button>
-              <Button variant="secondary">Submit and add another one</Button>
+              <Button className="mb-2">Submit</Button>
             </form>
           </FormProvider>
         </div>

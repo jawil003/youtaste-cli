@@ -44,10 +44,15 @@ func main() {
 		MaxAge: 12 * time.Hour,
 	}))
 
+	r.GET("/", func(c *gin.Context) {
+		c.Redirect(http.StatusPermanentRedirect, "/app")
+	})
+
 	r.Use(static.Serve("/", static.LocalFile("./frontend/build", true)))
 
 	r.LoadHTMLFiles("frontend/build/index.html")
-	r.GET("/new/*other", func(c *gin.Context) {
+
+	r.GET("/app/*other", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{})
 	})
 
