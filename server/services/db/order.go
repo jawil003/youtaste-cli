@@ -98,7 +98,7 @@ func (o OrderService) Create(orders []models.Order, user string) error {
 					ordersNew = append(ordersNew[:ordersElemIndex], ordersNew[ordersElemIndex+1:]...)
 					arrayResNew = append(arrayResNew[:*arrayResItemFoundIndex], arrayResNew[*arrayResItemFoundIndex+1:]...)
 
-					arrayResItemFound.Variants = append(arrayResItemFound.Variants, ordersElem.Variants...)
+					arrayResItemFound = &ordersElem
 
 					arrayResNew = append(arrayResNew, *arrayResItemFound)
 
