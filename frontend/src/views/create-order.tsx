@@ -35,7 +35,7 @@ export const CreateOrderView: React.FC<Props> = () => {
 
     orderService.createOrUpdate(
       [{ name: value.mealName, variants }],
-      `${user.firstname} ${user.lastname}`
+      `${user.firstname.toLowerCase()}_${user.lastname.toLowerCase()}`
     );
   };
 
