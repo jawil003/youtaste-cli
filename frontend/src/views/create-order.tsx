@@ -1,11 +1,11 @@
 import React from "react";
 import { Helmet } from "react-helmet";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
-import { string } from "yup/lib/locale";
-import { Logo } from "../assets/logo/logo";
 import { Badge } from "../components/badge/badge";
 import { Button } from "../components/button/button";
 import { Input } from "../components/input/input";
+import OrderService from "../services/order.service";
+import { useStore } from "../store/store";
 
 export interface Props {}
 
@@ -25,10 +25,19 @@ export const CreateOrderView: React.FC<Props> = () => {
     defaultValues: { mealName: "", variant: "", variants: [] },
   });
 
+  const { user } = useStore();
+
   const variant = useWatch({ name: "variant", control: methods.control });
   const variants = useWatch({ name: "variants", control: methods.control });
 
-  const onSubmit = (value: FormData) => {};
+  const onSubmit = (value: FormData) => {
+    const orderService = new OrderService();
+
+    orderService.createOrUpdate(
+      [{ name: value.mealName, variants }],
+      `${user.firstname} ${user.lastname}`
+    );
+  };
 
   return (
     <div className="w-screen h-screen flex items-center justify-center">

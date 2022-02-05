@@ -7,6 +7,7 @@ import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { Routes } from "../enums/routes.enum";
 import { Helmet } from "react-helmet";
+import { useStore } from "../store/store";
 
 export interface Props {}
 
@@ -27,6 +28,7 @@ interface FormData {
  */
 export const CreateNewUserView: React.FC<Props> = () => {
   const [loadingButtonEnabled, setLoadingButtonEnabled] = useState(false);
+  const { setUser } = useStore();
 
   useEffect(() => {
     const firstname = localStorage.getItem("firstname");
@@ -43,6 +45,7 @@ export const CreateNewUserView: React.FC<Props> = () => {
   const onSubmit = (value: FormData) => {
     localStorage.setItem("firstname", value.firstname);
     localStorage.setItem("lastname", value.lastname);
+    setUser(value);
     methods.reset();
     navigate(Routes.NEW_ORDER);
   };

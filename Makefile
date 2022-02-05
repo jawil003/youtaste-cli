@@ -8,7 +8,7 @@ server-build-windows: build-frontend
 	GOOS=windows go build -o bin/windows/frontend.exe
 
 server-run-dev:
-	GIN_MODE=debug go run server/server.go
+	GIN_MODE=debug gin run server/server.go
 
 server-run-test:
 	GIN_MODE=test go run server/server.go
