@@ -8,6 +8,9 @@ import { Background } from "./components/background/background";
 import { Helmet } from "react-helmet";
 import { OrderConfirmation } from "./views/order-confirmation";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { logger } from "./config/logger";
+import { CookiesProvider } from "react-cookie";
+import { Auth } from "./components/auth/auth";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -15,32 +18,54 @@ const queryClient = new QueryClient({
       refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
+      retry: false,
+      retryDelay: 0,
     },
   },
 });
 
-console.log(process.env);
+logger.info(process.env, "Environment loaded");
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Background>
-        <Helmet>
-          <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-        </Helmet>
-        <BrowserRouter basename="/app">
-          <Routes>
-            <Route path={NRoutes.NEW} element={<CreateNewUserView />} />
-            <Route path={NRoutes.NEW_ORDER} element={<CreateOrderView />} />
-            <Route
-              path={NRoutes.ORDER_CONFIRM}
-              element={<OrderConfirmation />}
-            />
-            <Route path={NRoutes.ERROR} element={<ErrorView />} />
-            <Route index element={<Navigate to={NRoutes.NEW} />} />
-          </Routes>
-        </BrowserRouter>
-      </Background>
+      <CookiesProvider>
+        <Background>
+          <Helmet>
+            <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+          </Helmet>
+          <BrowserRouter basename="/app">
+            <Routes>
+              <Route
+                path={NRoutes.NEW}
+                element={
+                  <Auth mode="NO_USER">
+                    <CreateNewUserView />
+                  </Auth>
+                }
+              />
+              <Route
+                path={NRoutes.NEW_ORDER}
+                element={
+                  <Auth>
+                    <CreateOrderView />
+                  </Auth>
+                }
+              />
+              <Route
+                path={NRoutes.ORDER_CONFIRM}
+                element={
+                  <Auth>
+                    <OrderConfirmation />
+                  </Auth>
+                }
+              />
+              <Route path={NRoutes.ERROR} element={<ErrorView />} />
+              <Route index element={<Navigate to={NRoutes.NEW} />} />
+            </Routes>
+          </BrowserRouter>
+        </Background>
+      </CookiesProvider>
     </QueryClientProvider>
   );
 }

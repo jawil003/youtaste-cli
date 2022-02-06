@@ -2,6 +2,9 @@
   <configuration default="false" name="server-run-dev-debug" type="GoApplicationRunConfiguration" factoryName="Go Application">
     <module name="bs-to-scrapper" />
     <working_directory value="$PROJECT_DIR$" />
+    <envs>
+      <env name="GIN_MODE" value="debug" />
+    </envs>
     <EXTENSION ID="net.ashald.envfile">
       <option name="IS_ENABLED" value="false" />
       <option name="IS_SUBST" value="false" />

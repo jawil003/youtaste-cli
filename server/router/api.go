@@ -7,6 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 	"github.com/thoas/go-funk"
+	"net/http"
+	"os"
 )
 
 type CreateRequest struct {
@@ -56,7 +58,15 @@ func Register(r *gin.Engine) {
 			return
 		}
 
-		c.SetCookie("token", token, 60, "/", "127.0.0.1", false, true)
+		ginMode := os.Getenv("GIN_MODE")
+
+		if ginMode == "debug" {
+			c.SetSameSite(http.SameSiteNoneMode)
+
+			c.SetCookie("token", token, 60, "/", c.Request.Host, true, true)
+		} else {
+			c.SetCookie("token", token, 60, "/", c.Request.Host, false, true)
+		}
 
 		c.Status(200)
 

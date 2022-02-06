@@ -8,8 +8,8 @@ export default class OrderService {
     });
   }
 
-  public async getByUser(user: string) {
-    return await backend.get<{ orders: Order[] }>(`/api/orders/${user}`);
+  public async getByUser() {
+    return await backend.get<{ orders: Order[] }>(`/api/orders/user`);
   }
 
   public async getAll() {

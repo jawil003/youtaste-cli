@@ -2,7 +2,6 @@ import React from "react";
 import { ReactComponent as BurgerLogo } from "../../assets/Hamburger-cuate.svg";
 import { Logo } from "../../assets/logo/logo";
 import { useUser } from "../../hooks/user.hook";
-import { useStore } from "../../store/store";
 import { Username } from "../username/username";
 export interface Props {}
 

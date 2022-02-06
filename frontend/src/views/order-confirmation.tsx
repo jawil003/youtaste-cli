@@ -1,6 +1,7 @@
 import React from "react";
+import { useCookies } from "react-cookie";
 import { FormProvider, useForm } from "react-hook-form";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "../components/button/button";
 import { OrderList } from "../components/order-list/order-list";
 import { Routes } from "../enums/routes.enum";
@@ -14,8 +15,8 @@ export interface Props {}
  * @version 0.1
  */
 export const OrderConfirmation: React.FC<Props> = () => {
-  const { user } = useParams<"user">();
-  const { data: result } = useOrdersByUser(user ?? "");
+  const { data: result } = useOrdersByUser();
+
   const navigate = useNavigate();
   const methods = useForm();
 

@@ -7,8 +7,8 @@ import { Badge } from "../components/badge/badge";
 import { Button } from "../components/button/button";
 import { Input } from "../components/input/input";
 import { Routes } from "../enums/routes.enum";
+import { useUser } from "../hooks/user.hook";
 import OrderService from "../services/order.service";
-import { useStore } from "../store/store";
 
 export interface Props {}
 
@@ -28,7 +28,7 @@ export const CreateOrderView: React.FC<Props> = () => {
     defaultValues: { mealName: "", variant: "", variants: [] },
   });
 
-  const { user } = useStore();
+  const { data: user } = useUser();
 
   const navigate = useNavigate();
 
@@ -44,13 +44,13 @@ export const CreateOrderView: React.FC<Props> = () => {
 
     await queryClient.invalidateQueries([
       "orders",
-      `${user.firstname.toLowerCase()}_${user.lastname.toLowerCase()}`,
+      `${user?.firstname.toLowerCase()}_${user?.lastname.toLowerCase()}`,
     ]);
 
     navigate(
       Routes.ORDER_CONFIRM.replace(
         ":user",
-        `${user.firstname.toLowerCase()}_${user.lastname.toLowerCase()}`
+        `${user?.firstname.toLowerCase()}_${user?.lastname.toLowerCase()}`
       )
     );
     methods.reset();

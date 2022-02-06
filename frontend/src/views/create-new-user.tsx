@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { Routes } from "../enums/routes.enum";
 import { Helmet } from "react-helmet";
 import { useStore } from "../store/store";
+import UserService from "../services/user.service";
 
 export interface Props {}
 
@@ -42,9 +43,14 @@ export const CreateNewUserView: React.FC<Props> = () => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (value: FormData) => {
+  const onSubmit = async (value: FormData) => {
     localStorage.setItem("firstname", value.firstname);
     localStorage.setItem("lastname", value.lastname);
+
+    const userService = new UserService();
+
+    await userService.create(value.firstname, value.lastname);
+
     setUser(value);
     methods.reset();
     navigate(Routes.NEW_ORDER);

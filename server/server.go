@@ -12,10 +12,12 @@ import (
 	"github.com/go-rod/rod/lib/launcher"
 	"github.com/go-rod/rod/lib/proto"
 	"github.com/joho/godotenv"
+	"github.com/thoas/go-funk"
 	"github.com/urfave/cli/v2"
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -31,18 +33,30 @@ type Product struct {
 
 func main() {
 
+	err := godotenv.Load()
+	if err != nil {
+		return
+	}
+
 	r := gin.Default()
 
-	r.Use(cors.New(cors.Config{
-		AllowMethods:     []string{"PUT", "PATCH", "POST", "GET", "DELETE"},
-		AllowHeaders:     []string{"Origin"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-		AllowOriginFunc: func(origin string) bool {
-			return true
-		},
-		MaxAge: 12 * time.Hour,
-	}))
+	if os.Getenv("GIN_MODE") == "debug" {
+
+		corsUrlConn := os.Getenv("CORS_URL")
+
+		corsUrl := strings.Split(corsUrlConn, ",")
+
+		r.Use(cors.New(cors.Config{
+			AllowMethods:     []string{"POST", "GET", "DELETE"},
+			AllowHeaders:     []string{"Origin", "Content-Type", "X-Requested-With", "Accept"},
+			ExposeHeaders:    []string{"Content-Length", "Set-Cookie"},
+			AllowCredentials: true,
+			AllowOriginFunc: func(origin string) bool {
+				return funk.ContainsString(corsUrl, origin)
+			},
+			MaxAge: 12 * time.Hour,
+		}))
+	}
 
 	r.GET("/", func(c *gin.Context) {
 		c.Redirect(http.StatusPermanentRedirect, "/app")
@@ -58,7 +72,7 @@ func main() {
 
 	router.Register(r)
 
-	err := r.Run(":80")
+	err = r.Run(":80")
 	if err != nil {
 		return
 	}
@@ -88,11 +102,6 @@ func run(c *cli.Context) {
 	page := controller.MustConnect().NoDefaultDevice().MustPage("https://youtaste.com/")
 
 	if shouldAuth {
-
-		err = godotenv.Load()
-		if err != nil {
-			return
-		}
 
 		err = page.MustElementR("#navigation a", "Einloggen").Click(proto.InputMouseButtonLeft)
 		if err != nil {
