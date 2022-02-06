@@ -5,9 +5,9 @@ export interface Props {
   items: {
     headline: string;
     description: string;
-    onEditClick?: () => void;
-    onDeleteClick?: () => void;
-    onClick?: () => void;
+    onEditClick?: React.MouseEventHandler<HTMLButtonElement>;
+    onDeleteClick?: React.MouseEventHandler<HTMLButtonElement>;
+    onClick?: React.MouseEventHandler<HTMLButtonElement>;
     size: number;
   }[];
 }

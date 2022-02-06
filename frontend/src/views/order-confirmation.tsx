@@ -30,6 +30,9 @@ export const OrderConfirmation: React.FC<Props> = () => {
             result?.orders?.map(({ name, variants }) => ({
               headline: name ?? "",
               description: variants?.join(", ") ?? "",
+              onEditClick: () => {
+                navigate(Routes.EDIT_ORDER.replace(":name", name ?? ""));
+              },
               onDeleteClick: async () => {
                 const orderService = new OrderService();
 
