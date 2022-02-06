@@ -20,7 +20,7 @@ type CreateUserRequest struct {
 	Lastname  string `json:"lastname"`
 }
 
-type CustonJWT struct {
+type CustomJWT struct {
 	jwt.StandardClaims
 	Firstname string `json:"firstname"`
 	Lastname  string `json:"lastname"`
@@ -46,7 +46,7 @@ func Register(r *gin.Engine) {
 			return
 		}
 
-		token, err := services.JWT().Create(CustonJWT{
+		token, err := services.JWT().Create(CustomJWT{
 
 			Firstname: request.Firstname, Lastname: request.Lastname,
 		})
@@ -63,9 +63,9 @@ func Register(r *gin.Engine) {
 		if ginMode == "debug" {
 			c.SetSameSite(http.SameSiteNoneMode)
 
-			c.SetCookie("token", token, 60, "/", c.Request.Host, true, true)
+			c.SetCookie("token", token, 60*60*24, "/", c.Request.Host, true, true)
 		} else {
-			c.SetCookie("token", token, 60, "/", c.Request.Host, false, true)
+			c.SetCookie("token", token, 60*60*24, "/", c.Request.Host, false, true)
 		}
 
 		c.Status(200)
@@ -89,7 +89,7 @@ func Register(r *gin.Engine) {
 			return
 		}
 
-		jwt := CustonJWT{}
+		jwt := CustomJWT{}
 
 		_, err = services.JWT().Decode(authorization, &jwt)
 
@@ -125,7 +125,7 @@ func Register(r *gin.Engine) {
 			return
 		}
 
-		jwt := CustonJWT{}
+		jwt := CustomJWT{}
 
 		_, err = services.JWT().Decode(token, &jwt)
 
@@ -149,6 +149,53 @@ func Register(r *gin.Engine) {
 
 		context.JSON(200, gin.H{
 			"orders": orders,
+		})
+	})
+
+	api.GET("/orders/user/:name", func(context *gin.Context) {
+
+		token, err := context.Cookie("token")
+
+		if err != nil {
+			context.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		if token == "" {
+			context.JSON(400, gin.H{
+				"error": "Authorization header is empty",
+			})
+			return
+		}
+
+		jwt := CustomJWT{}
+
+		_, err = services.JWT().Decode(token, &jwt)
+
+		user := fmt.Sprintf("%s_%s", jwt.Firstname, jwt.Lastname)
+
+		if user == "" {
+			context.JSON(400, gin.H{
+				"error": "user is required",
+			})
+			return
+		}
+
+		orders, err := services.DB().Order().GetByUser(user)
+
+		for _, order := range *orders {
+			if order.Name == context.Param("name") {
+				context.JSON(200, gin.H{
+					"order": order,
+				})
+				return
+			}
+		}
+
+		context.JSON(200, gin.H{
+			"error": "order not found",
 		})
 	})
 
@@ -183,7 +230,7 @@ func Register(r *gin.Engine) {
 			return
 		}
 
-		jwt := CustonJWT{}
+		jwt := CustomJWT{}
 
 		_, err = services.JWT().Decode(token, &jwt)
 
@@ -215,6 +262,37 @@ func Register(r *gin.Engine) {
 		})
 	})
 
+	api.DELETE("/orders/user/:name", func(context *gin.Context) {
+		token, err := context.Cookie("token")
+
+		if err != nil {
+			context.JSON(400, gin.H{"error": err.Error()})
+			return
+		}
+
+		mealName := context.Param("name")
+
+		customJWT := CustomJWT{}
+
+		_, err = services.JWT().Decode(token, &customJWT)
+
+		if err != nil {
+			context.JSON(400, gin.H{"error": err.Error()})
+			return
+		}
+
+		user := fmt.Sprintf("%s_%s", customJWT.Firstname, customJWT.Lastname)
+
+		err = services.DB().Order().ClearByMealname(user, mealName)
+
+		if err != nil {
+			context.JSON(400, gin.H{"error": err.Error()})
+			return
+		}
+
+		context.JSON(200, gin.H{"status": "ok"})
+	})
+
 	api.DELETE("/orders/user", func(context *gin.Context) {
 
 		token, err := context.Cookie("token")
@@ -223,7 +301,7 @@ func Register(r *gin.Engine) {
 			context.JSON(400, gin.H{"error": err.Error()})
 		}
 
-		custonJWT := CustonJWT{}
+		custonJWT := CustomJWT{}
 
 		_, err = services.JWT().Decode(token, &custonJWT)
 

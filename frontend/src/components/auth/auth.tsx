@@ -1,5 +1,4 @@
 import React from "react";
-import { useCookies } from "react-cookie";
 import { Navigate } from "react-router-dom";
 import { Routes } from "../../enums/routes.enum";
 import { useUser } from "../../hooks/user.hook";
@@ -14,7 +13,10 @@ export interface Props {
  * @version 0.1
  */
 export const Auth: React.FC<Props> = ({ mode, children }) => {
-  const { data: user } = useUser();
+  const { data: user, isFetching } = useUser();
+
+  if (isFetching) return null;
+
   switch (mode) {
     case "USER": {
       if (user) {

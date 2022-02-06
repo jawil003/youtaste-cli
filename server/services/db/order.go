@@ -157,7 +157,7 @@ func (o OrderService) Create(orders []models.Order, user string) error {
 	return nil
 }
 
-func (o OrderService) Clear(user string) error {
+func (o OrderService) ClearByMealname(user string, mealName string) error {
 	db, err := OpenDbConnection()
 
 	if err != nil {
@@ -168,7 +168,26 @@ func (o OrderService) Clear(user string) error {
 	err = db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("orders"))
 
-		err := b.Delete([]byte(user))
+		var orders []models.Order
+
+		res := b.Get([]byte(user))
+
+		err := json.Unmarshal(res, &orders)
+
+		if err != nil {
+			return err
+		}
+
+		for index, order := range orders {
+			if order.Name == mealName {
+				orders = append(orders[:index], orders[index+1:]...)
+			}
+		}
+
+		jsonArray, err := json.Marshal(orders)
+
+		err = b.Put([]byte(user), jsonArray)
+
 		if err != nil {
 			return err
 		}
@@ -218,4 +237,26 @@ func (o OrderService) ClearAll() error {
 	}
 
 	return nil
+}
+
+func (o OrderService) Clear(user string) error {
+	db, err := OpenDbConnection()
+
+	if err != nil {
+		CloseConnection(db)
+		return err
+	}
+
+	err = db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("orders"))
+
+		err := b.Delete([]byte(user))
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	return err
 }

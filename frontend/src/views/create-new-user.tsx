@@ -9,6 +9,7 @@ import { Routes } from "../enums/routes.enum";
 import { Helmet } from "react-helmet";
 import { useStore } from "../store/store";
 import UserService from "../services/user.service";
+import { useQueryClient } from "react-query";
 
 export interface Props {}
 
@@ -37,6 +38,8 @@ export const CreateNewUserView: React.FC<Props> = () => {
     setLoadingButtonEnabled(Boolean(firstname));
   }, [setLoadingButtonEnabled]);
 
+  const queryClient = useQueryClient();
+
   const navigate = useNavigate();
   const methods = useForm<FormData>({
     defaultValues: { firstname: "", lastname: "" },
@@ -52,6 +55,8 @@ export const CreateNewUserView: React.FC<Props> = () => {
     await userService.create(value.firstname, value.lastname);
 
     setUser(value);
+    await queryClient.invalidateQueries(["user"]);
+
     methods.reset();
     navigate(Routes.NEW_ORDER);
   };

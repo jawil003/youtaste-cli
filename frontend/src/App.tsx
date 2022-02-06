@@ -53,6 +53,14 @@ function App() {
                 }
               />
               <Route
+                path={NRoutes.EDIT_ORDER}
+                element={
+                  <Auth>
+                    <CreateOrderView />
+                  </Auth>
+                }
+              />
+              <Route
                 path={NRoutes.ORDER_CONFIRM}
                 element={
                   <Auth>

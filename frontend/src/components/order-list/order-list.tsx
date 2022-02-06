@@ -1,10 +1,12 @@
 import React from "react";
-
+import { BsFillTrashFill, BsPencilFill } from "react-icons/bs";
 export interface Props {
   headline: string;
   items: {
     headline: string;
     description: string;
+    onEditClick?: () => void;
+    onDeleteClick?: () => void;
     onClick?: () => void;
     size: number;
   }[];
@@ -17,21 +19,39 @@ export interface Props {
  */
 export const OrderList: React.FC<Props> = ({ headline, children, items }) => {
   return (
-    <div className="flex flex-col max-w-md px-4 py-8 bg-white rounded-lg shadow  sm:px-6 md:px-8 lg:px-10 h-80 w-10">
+    <div className="flex flex-col max-w-md p-8 bg-white rounded-lg shadow max-h-3/4">
       <div className="self-center text-xl font-light text-gray-600 sm:text-2xl mb-6">
         {headline}
       </div>
-      <div className="mx-auto">
-        <div className="container flex flex-col mx-auto w-full items-center justify-center">
-          <ul className="flex flex-col w-full">
-            {items.map(({ description, headline, onClick, size }) => (
-              <li className="border-gray-400 flex flex-row mb-2">
+
+      <div className="container flex flex-col mx-auto items-center overflow-x-hidden overflow-y-scroll w-80">
+        <ul className="flex flex-col w-full gap-2">
+          {items.map(
+            ({
+              description,
+              headline,
+              onClick,
+              size,
+              onDeleteClick,
+              onEditClick,
+            }) => (
+              <li className="border-gray-400 flex flex-row">
                 <div className="shadow border select-none cursor-pointer bg-white rounded-md flex flex-1 items-center p-4">
                   <div className="flex-1 pl-1 md:mr-16">
                     <div className="font-medium">{headline}</div>
                     <div className="text-gray-600 text-sm">{description}</div>
                   </div>
                   <div className="text-gray-600 text-xs">{size}x</div>
+                  {onEditClick && (
+                    <button onClick={onEditClick}>
+                      <BsPencilFill className="ml-4" />
+                    </button>
+                  )}
+                  {onDeleteClick && (
+                    <button onClick={onDeleteClick}>
+                      <BsFillTrashFill className="ml-2" />
+                    </button>
+                  )}
                   {onClick && (
                     <button
                       className="w-24 text-right flex justify-end"
@@ -51,11 +71,11 @@ export const OrderList: React.FC<Props> = ({ headline, children, items }) => {
                   )}
                 </div>
               </li>
-            ))}
-          </ul>
-        </div>
-        {children}
+            )
+          )}
+        </ul>
       </div>
+      {children}
     </div>
   );
 };

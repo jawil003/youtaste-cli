@@ -12,7 +12,15 @@ export default class OrderService {
     return await backend.get<{ orders: Order[] }>(`/api/orders/user`);
   }
 
+  public async getByUserAndName(name: string) {
+    return await backend.get<{ order: Order }>(`/api/orders/user/${name}`);
+  }
+
   public async getAll() {
     return await backend.get<{ orders: Order[] }>("/api/orders/all");
+  }
+
+  public async deleteOrder(name: string) {
+    return await backend.delete(`/api/orders/user/${name}`);
   }
 }

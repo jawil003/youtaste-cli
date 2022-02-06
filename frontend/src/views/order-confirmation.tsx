@@ -1,11 +1,12 @@
 import React from "react";
-import { useCookies } from "react-cookie";
 import { FormProvider, useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
+import { useQueryClient } from "react-query";
+import { useNavigate } from "react-router-dom";
 import { Button } from "../components/button/button";
 import { OrderList } from "../components/order-list/order-list";
 import { Routes } from "../enums/routes.enum";
 import { useOrdersByUser } from "../hooks/ordersByUser.hook";
+import OrderService from "../services/order.service";
 
 export interface Props {}
 
@@ -16,7 +17,7 @@ export interface Props {}
  */
 export const OrderConfirmation: React.FC<Props> = () => {
   const { data: result } = useOrdersByUser();
-
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const methods = useForm();
 
@@ -29,6 +30,15 @@ export const OrderConfirmation: React.FC<Props> = () => {
             result?.orders?.map(({ name, variants }) => ({
               headline: name ?? "",
               description: variants?.join(", ") ?? "",
+              onDeleteClick: async () => {
+                const orderService = new OrderService();
+
+                if (!name) return;
+
+                await orderService.deleteOrder(name);
+
+                await queryClient.invalidateQueries(["orders-by-user"]);
+              },
               size: 1,
             })) ?? []
           }

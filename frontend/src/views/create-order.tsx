@@ -1,14 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { useQueryClient } from "react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Badge } from "../components/badge/badge";
 import { Button } from "../components/button/button";
 import { Input } from "../components/input/input";
 import { Routes } from "../enums/routes.enum";
 import { useUser } from "../hooks/user.hook";
 import OrderService from "../services/order.service";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 export interface Props {}
 
@@ -18,15 +20,37 @@ interface FormData {
   variants: string[];
 }
 
+const schema = yup.object({
+  mealName: yup.string().required("Mealname is required"),
+});
+
 /**
  * An CreateOrderView React Component.
  * @author
  * @version 0.1
  */
 export const CreateOrderView: React.FC<Props> = () => {
+  const { name } = useParams<"name">();
+
   const methods = useForm<FormData>({
     defaultValues: { mealName: "", variant: "", variants: [] },
+    resolver: yupResolver(schema),
   });
+
+  useEffect(() => {
+    if (name) {
+      (async () => {
+        const orderService = new OrderService();
+
+        const { data } = await orderService.getByUserAndName(name);
+
+        if (!data?.order) return;
+
+        methods.setValue("mealName", data.order.name ?? "");
+        methods.setValue("variants", data.order.variants ?? []);
+      })();
+    }
+  }, [methods, name]);
 
   const { data: user } = useUser();
 
@@ -42,10 +66,7 @@ export const CreateOrderView: React.FC<Props> = () => {
 
     await orderService.createOrUpdate([{ name: value.mealName, variants }]);
 
-    await queryClient.invalidateQueries([
-      "orders",
-      `${user?.firstname.toLowerCase()}_${user?.lastname.toLowerCase()}`,
-    ]);
+    await queryClient.invalidateQueries(["orders-by-user"]);
 
     navigate(
       Routes.ORDER_CONFIRM.replace(
