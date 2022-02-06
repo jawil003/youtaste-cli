@@ -9,3 +9,7 @@ func DB() db.ServiceCollection {
 func Network() NetworkService {
 	return NetworkService{}
 }
+
+func JWT() JwtService {
+	return JwtService{}
+}

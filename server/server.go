@@ -58,7 +58,7 @@ func main() {
 
 	router.Register(r)
 
-	err := r.Run(":3000")
+	err := r.Run(":80")
 	if err != nil {
 		return
 	}

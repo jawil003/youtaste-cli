@@ -17,7 +17,7 @@ export interface Props {
  */
 export const OrderList: React.FC<Props> = ({ headline, children, items }) => {
   return (
-    <div className="flex flex-col max-w-md px-4 py-8 bg-white rounded-lg shadow  sm:px-6 md:px-8 lg:px-10 max-h-80">
+    <div className="flex flex-col max-w-md px-4 py-8 bg-white rounded-lg shadow  sm:px-6 md:px-8 lg:px-10 h-80 w-10">
       <div className="self-center text-xl font-light text-gray-600 sm:text-2xl mb-6">
         {headline}
       </div>

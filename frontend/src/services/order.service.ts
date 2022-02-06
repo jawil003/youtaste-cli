@@ -1,19 +1,18 @@
-import axios from "axios";
+import { backend } from "../config/backend";
 import { Order } from "../types/order.type";
 
 export default class OrderService {
-  public async createOrUpdate(orders: Order[], user: string) {
-    return await axios.post<{ status: string }>("/api/orders", {
+  public async createOrUpdate(orders: Order[]) {
+    return await backend.post<{ status: string }>("/api/orders", {
       orders,
-      user,
     });
   }
 
   public async getByUser(user: string) {
-    return await axios.get<{ orders: Order[] }>(`/api/orders/${user}`);
+    return await backend.get<{ orders: Order[] }>(`/api/orders/${user}`);
   }
 
   public async getAll() {
-    return await axios.get<{ orders: Order[] }>("/api/orders/all");
+    return await backend.get<{ orders: Order[] }>("/api/orders/all");
   }
 }

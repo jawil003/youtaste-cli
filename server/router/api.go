@@ -3,13 +3,25 @@ package router
 import (
 	"bs-to-scrapper/server/models"
 	"bs-to-scrapper/server/services"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
 	"github.com/thoas/go-funk"
 )
 
 type CreateRequest struct {
-	User   string         `json:"user"`
 	Orders []models.Order `json:"orders"`
+}
+
+type CreateUserRequest struct {
+	Firstname string `json:"firstname"`
+	Lastname  string `json:"lastname"`
+}
+
+type CustonJWT struct {
+	jwt.StandardClaims
+	Firstname string `json:"firstname"`
+	Lastname  string `json:"lastname"`
 }
 
 type GetRequest struct {
@@ -20,9 +32,94 @@ func Register(r *gin.Engine) {
 
 	api := r.Group("/api")
 
-	api.GET("/orders/:user", func(context *gin.Context) {
+	api.POST("/user/create", func(c *gin.Context) {
+		var request CreateUserRequest
 
-		user := context.Param("user")
+		err := c.BindJSON(&request)
+
+		if err != nil {
+			c.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		token, err := services.JWT().Create(CustonJWT{
+
+			Firstname: request.Firstname, Lastname: request.Lastname,
+		})
+
+		if err != nil {
+			c.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		c.SetCookie("token", token, 60, "/", "127.0.0.1", false, true)
+
+		c.Status(200)
+
+	})
+
+	api.GET("/user/me", func(context *gin.Context) {
+		authorization, err := context.Cookie("token")
+
+		if err != nil {
+			context.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		if authorization == "" {
+			context.JSON(400, gin.H{
+				"error": "Authorization header is empty",
+			})
+			return
+		}
+
+		jwt := CustonJWT{}
+
+		_, err = services.JWT().Decode(authorization, &jwt)
+
+		if err != nil {
+			context.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		context.JSON(200, gin.H{
+			"firstname": jwt.Firstname,
+			"lastname":  jwt.Lastname,
+		})
+
+	})
+
+	api.GET("/orders/user", func(context *gin.Context) {
+
+		token, err := context.Cookie("token")
+
+		if err != nil {
+			context.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		if token == "" {
+			context.JSON(400, gin.H{
+				"error": "Authorization header is empty",
+			})
+			return
+		}
+
+		jwt := CustonJWT{}
+
+		_, err = services.JWT().Decode(token, &jwt)
+
+		user := fmt.Sprintf("%s_%s", jwt.Firstname, jwt.Lastname)
 
 		if user == "" {
 			context.JSON(400, gin.H{
@@ -67,9 +164,22 @@ func Register(r *gin.Engine) {
 
 	api.POST("/orders", func(context *gin.Context) {
 
+		token, err := context.Cookie("token")
+
+		if err != nil {
+			context.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		jwt := CustonJWT{}
+
+		_, err = services.JWT().Decode(token, &jwt)
+
 		var request CreateRequest
 
-		err := context.BindJSON(&request)
+		err = context.BindJSON(&request)
 
 		if err != nil {
 			context.JSON(500, gin.H{
@@ -77,7 +187,13 @@ func Register(r *gin.Engine) {
 			})
 		}
 
-		err = services.DB().Order().Create(request.Orders, request.User)
+		if err != nil {
+			context.JSON(500, gin.H{
+				"error": err,
+			})
+		}
+
+		err = services.DB().Order().Create(request.Orders, fmt.Sprintf("%s_%s", jwt.Firstname, jwt.Lastname))
 		if err != nil {
 			context.JSON(500, gin.H{
 				"error": err,
@@ -89,20 +205,40 @@ func Register(r *gin.Engine) {
 		})
 	})
 
-	api.DELETE("/orders/:user", func(context *gin.Context) {
-		user := context.Param("user")
+	api.DELETE("/orders/user", func(context *gin.Context) {
 
-		if user == "all" {
-			err := services.DB().Order().ClearAll()
-			if err != nil {
-				context.JSON(400, gin.H{
-					"error": err.Error(),
-				})
-				return
-			}
+		token, err := context.Cookie("token")
+
+		if err != nil {
+			context.JSON(400, gin.H{"error": err.Error()})
 		}
 
-		err := services.DB().Order().Clear(user)
+		custonJWT := CustonJWT{}
+
+		_, err = services.JWT().Decode(token, &custonJWT)
+
+		if err != nil {
+			context.JSON(400, gin.H{"error": err.Error()})
+		}
+
+		user := fmt.Sprintf("%s_%s", custonJWT.Firstname, custonJWT.Lastname)
+
+		err = services.DB().Order().Clear(user)
+
+		if err != nil {
+			context.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		context.JSON(200, gin.H{
+			"status": "ok",
+		})
+	})
+
+	api.DELETE("/orders/all", func(context *gin.Context) {
+		err := services.DB().Order().ClearAll()
 		if err != nil {
 			context.JSON(400, gin.H{
 				"error": err.Error(),

@@ -1,6 +1,9 @@
 import React from "react";
 import { ReactComponent as BurgerLogo } from "../../assets/Hamburger-cuate.svg";
 import { Logo } from "../../assets/logo/logo";
+import { useUser } from "../../hooks/user.hook";
+import { useStore } from "../../store/store";
+import { Username } from "../username/username";
 export interface Props {}
 
 /**
@@ -9,10 +12,18 @@ export interface Props {}
  * @version 0.1
  */
 export const Background: React.FC<Props> = ({ children }) => {
+  const { data: user } = useUser();
   return (
     <div className="relative w-screen h-screen overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-full z-0">
-        <Logo className="absolute top-4 left-6" />
+      <div className="absolute top-0 left-0 w-full h-full">
+        <div className="relative w-full flex justify-between p-5 z-50">
+          <Logo className="" />
+          {user && (
+            <Username>
+              {user?.firstname} {user?.lastname}
+            </Username>
+          )}
+        </div>
         <BurgerLogo />
       </div>
 

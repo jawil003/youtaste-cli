@@ -40,10 +40,7 @@ export const CreateOrderView: React.FC<Props> = () => {
   const onSubmit = async (value: FormData) => {
     const orderService = new OrderService();
 
-    await orderService.createOrUpdate(
-      [{ name: value.mealName, variants }],
-      `${user.firstname.toLowerCase()}_${user.lastname.toLowerCase()}`
-    );
+    await orderService.createOrUpdate([{ name: value.mealName, variants }]);
 
     await queryClient.invalidateQueries([
       "orders",
