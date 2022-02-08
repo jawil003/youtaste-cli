@@ -1,2 +1,4 @@
 .env
 *.db
+.gitsecret/keys/random_seed
+!*.secret
