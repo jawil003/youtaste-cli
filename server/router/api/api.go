@@ -2,7 +2,7 @@ package api
 
 import (
 	"bs-to-scrapper/server/models"
-	socket_io "bs-to-scrapper/server/router/api/socket.io"
+	"bs-to-scrapper/server/router/api/ws"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 )
@@ -34,6 +34,6 @@ func Register(r *gin.Engine) {
 
 	RegisterOrders(api)
 
-	socket_io.RegisterSocketIO(api)
+	ws.RegisterWebsocket(api)
 
 }
