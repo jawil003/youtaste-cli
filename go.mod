@@ -20,8 +20,12 @@ require (
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.10.0 // indirect
+	github.com/gofrs/uuid v4.0.0+incompatible // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/gomodule/redigo v1.8.4 // indirect
+	github.com/googollee/go-socket.io v1.6.1 // indirect
+	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/jweslley/localtunnel v0.1.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect

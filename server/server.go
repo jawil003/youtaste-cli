@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bs-to-scrapper/server/router"
+	"bs-to-scrapper/server/router/api"
 	"bs-to-scrapper/server/services"
 	"fmt"
 	"github.com/gin-contrib/cors"
@@ -65,7 +65,7 @@ func main() {
 		c.HTML(http.StatusOK, "index.html", gin.H{})
 	})
 
-	router.Register(r)
+	api.Register(r)
 
 	addresses, err := services.Network().GetAddresses()
 	if err != nil {
