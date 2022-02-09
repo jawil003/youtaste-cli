@@ -2,6 +2,7 @@ package api
 
 import (
 	"bs-to-scrapper/server/models"
+	"bs-to-scrapper/server/observer"
 	"bs-to-scrapper/server/services"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,8 @@ var wsupgrader = &websocket.Upgrader{
 func RegisterPolls(r *gin.RouterGroup) {
 
 	pollsGroup := r.Group("/polls")
+
+	observer.NewPollObserver().Run()
 
 	pollsGroup.GET("/", func(context *gin.Context) {
 		_, err := wsupgrader.Upgrade(context.Writer, context.Request, nil)
