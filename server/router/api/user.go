@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bs-to-scrapper/server/models"
 	"bs-to-scrapper/server/services"
 	"github.com/gin-gonic/gin"
 	"github.com/thoas/go-funk"
@@ -10,7 +11,7 @@ import (
 
 func RegisterUser(api *gin.RouterGroup) {
 	api.POST("/user/create", func(c *gin.Context) {
-		var request CreateUserRequest
+		var request models.CreateUserRequest
 
 		err := c.BindJSON(&request)
 
@@ -21,7 +22,7 @@ func RegisterUser(api *gin.RouterGroup) {
 			return
 		}
 
-		token, err := services.JWT().Create(CustomJWT{
+		token, err := services.JWT().Create(models.Jwt{
 
 			Firstname: request.Firstname, Lastname: request.Lastname,
 		})
@@ -64,7 +65,7 @@ func RegisterUser(api *gin.RouterGroup) {
 			return
 		}
 
-		jwt := CustomJWT{}
+		jwt := models.Jwt{}
 
 		_, err = services.JWT().Decode(authorization, &jwt)
 

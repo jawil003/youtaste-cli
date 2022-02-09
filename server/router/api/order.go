@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bs-to-scrapper/server/models"
 	"bs-to-scrapper/server/services"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -25,7 +26,7 @@ func RegisterOrders(api *gin.RouterGroup) {
 			return
 		}
 
-		jwt := CustomJWT{}
+		jwt := models.Jwt{}
 
 		_, err = services.JWT().Decode(token, &jwt)
 
@@ -70,7 +71,7 @@ func RegisterOrders(api *gin.RouterGroup) {
 			return
 		}
 
-		jwt := CustomJWT{}
+		jwt := models.Jwt{}
 
 		_, err = services.JWT().Decode(token, &jwt)
 
@@ -110,11 +111,11 @@ func RegisterOrders(api *gin.RouterGroup) {
 			return
 		}
 
-		jwt := CustomJWT{}
+		jwt := models.Jwt{}
 
 		_, err = services.JWT().Decode(token, &jwt)
 
-		var request CreateRequest
+		var request models.CreateOrderRequest
 
 		err = context.BindJSON(&request)
 
@@ -152,7 +153,7 @@ func RegisterOrders(api *gin.RouterGroup) {
 
 		mealName := context.Param("name")
 
-		customJWT := CustomJWT{}
+		customJWT := models.Jwt{}
 
 		_, err = services.JWT().Decode(token, &customJWT)
 
@@ -181,7 +182,7 @@ func RegisterOrders(api *gin.RouterGroup) {
 			context.JSON(400, gin.H{"error": err.Error()})
 		}
 
-		custonJWT := CustomJWT{}
+		custonJWT := models.Jwt{}
 
 		_, err = services.JWT().Decode(token, &custonJWT)
 
