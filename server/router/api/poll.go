@@ -20,12 +20,14 @@ func RegisterPolls(r *gin.RouterGroup) {
 
 	observer.NewPollObserver().Run()
 
-	pollsGroup.GET("/", func(context *gin.Context) {
-		_, err := wsupgrader.Upgrade(context.Writer, context.Request, nil)
+	pollsGroup.GET("", func(context *gin.Context) {
+		conn, err := wsupgrader.Upgrade(context.Writer, context.Request, nil)
 		if err != nil {
 			fmt.Printf("failed to set ws upgrade: %+v\n", err)
 			return
 		}
+
+		observer.NewPollObserver().Connect(conn)
 
 	})
 
