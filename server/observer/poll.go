@@ -19,7 +19,7 @@ func NewPollObserver() *PollObserver {
 
 type PollObserver struct {
 	connections []*websocket.Conn
-	polls       chan models.Poll
+	polls       chan models.PollObserverTransport
 }
 
 func (po PollObserver) Run() {
@@ -49,6 +49,6 @@ func (po *PollObserver) Disconnect(connection *websocket.Conn) {
 	}
 }
 
-func (po *PollObserver) SendPoll(poll models.Poll) {
+func (po *PollObserver) SendPoll(poll models.PollObserverTransport) {
 	po.polls <- poll
 }
