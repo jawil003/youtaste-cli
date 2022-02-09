@@ -11,6 +11,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { logger } from "./config/logger";
 import { CookiesProvider } from "react-cookie";
 import { Auth } from "./components/auth/auth";
+import { Poll } from "./views/poll";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -68,6 +69,7 @@ function App() {
                   </Auth>
                 }
               />
+              <Route path={"/poll"} element={<Poll />} />
               <Route path={NRoutes.ERROR} element={<ErrorView />} />
               <Route index element={<Navigate to={NRoutes.NEW} />} />
             </Routes>

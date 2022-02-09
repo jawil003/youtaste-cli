@@ -7,11 +7,19 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"net/http"
+	"time"
 )
 
 var wsupgrader = &websocket.Upgrader{
 	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
+	WriteBufferSize: 1024, CheckOrigin: func(r *http.Request) bool {
+		/*corsUrlConn := os.Getenv("CORS_URL")
+		corsUrl := strings.Split(corsUrlConn, ",")
+		res := fmt.Sprintf("http://%s", r.Host)
+		return funk.ContainsString(corsUrl, res)*/
+		return true
+	},
 }
 
 func RegisterPolls(r *gin.RouterGroup) {
@@ -27,14 +35,10 @@ func RegisterPolls(r *gin.RouterGroup) {
 			return
 		}
 
-		observer.NewPollObserver().Connect(conn)
+		//TODO: Replace this with blocking channel
+		time.Sleep(10 * time.Second)
 
-		defer func(conn *websocket.Conn) {
-			err := conn.Close()
-			if err != nil {
-				fmt.Printf("failed to close websocket: %+v\n", err)
-			}
-		}(conn)
+		observer.NewPollObserver().Connect(conn)
 
 	})
 
