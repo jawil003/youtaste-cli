@@ -29,6 +29,13 @@ func RegisterPolls(r *gin.RouterGroup) {
 
 		observer.NewPollObserver().Connect(conn)
 
+		defer func(conn *websocket.Conn) {
+			err := conn.Close()
+			if err != nil {
+				fmt.Printf("failed to close websocket: %+v\n", err)
+			}
+		}(conn)
+
 	})
 
 	pollsGroup.POST("/new", func(context *gin.Context) {
