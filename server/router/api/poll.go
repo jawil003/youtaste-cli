@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"net/http"
-	"time"
 )
 
 var wsupgrader = &websocket.Upgrader{
@@ -26,7 +25,8 @@ func RegisterPolls(r *gin.RouterGroup) {
 
 	pollsGroup := r.Group("/polls")
 
-	observer.NewPollObserver().Run()
+	hub := observer.NewPollObserverHub()
+	go hub.Run()
 
 	pollsGroup.GET("", func(context *gin.Context) {
 		conn, err := wsupgrader.Upgrade(context.Writer, context.Request, nil)
@@ -35,10 +35,8 @@ func RegisterPolls(r *gin.RouterGroup) {
 			return
 		}
 
-		//TODO: Replace this with blocking channel
-		time.Sleep(10 * time.Second)
-
-		observer.NewPollObserver().Connect(conn)
+		client := &observer.PollObserverClient{Hub: hub, Conn: conn, Send: make(chan []models.Poll, 256)}
+		client.Hub.Register <- client
 
 	})
 
