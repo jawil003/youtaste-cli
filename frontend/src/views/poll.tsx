@@ -15,9 +15,13 @@ export const Poll: React.FC<Props> = () => {
       console.log("connected");
     };
 
-    websocket.onclose = () => {
-      console.log("disconnected");
+    websocket.onmessage = (event) => {
+      console.log(event.data);
     };
+
+    window.addEventListener("beforeunload", () => {
+      websocket.close();
+    });
   });
 
   return <div></div>;

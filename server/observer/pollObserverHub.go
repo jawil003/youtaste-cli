@@ -1,5 +1,7 @@
 package observer
 
+import "bs-to-scrapper/server/models"
+
 type PollObserverHub struct {
 	Register   chan *PollObserverClient
 	Unregister chan *PollObserverClient
@@ -14,16 +16,27 @@ func NewPollObserverHub() *PollObserverHub {
 	}
 }
 
-func (h *PollObserverHub) Run() {
+func (c *PollObserverHub) Run() {
 	for {
 		select {
-		case client := <-h.Register:
-			h.Clients[client] = true
-		case client := <-h.Unregister:
-			if _, ok := h.Clients[client]; ok {
+		case client := <-c.Register:
+			c.Clients[client] = true
+		case client := <-c.Unregister:
+			if _, ok := c.Clients[client]; ok {
 				close(client.Send)
-				delete(h.Clients, client)
+				delete(c.Clients, client)
 			}
+		}
+	}
+}
+
+func (c PollObserverHub) SendAll(poll models.Poll) {
+	for client := range c.Clients {
+		select {
+		case client.Send <- poll:
+		default:
+			close(client.Send)
+			delete(c.Clients, client)
 		}
 	}
 }

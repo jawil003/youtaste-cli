@@ -35,8 +35,11 @@ func RegisterPolls(r *gin.RouterGroup) {
 			return
 		}
 
-		client := &observer.PollObserverClient{Hub: hub, Conn: conn, Send: make(chan []models.Poll, 256)}
+		client := &observer.PollObserverClient{Hub: hub, Conn: conn, Send: make(chan models.Poll, 256)}
 		client.Hub.Register <- client
+
+		client.ReadPump()
+		client.WritePump()
 
 	})
 
@@ -77,6 +80,9 @@ func RegisterPolls(r *gin.RouterGroup) {
 				"error": err.Error(),
 			})
 		}
+
+		hub.SendAll(poll)
+
 	})
 
 	pollsGroup.POST("/choose", func(context *gin.Context) {
