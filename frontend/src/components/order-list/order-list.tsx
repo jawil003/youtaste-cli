@@ -20,9 +20,7 @@ export interface Props {
 export const OrderList: React.FC<Props> = ({ headline, children, items }) => {
   return (
     <div className="flex flex-col max-w-md p-8 bg-white rounded-lg shadow max-h-3/4">
-      <div className="self-center text-xl font-light text-gray-600 sm:text-2xl mb-6">
-        {headline}
-      </div>
+      <div className="background-card-title">{headline}</div>
 
       <div className="container flex flex-col mx-auto items-center overflow-x-hidden overflow-y-scroll w-80">
         <ul className="flex flex-col w-full gap-2">

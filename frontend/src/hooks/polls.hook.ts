@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import PollService from "../services/poll.service";
-import { Poll } from "../types/poll.type";
 
 export const usePolls = () => {
   const [polls, setPolls] = useState<{ [x: string]: number }>({});

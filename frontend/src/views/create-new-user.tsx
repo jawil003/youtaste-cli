@@ -66,10 +66,8 @@ export const CreateNewUserView: React.FC<Props> = () => {
       <Helmet>
         <title>New User | TastyFood</title>
       </Helmet>
-      <div className="flex flex-col w-full max-w-md px-4 py-8 bg-white rounded-lg shadow  sm:px-6 md:px-8 lg:px-10">
-        <div className="self-center text-xl font-light text-gray-600 sm:text-2xl">
-          Who are you?
-        </div>
+      <div className="background-card flex flex-col">
+        <div className="background-card-title">Who are you?</div>
         <div className="mt-8">
           <FormProvider {...methods}>
             <form noValidate onSubmit={methods.handleSubmit(onSubmit)}>
