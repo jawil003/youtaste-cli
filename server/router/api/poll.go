@@ -74,7 +74,7 @@ func RegisterPolls(r *gin.RouterGroup) {
 
 		err = context.BindJSON(&poll)
 
-		err = services.DB().Poll().Create(poll)
+		err = services.DB().Poll().Create(poll, services.User().GetUsername(jwt.Firstname, jwt.Lastname))
 		if err != nil {
 			context.JSON(400, gin.H{
 				"error": err.Error(),
@@ -85,42 +85,4 @@ func RegisterPolls(r *gin.RouterGroup) {
 
 	})
 
-	pollsGroup.POST("/choose", func(context *gin.Context) {
-		token, err := context.Cookie("token")
-
-		if err != nil {
-			context.JSON(401, gin.H{
-				"message": "Unauthorized",
-			})
-			return
-		}
-
-		if token == "" {
-			context.JSON(400, gin.H{
-				"error": "Authorization header is empty",
-			})
-			return
-		}
-
-		jwt := models.Jwt{}
-
-		user, err := services.JWT().Decode(token, &jwt)
-
-		if err != nil || user == nil {
-			context.JSON(401, gin.H{
-				"message": "Unauthorized",
-			})
-		}
-
-		var poll models.Poll
-
-		err = context.BindJSON(&poll)
-
-		err = services.DB().Poll().Choose(poll)
-		if err != nil {
-			context.JSON(400, gin.H{
-				"error": err.Error(),
-			})
-		}
-	})
 }

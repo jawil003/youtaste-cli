@@ -2,7 +2,9 @@ package db
 
 import (
 	"bs-to-scrapper/server/models"
+	"encoding/json"
 	"errors"
+	"github.com/thoas/go-funk"
 	bolt "go.etcd.io/bbolt"
 	"strconv"
 )
@@ -14,22 +16,66 @@ func (_ ServiceCollection) Poll() PollService {
 	return PollService{}
 }
 
-func (_ PollService) Create(poll models.Poll) error {
+func (_ PollService) Create(poll models.Poll, user string) error {
 	db, err := OpenDbConnection()
 
 	err = db.Update(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket([]byte("polls"))
+		bucketPollsCount := tx.Bucket([]byte("polls_count"))
+		bucketPollsByUser := tx.Bucket([]byte("polls_user"))
 
-		pollsString := bucket.Get([]byte(poll.RestaurantName))
+		pollsByUserString := bucketPollsByUser.Get([]byte(user))
 
-		if pollsString != nil {
-			return errors.New("poll already exists")
-		}
+		var pollsByUserStringUnmarshal []string
 
-		err := bucket.Put([]byte(poll.RestaurantName), []byte("0"))
+		err := json.Unmarshal(pollsByUserString, &pollsByUserStringUnmarshal)
 
 		if err != nil {
 			return err
+		}
+
+		hasAlreadyVoted := funk.ContainsString(pollsByUserStringUnmarshal, poll.RestaurantName)
+
+		if hasAlreadyVoted {
+			return errors.New("you have already voted for this restaurant")
+		} else {
+			pollsString := bucketPollsCount.Get([]byte(poll.RestaurantName))
+
+			if pollsString != nil {
+				pollsCount, err := strconv.Atoi(string(pollsString))
+
+				if err != nil {
+					return err
+				}
+
+				err = bucketPollsCount.Put([]byte(poll.RestaurantName), []byte(strconv.Itoa(pollsCount+1)))
+
+				if err != nil {
+					return err
+				}
+
+				return nil
+
+			} else {
+				err = bucketPollsCount.Put([]byte(poll.RestaurantName), []byte("1"))
+
+				if err != nil {
+					return err
+				}
+			}
+
+			pollsByUserStringUnmarshal = append(pollsByUserStringUnmarshal, poll.RestaurantName)
+
+			pollsByUserString, err = json.Marshal(pollsByUserStringUnmarshal)
+
+			if err != nil {
+				return err
+			}
+
+			err := bucketPollsByUser.Put([]byte(user), pollsByUserString)
+			if err != nil {
+				return err
+			}
+
 		}
 
 		return nil
@@ -44,43 +90,42 @@ func (_ PollService) Create(poll models.Poll) error {
 	return nil
 }
 
-func (_ PollService) Choose(poll models.Poll) error {
+func (_ PollService) GetAll() ([]models.PollWithCount, error) {
 	db, err := OpenDbConnection()
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	err = db.Update(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket([]byte("polls"))
+	var pollsWithCount []models.PollWithCount
 
-		voteNumber := bucket.Get([]byte(poll.RestaurantName))
+	err = db.View(func(tx *bolt.Tx) error {
+		bucketPollsCount := tx.Bucket([]byte("polls_count"))
 
-		if voteNumber == nil {
+		cursor := bucketPollsCount.Cursor()
 
-			return errors.New("poll does not exist")
+		for k, v := cursor.First(); k != nil; k, v = cursor.Next() {
+			poll := models.Poll{
+				RestaurantName: string(k),
+			}
+
+			stringCOnvInt, err := strconv.Atoi(string(v))
+
+			if err != nil {
+				return err
+			}
+
+			pollsWithCount = append(pollsWithCount, models.PollWithCount{
+				Poll:  poll,
+				Count: stringCOnvInt,
+			})
 		}
-
-		voteNumberInt, err := strconv.Atoi(string(voteNumber))
-
-		if err != nil {
-			return err
-		}
-
-		err = bucket.Put([]byte(poll.RestaurantName), []byte(strconv.Itoa(voteNumberInt+1)))
-
-		if err != nil {
-			return err
-		}
-
 		return nil
 	})
 
 	if err != nil {
-		defer db.Close()
-		return err
+		return nil, err
 	}
 
-	defer db.Close()
-	return nil
+	return pollsWithCount, nil
 }

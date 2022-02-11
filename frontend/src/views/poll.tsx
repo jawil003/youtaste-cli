@@ -8,21 +8,5 @@ export interface Props {}
  * @version 0.1
  */
 export const Poll: React.FC<Props> = () => {
-  useEffect(() => {
-    const websocket = new WebSocket("ws://localhost:80/api/polls");
-
-    websocket.onopen = () => {
-      console.log("connected");
-    };
-
-    websocket.onmessage = (event) => {
-      console.log(event.data);
-    };
-
-    window.addEventListener("beforeunload", () => {
-      websocket.close();
-    });
-  });
-
-  return <div></div>;
+  return <div className="flex w-full h-full justify-center items-center"></div>;
 };

@@ -13,3 +13,7 @@ func Network() NetworkService {
 func JWT() JwtService {
 	return JwtService{}
 }
+
+func User() UserService {
+	return UserService{}
+}
