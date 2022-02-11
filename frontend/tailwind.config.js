@@ -5,6 +5,8 @@ module.exports = {
       colors: {
         black: {
           20: "rgba(0, 0, 0, 0.2)",
+          40: "rgba(0, 0, 0, 0.4)",
+          60: "rgba(0, 0, 0, 0.6)",
         },
       },
       maxHeight: {

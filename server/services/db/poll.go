@@ -2,6 +2,7 @@ package db
 
 import (
 	"bs-to-scrapper/server/models"
+	"bs-to-scrapper/server/observer"
 	"encoding/json"
 	"errors"
 	"github.com/thoas/go-funk"
@@ -16,7 +17,7 @@ func (_ ServiceCollection) Poll() PollService {
 	return PollService{}
 }
 
-func (_ PollService) Create(poll models.Poll, user string) error {
+func (_ PollService) Create(poll models.Poll, user string, hub *observer.PollObserverHub) error {
 	db, err := OpenDbConnection()
 	defer db.Close()
 
@@ -91,6 +92,7 @@ func (_ PollService) Create(poll models.Poll, user string) error {
 	if err != nil {
 		return err
 	}
+	hub.SendAll(poll)
 	return nil
 }
 
