@@ -4,5 +4,6 @@ export enum Routes {
   "EDIT_ORDER" = "/edit/order/:name",
   "ORDER_CONFIRM" = "/confirm",
   "ADMIN" = "/admin",
+  "POLLS" = "/poll",
   ERROR = "*",
 }

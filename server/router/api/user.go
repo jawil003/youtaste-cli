@@ -10,6 +10,7 @@ import (
 )
 
 func RegisterUser(api *gin.RouterGroup) {
+
 	api.POST("/user/create", func(c *gin.Context) {
 		var request models.CreateUserRequest
 
@@ -49,36 +50,21 @@ func RegisterUser(api *gin.RouterGroup) {
 	})
 
 	api.GET("/user/me", func(context *gin.Context) {
-		authorization, err := context.Cookie("token")
 
-		if err != nil {
+		jwt, ok := context.Get("user")
+
+		if !ok {
 			context.JSON(400, gin.H{
-				"error": err.Error(),
+				"error": "user not found",
 			})
 			return
 		}
 
-		if authorization == "" {
-			context.JSON(400, gin.H{
-				"error": "Authorization header is empty",
-			})
-			return
-		}
-
-		jwt := models.Jwt{}
-
-		_, err = services.JWT().Decode(authorization, &jwt)
-
-		if err != nil {
-			context.JSON(400, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
+		user := jwt.(models.Jwt)
 
 		context.JSON(200, gin.H{
-			"firstname": jwt.Firstname,
-			"lastname":  jwt.Lastname,
+			"firstname": user.Firstname,
+			"lastname":  user.Lastname,
 		})
 
 	})

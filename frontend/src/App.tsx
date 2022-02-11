@@ -69,7 +69,7 @@ function App() {
                   </Auth>
                 }
               />
-              <Route path={"/poll"} element={<Poll />} />
+              <Route path={NRoutes.POLLS} element={<Poll />} />
               <Route path={NRoutes.ERROR} element={<ErrorView />} />
               <Route index element={<Navigate to={NRoutes.NEW} />} />
             </Routes>

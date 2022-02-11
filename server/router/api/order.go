@@ -10,27 +10,14 @@ import (
 func RegisterOrders(api *gin.RouterGroup) {
 	api.GET("/orders/user", func(context *gin.Context) {
 
-		token, err := context.Cookie("token")
+		jwt, ok := context.Get("user")
 
-		if err != nil {
-			context.JSON(400, gin.H{
-				"error": err.Error(),
-			})
+		if !ok {
+			context.JSON(401, gin.H{"error": "unauthorized"})
 			return
 		}
 
-		if token == "" {
-			context.JSON(400, gin.H{
-				"error": "Authorization header is empty",
-			})
-			return
-		}
-
-		jwt := models.Jwt{}
-
-		_, err = services.JWT().Decode(token, &jwt)
-
-		user := fmt.Sprintf("%s_%s", jwt.Firstname, jwt.Lastname)
+		user := services.User().GetUsername(jwt.(models.Jwt).Firstname, jwt.(models.Jwt).Lastname)
 
 		if user == "" {
 			context.JSON(400, gin.H{
@@ -53,71 +40,18 @@ func RegisterOrders(api *gin.RouterGroup) {
 		})
 	})
 
-	api.GET("/orders/user/:name", func(context *gin.Context) {
-
-		token, err := context.Cookie("token")
-
-		if err != nil {
-			context.JSON(400, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
-
-		if token == "" {
-			context.JSON(400, gin.H{
-				"error": "Authorization header is empty",
-			})
-			return
-		}
-
-		jwt := models.Jwt{}
-
-		_, err = services.JWT().Decode(token, &jwt)
-
-		user := fmt.Sprintf("%s_%s", jwt.Firstname, jwt.Lastname)
-
-		if user == "" {
-			context.JSON(400, gin.H{
-				"error": "user is required",
-			})
-			return
-		}
-
-		orders, err := services.DB().Order().GetByUser(user)
-
-		for _, order := range *orders {
-			if order.Name == context.Param("name") {
-				context.JSON(200, gin.H{
-					"order": order,
-				})
-				return
-			}
-		}
-
-		context.JSON(200, gin.H{
-			"error": "order not found",
-		})
-	})
-
 	api.POST("/orders", func(context *gin.Context) {
 
-		token, err := context.Cookie("token")
+		jwt, ok := context.Get("user")
 
-		if err != nil {
-			context.JSON(400, gin.H{
-				"error": err.Error(),
-			})
+		if !ok {
+			context.JSON(401, gin.H{"error": "unauthorized"})
 			return
 		}
-
-		jwt := models.Jwt{}
-
-		_, err = services.JWT().Decode(token, &jwt)
 
 		var request models.CreateOrderRequest
 
-		err = context.BindJSON(&request)
+		err := context.BindJSON(&request)
 
 		if err != nil {
 			context.JSON(500, gin.H{
@@ -131,7 +65,7 @@ func RegisterOrders(api *gin.RouterGroup) {
 			})
 		}
 
-		err = services.DB().Order().Create(request.Orders, fmt.Sprintf("%s_%s", jwt.Firstname, jwt.Lastname))
+		err = services.DB().Order().Create(request.Orders, services.User().GetUsername(jwt.(models.Jwt).Firstname, jwt.(models.Jwt).Lastname))
 		if err != nil {
 			context.JSON(500, gin.H{
 				"error": err,
@@ -144,27 +78,18 @@ func RegisterOrders(api *gin.RouterGroup) {
 	})
 
 	api.DELETE("/orders/user/:name", func(context *gin.Context) {
-		token, err := context.Cookie("token")
-
-		if err != nil {
-			context.JSON(400, gin.H{"error": err.Error()})
-			return
-		}
-
 		mealName := context.Param("name")
 
-		customJWT := models.Jwt{}
+		customJWT, ok := context.Get("user")
 
-		_, err = services.JWT().Decode(token, &customJWT)
-
-		if err != nil {
-			context.JSON(400, gin.H{"error": err.Error()})
+		if !ok {
+			context.JSON(401, gin.H{"error": "unauthorized"})
 			return
 		}
 
-		user := fmt.Sprintf("%s_%s", customJWT.Firstname, customJWT.Lastname)
+		user := fmt.Sprintf(services.User().GetUsername(customJWT.(models.Jwt).Firstname, customJWT.(models.Jwt).Lastname))
 
-		err = services.DB().Order().ClearByMealname(user, mealName)
+		err := services.DB().Order().ClearByMealname(user, mealName)
 
 		if err != nil {
 			context.JSON(400, gin.H{"error": err.Error()})
@@ -176,23 +101,16 @@ func RegisterOrders(api *gin.RouterGroup) {
 
 	api.DELETE("/orders/user", func(context *gin.Context) {
 
-		token, err := context.Cookie("token")
+		custonJWT, ok := context.Get("user")
 
-		if err != nil {
-			context.JSON(400, gin.H{"error": err.Error()})
+		if !ok {
+			context.JSON(401, gin.H{"error": "unauthorized"})
+			return
 		}
 
-		custonJWT := models.Jwt{}
+		user := fmt.Sprintf(services.User().GetUsername(custonJWT.(models.Jwt).Firstname, custonJWT.(models.Jwt).Lastname))
 
-		_, err = services.JWT().Decode(token, &custonJWT)
-
-		if err != nil {
-			context.JSON(400, gin.H{"error": err.Error()})
-		}
-
-		user := fmt.Sprintf("%s_%s", custonJWT.Firstname, custonJWT.Lastname)
-
-		err = services.DB().Order().Clear(user)
+		err := services.DB().Order().Clear(user)
 
 		if err != nil {
 			context.JSON(400, gin.H{

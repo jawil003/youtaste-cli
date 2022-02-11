@@ -58,7 +58,7 @@ export const CreateNewUserView: React.FC<Props> = () => {
     await queryClient.invalidateQueries(["user"]);
 
     methods.reset();
-    navigate(Routes.NEW_ORDER);
+    navigate(Routes.POLLS);
   };
 
   return (

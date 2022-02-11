@@ -26,13 +26,16 @@ func (_ PollService) Create(poll models.Poll, user string) error {
 
 		pollsByUserString := bucketPollsByUser.Get([]byte(user))
 
-		var pollsByUserStringUnmarshal []string
+		var pollsByUserStringUnmarshal []string = []string{}
 
-		err := json.Unmarshal(pollsByUserString, &pollsByUserStringUnmarshal)
+		if pollsByUserString != nil {
 
-		if err != nil {
+			err := json.Unmarshal(pollsByUserString, &pollsByUserStringUnmarshal)
 
-			return err
+			if err != nil {
+
+				return err
+			}
 		}
 
 		hasAlreadyVoted := funk.ContainsString(pollsByUserStringUnmarshal, poll.RestaurantName)
