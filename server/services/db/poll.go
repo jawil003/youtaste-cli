@@ -18,6 +18,7 @@ func (_ ServiceCollection) Poll() PollService {
 
 func (_ PollService) Create(poll models.Poll, user string) error {
 	db, err := OpenDbConnection()
+	defer db.Close()
 
 	err = db.Update(func(tx *bolt.Tx) error {
 		bucketPollsCount := tx.Bucket([]byte("polls_count"))
@@ -30,6 +31,7 @@ func (_ PollService) Create(poll models.Poll, user string) error {
 		err := json.Unmarshal(pollsByUserString, &pollsByUserStringUnmarshal)
 
 		if err != nil {
+
 			return err
 		}
 
@@ -50,6 +52,7 @@ func (_ PollService) Create(poll models.Poll, user string) error {
 				err = bucketPollsCount.Put([]byte(poll.RestaurantName), []byte(strconv.Itoa(pollsCount+1)))
 
 				if err != nil {
+
 					return err
 				}
 
@@ -59,6 +62,7 @@ func (_ PollService) Create(poll models.Poll, user string) error {
 				err = bucketPollsCount.Put([]byte(poll.RestaurantName), []byte("1"))
 
 				if err != nil {
+
 					return err
 				}
 			}
@@ -82,22 +86,20 @@ func (_ PollService) Create(poll models.Poll, user string) error {
 
 	})
 	if err != nil {
-		defer db.Close()
 		return err
 	}
-
-	defer db.Close()
 	return nil
 }
 
 func (_ PollService) GetAll() ([]models.PollWithCount, error) {
 	db, err := OpenDbConnection()
+	defer db.Close()
 
 	if err != nil {
 		return nil, err
 	}
 
-	var pollsWithCount []models.PollWithCount
+	pollsWithCount := make([]models.PollWithCount, 0)
 
 	err = db.View(func(tx *bolt.Tx) error {
 		bucketPollsCount := tx.Bucket([]byte("polls_count"))

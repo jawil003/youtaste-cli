@@ -15,6 +15,8 @@ func OpenDbConnection() (*bolt.DB, error) {
 
 	err = open.Update(func(tx *bolt.Tx) error {
 		_, err := tx.CreateBucketIfNotExists([]byte("orders"))
+		_, err = tx.CreateBucketIfNotExists([]byte("polls_count"))
+		_, err = tx.CreateBucketIfNotExists([]byte("polls_user"))
 
 		if err != nil {
 			return err
@@ -27,15 +29,4 @@ func OpenDbConnection() (*bolt.DB, error) {
 	}
 
 	return open, nil
-}
-
-func CloseConnection(db *bolt.DB) {
-	defer func(db *bolt.DB) {
-		err := db.Close()
-		if err != nil {
-			panic(err)
-		}
-	}(db)
-
-	return
 }

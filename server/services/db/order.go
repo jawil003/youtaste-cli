@@ -17,9 +17,10 @@ type OrderService struct {
 func (o OrderService) GetByUser(user string) (*[]models.Order, error) {
 
 	db, err := OpenDbConnection()
+	defer db.Close()
 
 	if err != nil {
-		CloseConnection(db)
+
 		return nil, err
 	}
 
@@ -45,11 +46,8 @@ func (o OrderService) GetByUser(user string) (*[]models.Order, error) {
 	})
 
 	if err != nil {
-		CloseConnection(db)
 		return nil, err
 	}
-
-	CloseConnection(db)
 
 	return &orderArray, nil
 
@@ -57,9 +55,9 @@ func (o OrderService) GetByUser(user string) (*[]models.Order, error) {
 
 func (o OrderService) Create(orders []models.Order, user string) error {
 	db, err := OpenDbConnection()
+	defer db.Close()
 
 	if err != nil {
-		CloseConnection(db)
 		return err
 	}
 
@@ -144,8 +142,6 @@ func (o OrderService) Create(orders []models.Order, user string) error {
 		return nil
 	})
 
-	CloseConnection(db)
-
 	if err != nil {
 		return err
 	}
@@ -159,9 +155,9 @@ func (o OrderService) Create(orders []models.Order, user string) error {
 
 func (o OrderService) ClearByMealname(user string, mealName string) error {
 	db, err := OpenDbConnection()
+	defer db.Close()
 
 	if err != nil {
-		CloseConnection(db)
 		return err
 	}
 
@@ -195,8 +191,6 @@ func (o OrderService) ClearByMealname(user string, mealName string) error {
 		return nil
 	})
 
-	CloseConnection(db)
-
 	if err != nil {
 		return err
 	}
@@ -210,9 +204,9 @@ func (o OrderService) ClearByMealname(user string, mealName string) error {
 
 func (o OrderService) ClearAll() error {
 	db, err := OpenDbConnection()
+	defer db.Close()
 
 	if err != nil {
-		CloseConnection(db)
 		return err
 	}
 
@@ -225,8 +219,6 @@ func (o OrderService) ClearAll() error {
 
 		return nil
 	})
-
-	CloseConnection(db)
 
 	if err != nil {
 		return err
@@ -241,9 +233,9 @@ func (o OrderService) ClearAll() error {
 
 func (o OrderService) Clear(user string) error {
 	db, err := OpenDbConnection()
+	defer db.Close()
 
 	if err != nil {
-		CloseConnection(db)
 		return err
 	}
 

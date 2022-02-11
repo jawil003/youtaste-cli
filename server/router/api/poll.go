@@ -29,6 +29,15 @@ func RegisterPolls(r *gin.RouterGroup) {
 	go hub.Run()
 
 	pollsGroup.GET("", func(context *gin.Context) {
+		polls, err := services.DB().Poll().GetAll()
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		context.JSON(http.StatusOK, polls)
+	})
+
+	pollsGroup.GET("/ws", func(context *gin.Context) {
 		conn, err := wsupgrader.Upgrade(context.Writer, context.Request, nil)
 		if err != nil {
 			fmt.Printf("failed to set ws upgrade: %+v\n", err)
