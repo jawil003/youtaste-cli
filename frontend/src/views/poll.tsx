@@ -27,11 +27,11 @@ export const Poll: React.FC<Props> = () => {
         <title>Choose Restaurant | TastyFood</title>
       </Helmet>
       <div className="flex flex-col background-card max-h-3/4">
-        <div className="background-card-title">
+        <div className="background-card-title mb-8">
           Which Restaurant do you want to order from?
         </div>
-        <div className="flex-1 overflow-auto no-scrollbar">
-          <div className="mt-8 flex flex-col gap-4 ">
+        <div className="flex-1 overflow-auto no-scrollbar pb-2">
+          <div className="flex flex-col gap-4 flex-1">
             {Object.entries(polls)?.map(([poll, count]) => (
               <PollOption type="button" count={count}>
                 {poll}
