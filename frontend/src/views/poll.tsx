@@ -26,20 +26,22 @@ export const Poll: React.FC<Props> = () => {
       <Helmet>
         <title>Choose Restaurant | TastyFood</title>
       </Helmet>
-      <div className="background-card">
+      <div className="flex flex-col background-card max-h-3/4">
         <div className="background-card-title">
           Which Restaurant do you want to order from?
         </div>
-        <div className="mt-8 flex flex-col gap-4 ">
-          {Object.entries(polls)?.map(([poll, count]) => (
-            <PollOption type="button" count={count}>
-              {poll}
-            </PollOption>
-          ))}
-          <Button onClick={() => setOpen(true)} className="mt-8">
-            Add another
-          </Button>
+        <div className="flex-1 overflow-auto no-scrollbar">
+          <div className="mt-8 flex flex-col gap-4 ">
+            {Object.entries(polls)?.map(([poll, count]) => (
+              <PollOption type="button" count={count}>
+                {poll}
+              </PollOption>
+            ))}
+          </div>
         </div>
+        <Button onClick={() => setOpen(true)} className="mt-8">
+          Add another
+        </Button>
       </div>
       <AnotherPollOption open={open} onClose={() => setOpen(false)} />
     </div>
