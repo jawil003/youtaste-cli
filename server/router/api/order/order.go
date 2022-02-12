@@ -1,4 +1,4 @@
-package api
+package order
 
 import (
 	"bs-to-scrapper/server/models"
@@ -31,6 +31,8 @@ func RegisterOrders(api *gin.RouterGroup) {
 
 		orderTimer.Start(int64(orderTimerTimeAsInt))
 	})
+
+	RegisterTimer(api, orderTimer)
 
 	api.GET("/orders/user", func(context *gin.Context) {
 
