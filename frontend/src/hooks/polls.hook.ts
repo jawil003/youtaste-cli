@@ -41,6 +41,7 @@ export const usePolls = () => {
       websocket.close();
     });
     return () => {
+      setPolls({});
       websocket.onclose = null;
       websocket.onmessage = null;
       websocket.onopen = null;
