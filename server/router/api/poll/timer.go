@@ -5,12 +5,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterTimer(r *gin.RouterGroup) {
+func RegisterTimer(r *gin.RouterGroup, timerInst *services.TimerService) {
+
 	timer := r.Group("/timer")
 
 	timer.GET("", func(context *gin.Context) {
 		context.JSON(200, gin.H{
-			"time": services.Timer().GetRemainingTime(),
+			"time": timerInst.GetRemainingTime(),
 		})
 	})
 }

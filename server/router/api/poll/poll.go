@@ -21,11 +21,11 @@ var wsupgrader = &websocket.Upgrader{
 	},
 }
 
-func RegisterPolls(r *gin.RouterGroup) {
+func RegisterPolls(r *gin.RouterGroup, timer *services.TimerService) {
 
 	pollsGroup := r.Group("/polls")
 
-	RegisterTimer(pollsGroup)
+	RegisterTimer(pollsGroup, timer)
 
 	hub := observer.NewPollObserverHub()
 	go hub.Run()

@@ -52,10 +52,12 @@ func Register(r *gin.Engine) {
 		context.Next()
 	})
 
-	RegisterUser(api)
+	pollTimer := services.Timer()
+
+	RegisterUser(api, pollTimer)
 
 	RegisterOrders(api)
 
-	poll.RegisterPolls(api)
+	poll.RegisterPolls(api, pollTimer)
 
 }

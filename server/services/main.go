@@ -18,13 +18,6 @@ func User() UserService {
 	return UserService{}
 }
 
-var timerService *TimerService
-
 func Timer() *TimerService {
-
-	if timerService == nil {
-		timerService = &TimerService{}
-	}
-
-	return timerService
+	return &TimerService{}
 }

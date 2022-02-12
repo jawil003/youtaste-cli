@@ -5,9 +5,33 @@ import (
 	"bs-to-scrapper/server/services"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"os"
+	"strconv"
+	"time"
 )
 
 func RegisterOrders(api *gin.RouterGroup) {
+
+	pollTimerTime := os.Getenv("POLL_TIMER_TIME")
+	pollTimerTimeAsInt, err := strconv.Atoi(pollTimerTime)
+
+	if err != nil {
+		return
+	}
+
+	orderTimer := services.Timer()
+
+	time.AfterFunc(time.Millisecond*time.Duration(pollTimerTimeAsInt), func() {
+		orderTimerTime := os.Getenv("ORDER_TIMER_TIME")
+		orderTimerTimeAsInt, err := strconv.Atoi(orderTimerTime)
+
+		if err != nil {
+			return
+		}
+
+		orderTimer.Start(int64(orderTimerTimeAsInt))
+	})
+
 	api.GET("/orders/user", func(context *gin.Context) {
 
 		jwt, ok := context.Get("user")

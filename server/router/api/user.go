@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-func RegisterUser(api *gin.RouterGroup) {
+func RegisterUser(api *gin.RouterGroup, timer *services.TimerService) {
 
 	api.POST("/user/create", func(c *gin.Context) {
 		var request models.CreateUserRequest
@@ -35,7 +35,7 @@ func RegisterUser(api *gin.RouterGroup) {
 			return
 		}
 
-		services.Timer().Start(1000000)
+		timer.Start(1000000)
 
 		ginMode := os.Getenv("GIN_MODE")
 
