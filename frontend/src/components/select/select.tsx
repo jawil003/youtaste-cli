@@ -58,7 +58,7 @@ export const Select: React.FC<Props> = ({
             <button
               onClick={() => setOpen(!open)}
               type="button"
-              className="relative w-full bg-white rounded-md border border-gray-300 py-2 px-4 pr-10 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="relative w-full bg-white rounded-md border border-gray-300 py-2 px-4 pr-10 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             >
               <span className="flex items-center">
                 <span
@@ -108,7 +108,7 @@ export const Select: React.FC<Props> = ({
                       id="listbox-item-0"
                       // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
                       role="option"
-                      className="text-gray-900 cursor-default hover:bg-indigo-500 hover:text-white select-none relative py-2 pl-3 pr-9"
+                      className="text-gray-900 cursor-default hover:bg-blue-500 hover:text-white select-none relative py-2 pl-3 pr-9"
                     >
                       <div className="flex items-center">
                         <span className="ml-3 block font-normal truncate">
