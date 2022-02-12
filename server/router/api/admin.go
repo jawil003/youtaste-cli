@@ -76,4 +76,67 @@ func RegisterAdmin(r *gin.RouterGroup) {
 			"message": "success",
 		})
 	})
+
+	admin.POST("/lieferando", func(context *gin.Context) {
+
+		var createLieferandoRequest *models.CreateProviderLoginRequest
+
+		err := context.BindJSON(createLieferandoRequest)
+		if err != nil {
+			context.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		err = os.Setenv("LIEFERANDO_USERNAME", createLieferandoRequest.Username)
+		if err != nil {
+			context.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		err = os.Setenv("LIEFERANDO_PASSWORD", createLieferandoRequest.Password)
+		if err != nil {
+			context.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		context.JSON(200, gin.H{
+			"message": "success",
+		})
+	})
+
+	admin.POST("/youtaste", func(context *gin.Context) {
+		var createLieferandoRequest *models.CreateProviderLoginRequest
+
+		err := context.BindJSON(createLieferandoRequest)
+		if err != nil {
+			context.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		err = os.Setenv("YOUTASTE_PHONE", createLieferandoRequest.Phone)
+		if err != nil {
+			context.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		err = os.Setenv("YOUTASTE_PASSWORD", createLieferandoRequest.Password)
+		if err != nil {
+			context.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		context.JSON(200, gin.H{
+			"message": "success",
+		})
+	})
 }

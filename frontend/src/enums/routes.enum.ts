@@ -3,7 +3,8 @@ export enum Routes {
   "NEW_ORDER" = "/new/order",
   "EDIT_ORDER" = "/edit/order/:name",
   "ORDER_CONFIRM" = "/confirm",
-  "ADMIN" = "/admin",
   "POLLS" = "/poll",
+  "ADMIN_NEW" = "/admin/new",
+  "ADMIN_OVERVIEW" = "/admin/overview",
   ERROR = "*",
 }

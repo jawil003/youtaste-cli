@@ -12,6 +12,7 @@ import { logger } from "./config/logger";
 import { CookiesProvider } from "react-cookie";
 import { Auth } from "./components/auth/auth";
 import { Poll } from "./views/poll";
+import { AdminNewView } from "./views/admin/new";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -50,6 +51,22 @@ function App() {
                 element={
                   <Auth>
                     <CreateOrderView />
+                  </Auth>
+                }
+              />
+              <Route
+                path={NRoutes["ADMIN_NEW"]}
+                element={
+                  <Auth mode="ADMIN">
+                    <AdminNewView />
+                  </Auth>
+                }
+              />
+              <Route
+                path={NRoutes["ADMIN_OVERVIEW"]}
+                element={
+                  <Auth mode="ADMIN">
+                    <AdminNewView />
                   </Auth>
                 }
               />

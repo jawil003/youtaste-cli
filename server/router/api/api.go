@@ -61,4 +61,6 @@ func Register(r *gin.Engine) {
 
 	poll.RegisterPolls(api, pollTimer)
 
+	RegisterAdmin(api)
+
 }
