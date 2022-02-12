@@ -26,6 +26,7 @@ func (c *PollObserverClient) WritePump() {
 			if !ok {
 				// The hub closed the channel.
 				err := c.Conn.WriteMessage(websocket.CloseMessage, []byte{})
+				log.Printf("PollObserverClient closed channel %v", c.Conn.RemoteAddr())
 				if err != nil {
 					return
 				}
@@ -33,6 +34,7 @@ func (c *PollObserverClient) WritePump() {
 			}
 
 			err := c.Conn.WriteJSON(poll)
+			log.Printf("PollObserverClient broadcasted: %v", poll)
 			if err != nil {
 				return
 			}

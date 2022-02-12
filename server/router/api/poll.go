@@ -47,8 +47,8 @@ func RegisterPolls(r *gin.RouterGroup) {
 		client := &observer.PollObserverClient{Hub: hub, Conn: conn, Send: make(chan models.Poll, 256)}
 		client.Hub.Register <- client
 
-		client.ReadPump()
-		client.WritePump()
+		go client.ReadPump()
+		go client.WritePump()
 
 	})
 
@@ -66,13 +66,13 @@ func RegisterPolls(r *gin.RouterGroup) {
 		err := context.BindJSON(&poll)
 
 		err = services.DB().Poll().Create(poll, services.User().GetUsername(jwt.(models.Jwt).Firstname, jwt.(models.Jwt).Lastname), hub)
+
 		if err != nil {
 			context.JSON(400, gin.H{
 				"error": err.Error(),
 			})
+			return
 		}
-
-		hub.SendAll(poll)
 
 	})
 

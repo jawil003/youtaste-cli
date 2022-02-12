@@ -35,8 +35,7 @@ func (c PollObserverHub) SendAll(poll models.Poll) {
 		select {
 		case client.Send <- poll:
 		default:
-			close(client.Send)
-			delete(c.Clients, client)
+			return
 		}
 	}
 }
