@@ -2,6 +2,7 @@ package api
 
 import (
 	"bs-to-scrapper/server/models"
+	"bs-to-scrapper/server/router/api/poll"
 	"bs-to-scrapper/server/services"
 	"github.com/gin-gonic/gin"
 )
@@ -55,6 +56,6 @@ func Register(r *gin.Engine) {
 
 	RegisterOrders(api)
 
-	RegisterPolls(api)
+	poll.RegisterPolls(api)
 
 }

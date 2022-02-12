@@ -1,4 +1,4 @@
-package api
+package poll
 
 import (
 	"bs-to-scrapper/server/models"
@@ -24,6 +24,8 @@ var wsupgrader = &websocket.Upgrader{
 func RegisterPolls(r *gin.RouterGroup) {
 
 	pollsGroup := r.Group("/polls")
+
+	RegisterTimer(pollsGroup)
 
 	hub := observer.NewPollObserverHub()
 	go hub.Run()

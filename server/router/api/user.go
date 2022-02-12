@@ -35,6 +35,8 @@ func RegisterUser(api *gin.RouterGroup) {
 			return
 		}
 
+		services.Timer().Start(1000000)
+
 		ginMode := os.Getenv("GIN_MODE")
 
 		if ginMode == "debug" {

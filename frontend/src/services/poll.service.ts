@@ -11,4 +11,8 @@ export default class PollService {
   public async create(poll: Poll) {
     await backend.post("/api/polls/new", poll);
   }
+
+  public async getTime() {
+    return (await backend.get<{ time: number }>("/api/polls/timer"))?.data;
+  }
 }
