@@ -65,7 +65,7 @@ func RegisterPolls(r *gin.RouterGroup) {
 
 		err := context.BindJSON(&poll)
 
-		err = services.DB().Poll().Create(poll, services.User().GetUsername(jwt.(models.Jwt).Firstname, jwt.(models.Jwt).Lastname), hub)
+		err = services.DB().Poll().Create(poll, services.User().GetUsername(jwt.(models.Jwt).Firstname, jwt.(models.Jwt).Lastname), poll.Provider, hub)
 
 		if err != nil {
 			context.JSON(400, gin.H{

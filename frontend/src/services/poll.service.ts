@@ -7,4 +7,8 @@ export default class PollService {
       await backend.get<Poll[]>("/api/polls")
     ).data;
   }
+
+  public async create(poll: Poll) {
+    await backend.post("/api/polls/new", poll);
+  }
 }

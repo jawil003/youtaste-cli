@@ -17,7 +17,7 @@ export const PollOption: React.FC<Props> = ({
 }) => {
   return (
     <button
-      type="submit"
+      type="button"
       className={
         `relative overflow-hidden flex py-2 px-4  ${`border-white-600 hover:border-white-700 focus:ring-white-500 focus:ring-offset-white-200`} text-black w-full transition ease-in duration-200 text-center text-base font-normal shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ` +
         className

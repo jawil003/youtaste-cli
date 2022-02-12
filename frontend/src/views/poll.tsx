@@ -6,6 +6,7 @@ import { PollOption } from "../components/poll-option/poll-option";
 import { ProviderSidebar } from "../components/provider-sidebar/provider-sidebar";
 import { Timer } from "../components/timer/timer";
 import { usePolls } from "../hooks/polls.hook";
+import PollService from "../services/poll.service";
 
 export interface Props {}
 
@@ -30,10 +31,17 @@ export const Poll: React.FC<Props> = () => {
         <div className="background-card-title mb-8">
           Which Restaurant do you want to order from?
         </div>
-        <div className="flex-1 overflow-auto no-scrollbar pb-2">
+        <div className="flex-1 overflow-auto no-scrollbar p-2">
           <div className="flex flex-col gap-4 flex-1">
             {Object.entries(polls)?.map(([poll, count]) => (
-              <PollOption type="button" count={count}>
+              <PollOption
+                onClick={async () => {
+                  const pollService = new PollService();
+                  await pollService.create({ restaurantName: poll });
+                }}
+                type="button"
+                count={count}
+              >
                 {poll}
               </PollOption>
             ))}

@@ -6,6 +6,7 @@ import { Input } from "../input/input";
 import { Select } from "../select/select";
 import { BsX } from "react-icons/bs";
 import { ProviderSidebar } from "../provider-sidebar/provider-sidebar";
+import PollService from "../../services/poll.service";
 export interface Props {
   open: boolean;
   onClose: () => void;
@@ -18,6 +19,18 @@ export interface Props {
  */
 export const AnotherPollOption: React.FC<Props> = ({ onClose, open }) => {
   const methods = useForm({ defaultValues: { provider: "youtaste" } });
+
+  const handleSubmit = async (values: { name?: string; provider: string }) => {
+    const pollService = new PollService();
+
+    await pollService.create({
+      restaurantName: values.name ?? "",
+      provider: values.provider as "youtaste" | "lieferando",
+    });
+
+    methods.reset();
+    onClose();
+  };
 
   if (open)
     return ReactDOM.createPortal(
@@ -33,7 +46,7 @@ export const AnotherPollOption: React.FC<Props> = ({ onClose, open }) => {
             </button>
             <div className="background-card-title">Add another Restaurant</div>
             <div className="mt-8">
-              <form>
+              <form onSubmit={methods.handleSubmit(handleSubmit)} noValidate>
                 <Select
                   options={[
                     { value: "youtaste", label: "YouTaste" },

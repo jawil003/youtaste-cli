@@ -17,13 +17,14 @@ func (_ ServiceCollection) Poll() PollService {
 	return PollService{}
 }
 
-func (_ PollService) Create(poll models.Poll, user string, hub *observer.PollObserverHub) error {
+func (_ PollService) Create(poll models.Poll, user string, provider string, hub *observer.PollObserverHub) error {
 	db, err := OpenDbConnection()
 	defer db.Close()
 
 	err = db.Update(func(tx *bolt.Tx) error {
 		bucketPollsCount := tx.Bucket([]byte("polls_count"))
 		bucketPollsByUser := tx.Bucket([]byte("polls_user"))
+		bucketPollsByProvider := tx.Bucket([]byte("polls_provider"))
 
 		pollsByUserString := bucketPollsByUser.Get([]byte(user))
 
@@ -65,6 +66,16 @@ func (_ PollService) Create(poll models.Poll, user string, hub *observer.PollObs
 			} else {
 				err = bucketPollsCount.Put([]byte(poll.RestaurantName), []byte("1"))
 
+				if provider == "" {
+					return errors.New("provider is empty")
+				}
+
+				err = bucketPollsByProvider.Put([]byte(poll.RestaurantName), []byte(provider))
+
+				if err != nil {
+					return err
+				}
+
 				if err != nil {
 
 					return err
@@ -83,7 +94,6 @@ func (_ PollService) Create(poll models.Poll, user string, hub *observer.PollObs
 			if err != nil {
 				return err
 			}
-
 		}
 
 		return nil

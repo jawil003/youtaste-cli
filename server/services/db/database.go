@@ -17,6 +17,7 @@ func OpenDbConnection() (*bolt.DB, error) {
 		_, err := tx.CreateBucketIfNotExists([]byte("orders"))
 		_, err = tx.CreateBucketIfNotExists([]byte("polls_count"))
 		_, err = tx.CreateBucketIfNotExists([]byte("polls_user"))
+		_, err = tx.CreateBucketIfNotExists([]byte("polls_provider"))
 
 		if err != nil {
 			return err
