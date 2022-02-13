@@ -42,7 +42,7 @@ export const Auth: React.FC<Props> = ({ mode, children }) => {
       if (!user) {
         return <>{children}</>;
       } else {
-        return <Navigate to={Routes.ORDER_CONFIRM} />;
+        return null;
       }
     }
   }

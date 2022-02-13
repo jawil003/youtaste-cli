@@ -33,8 +33,9 @@ func RegisterUser(api *gin.RouterGroup, timer *services.TimerService) {
 			})
 			return
 		}
-
-		timer.Start(1000000)
+		if timer.IsActive() {
+			timer.Start(120000)
+		}
 
 		ginMode := os.Getenv("GIN_MODE")
 
@@ -48,6 +49,13 @@ func RegisterUser(api *gin.RouterGroup, timer *services.TimerService) {
 
 		c.Status(200)
 
+	})
+
+	api.DELETE("/user", func(context *gin.Context) {
+
+		context.SetCookie("token", "", -1, "/", context.Request.Host, false, true)
+
+		context.Status(200)
 	})
 
 	api.GET("/user/me", func(context *gin.Context) {

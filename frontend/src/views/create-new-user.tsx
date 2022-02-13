@@ -10,6 +10,7 @@ import { Helmet } from "react-helmet";
 import { useStore } from "../store/store";
 import UserService from "../services/user.service";
 import { useQueryClient } from "react-query";
+import { Queries } from "../enums/queries.enum";
 
 export interface Props {}
 
@@ -55,14 +56,14 @@ export const CreateNewUserView: React.FC<Props> = () => {
     await userService.create(value.firstname, value.lastname);
 
     setUser(value);
-    await queryClient.invalidateQueries(["user"]);
+    await queryClient.invalidateQueries(Queries.USER);
 
     methods.reset();
     navigate(Routes.POLLS);
   };
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center">
+    <div className="w-full h-full flex items-center justify-center">
       <Helmet>
         <title>New User | TastyFood</title>
       </Helmet>

@@ -5,6 +5,10 @@ export default class UserService {
     return await backend.post("/api/user/create", { firstname, lastname });
   }
 
+  public async remove() {
+    return await backend.delete("/api/user");
+  }
+
   public async me() {
     return await backend.get<{ firstname: string; lastname: string }>(
       "/api/user/me"

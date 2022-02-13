@@ -1,17 +1,15 @@
 import React, { useEffect } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { useQueryClient } from "react-query";
-import { useNavigate } from "react-router-dom";
 import { Badge } from "../badge/badge";
 import { Button } from "../button/button";
 import { Input } from "../input/input";
-import { Routes } from "../../enums/routes.enum";
-import { useUser } from "../../hooks/user.hook";
 import OrderService from "../../services/order.service";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import ReactDOM from "react-dom";
 import { XIcon } from "@heroicons/react/solid";
+import { Queries } from "../../enums/queries.enum";
 
 export interface Props {
   open: boolean;
@@ -56,10 +54,6 @@ export const CreateOrderView: React.FC<Props> = ({ open, name, onClose }) => {
     }
   }, [methods, name]);
 
-  const { data: user } = useUser();
-
-  const navigate = useNavigate();
-
   const variant = useWatch({ name: "variant", control: methods.control });
   const variants = useWatch({ name: "variants", control: methods.control });
 
@@ -70,7 +64,7 @@ export const CreateOrderView: React.FC<Props> = ({ open, name, onClose }) => {
 
     await orderService.createOrUpdate([{ name: value.mealName, variants }]);
 
-    await queryClient.invalidateQueries(["orders-by-user"]);
+    await queryClient.invalidateQueries(Queries.ORDERS_BY_USER);
 
     methods.reset();
     onClose();

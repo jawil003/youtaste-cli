@@ -1,8 +1,9 @@
 import { useQuery } from "react-query";
+import { Queries } from "../enums/queries.enum";
 import OrderService from "../services/order.service";
 
 export const useOrdersByUser = () =>
-  useQuery(["orders-by-user"], async () => {
+  useQuery(Queries.ORDERS_BY_USER, async () => {
     const orderService = new OrderService();
 
     return await (

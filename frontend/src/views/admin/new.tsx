@@ -16,8 +16,7 @@ export interface Props {}
 export const AdminNewView: React.FC<Props> = () => {
   const methods = useForm({
     defaultValues: {
-      pollTimeout: 0,
-      orderTimeout: 0,
+      orderDatetime: undefined,
     },
   });
 
@@ -51,8 +50,12 @@ export const AdminNewView: React.FC<Props> = () => {
                 </div>
               </Button>
             </div>
-            <Input type={"number"} label="Poll Timeout" name="pollTimeout" />
-            <Input type={"number"} label="Order Timeout" name="orderTimeout" />
+            <Input
+              type={"datetime-local"}
+              label="Order Datetime"
+              name="orderDatetime"
+            />
+
             <Button className="mt-4 ">Submit</Button>
           </form>
         </div>

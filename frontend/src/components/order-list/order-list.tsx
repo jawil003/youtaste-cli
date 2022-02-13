@@ -20,9 +20,9 @@ export interface Props {
 export const OrderList: React.FC<Props> = ({ headline, children, items }) => {
   return (
     <div className="flex flex-col max-w-md p-8 bg-white rounded-lg shadow max-h-3/4">
-      <div className="background-card-title">{headline}</div>
+      <div className="w-full background-card-title">{headline}</div>
 
-      <div className="container flex flex-col mx-auto items-center overflow-x-hidden overflow-y-scroll w-80 mt-8 mb-4">
+      <div className="container flex flex-col mx-auto items-center overflow-x-hidden no-scrollbar overflow-y-scroll w-80 mt-8 mb-4">
         <ul className="flex flex-col w-full gap-2">
           {items.map(
             ({
@@ -34,8 +34,8 @@ export const OrderList: React.FC<Props> = ({ headline, children, items }) => {
               onEditClick,
             }) => (
               <li className="border-gray-400 flex flex-row">
-                <div className="shadow border select-none cursor-pointer bg-white rounded-md flex flex-1 items-center p-4">
-                  <div className="flex-1 pl-1 md:mr-16">
+                <div className="max-w-full shadow border select-none cursor-pointer bg-white rounded-md flex flex-1 items-center p-4">
+                  <div className="flex-1 pl-1 gap-x-16">
                     <div className="font-medium">{headline}</div>
                     <div className="text-gray-600 text-sm">{description}</div>
                   </div>

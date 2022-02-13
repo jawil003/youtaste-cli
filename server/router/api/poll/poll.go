@@ -67,7 +67,7 @@ func RegisterPolls(r *gin.RouterGroup, timer *services.TimerService) {
 
 		err := context.BindJSON(&poll)
 
-		err = services.DB().Poll().Create(poll, services.User().GetUsername(jwt.(models.Jwt).Firstname, jwt.(models.Jwt).Lastname), poll.Provider, hub)
+		err = services.DB().Poll().Create(poll, services.User().GetUsername(jwt.(models.Jwt).Firstname, jwt.(models.Jwt).Lastname), poll.Provider)
 
 		if err != nil {
 			context.JSON(400, gin.H{
@@ -75,6 +75,10 @@ func RegisterPolls(r *gin.RouterGroup, timer *services.TimerService) {
 			})
 			return
 		}
+
+		hub.SendAll(poll)
+
+		context.Status(http.StatusOK)
 
 	})
 

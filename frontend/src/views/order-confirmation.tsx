@@ -2,12 +2,10 @@ import React, { useState } from "react";
 import { Helmet } from "react-helmet";
 import { FormProvider, useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
-import { useNavigate } from "react-router-dom";
 import { Button } from "../components/button/button";
 import { CreateOrderView } from "../components/create-order/create-order";
 import { OrderList } from "../components/order-list/order-list";
-import { Timer } from "../components/timer/timer";
-import {} from "../enums/routes.enum";
+import { Queries } from "../enums/queries.enum";
 import { useOrdersByUser } from "../hooks/ordersByUser.hook";
 import OrderService from "../services/order.service";
 
@@ -32,7 +30,7 @@ export const OrderConfirmation: React.FC<Props> = () => {
         <title>My Orders | TastyFood</title>
       </Helmet>
       <div className="flex items-center justify-center w-full h-full">
-        <Timer></Timer>
+        {/*<Timer></Timer>*/}
         <OrderList
           headline="My Orders"
           items={
@@ -50,7 +48,7 @@ export const OrderConfirmation: React.FC<Props> = () => {
 
                 await orderService.deleteOrder(name);
 
-                await queryClient.invalidateQueries(["orders-by-user"]);
+                await queryClient.invalidateQueries(Queries.ORDERS_BY_USER);
               },
               size: 1,
             })) ?? []

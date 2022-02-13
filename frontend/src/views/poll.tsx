@@ -22,7 +22,7 @@ export const Poll: React.FC<Props> = () => {
 
   return (
     <div className="flex w-full h-full justify-center items-center">
-      <Timer>00:00:00</Timer>
+      <Timer />
       <ProviderSidebar />
       <Helmet>
         <title>Choose Restaurant | TastyFood</title>
