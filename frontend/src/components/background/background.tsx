@@ -15,7 +15,7 @@ export const Background: React.FC<Props> = ({ children }) => {
   return (
     <div className="relative w-screen h-screen overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-full">
-        <div className="relative w-full flex justify-between p-5 z-50">
+        <div className="relative w-full flex justify-between p-5 z-10">
           <Logo className="" />
           {user && (
             <Username>

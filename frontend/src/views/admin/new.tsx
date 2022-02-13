@@ -5,7 +5,9 @@ import { Button } from "../../components/button/button";
 import { Input } from "../../components/input/input";
 import { ReactComponent as LieferandoLogo } from "../../assets/lieferandoat-small.svg";
 import youtasteLogoUrl from "../../assets/youtaste-white-logo.png";
-
+import { Toggle } from "../../components/toggle/toggle";
+import dayjs from "dayjs";
+import { DevTool } from "@hookform/devtools";
 export interface Props {}
 
 /**
@@ -16,7 +18,8 @@ export interface Props {}
 export const AdminNewView: React.FC<Props> = () => {
   const methods = useForm({
     defaultValues: {
-      orderDatetime: undefined,
+      orderDatetime: dayjs().add(30, "minutes").format("YYYY-MM-DDTHH:mm:ss"),
+      checkOpen: false,
     },
   });
 
@@ -55,10 +58,14 @@ export const AdminNewView: React.FC<Props> = () => {
               label="Order Datetime"
               name="orderDatetime"
             />
+            <Toggle className="mt-2" name="checkOpen">
+              Use Open Time of Restaurant (if available)
+            </Toggle>
 
             <Button className="mt-4 ">Submit</Button>
           </form>
         </div>
+        <DevTool placement="top-right" control={methods.control} />
       </div>
     </FormProvider>
   );

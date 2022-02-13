@@ -5,6 +5,7 @@
   "dependencies": {
     "@craco/craco": "^6.4.3",
     "@heroicons/react": "^1.0.5",
+    "@hookform/devtools": "^4.0.2",
     "@hookform/resolvers": "^2.8.8",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.2",
