@@ -9,6 +9,9 @@ module.exports = {
           60: "rgba(0, 0, 0, 0.6)",
         },
       },
+      width: {
+        112: "28rem",
+      },
       maxHeight: {
         0: "0",
         "1/4": "25%",

@@ -30,39 +30,51 @@ export const AdminNewView: React.FC<Props> = () => {
           <title>Setup | TastyFood</title>
         </Helmet>
         <div className="background-card">
-          <div className="background-card-title">Setup</div>
+          <h1 className="background-card-title">Setup</h1>
           <form className="flex flex-col gap-y-2 mt-8">
-            <div className="flex gap-x-2 mb-2">
-              <Button
-                className="bg-orange-400 focus:ring-orange-400"
-                type="button"
-              >
-                <div className="flex gap-x-2 items-center">
-                  <LieferandoLogo width={20} />
-                  <div className="flex-1">
-                    <span>Login</span>
-                  </div>
-                </div>
-              </Button>
-              <Button className="bg-red-400 focus:ring-red-400" type="button">
-                <div className="flex gap-x-2 items-center">
-                  <img src={youtasteLogoUrl} alt="youtasteLogo" width={12} />
-                  <div className="flex-1">
-                    <span>Login</span>
-                  </div>
-                </div>
-              </Button>
+            <div>
+              <h2 className="text-lg font-medium mb-2">Youtaste Login</h2>
+              <div className="flex gap-x-4">
+                <Input
+                  className="bg-transparent"
+                  label="Phone"
+                  name="youtastePhone"
+                />
+                <Input
+                  type={"password"}
+                  label="Password"
+                  name="youtastePassword"
+                />
+              </div>
             </div>
-            <Input
-              type={"datetime-local"}
-              label="Order Datetime"
-              name="orderDatetime"
-            />
-            <Toggle className="mt-2" name="checkOpen">
-              Use Open Time of Restaurant (if available)
-            </Toggle>
+            <div>
+              <h2 className="text-lg font-medium mt-2 mb-2">
+                Lieferando Login
+              </h2>
+              <div className="flex gap-x-4">
+                <Input label="Username" name="lieferandoUsername" />
+                <Input
+                  type={"password"}
+                  label="Password"
+                  name="lieferandoPassword"
+                />
+              </div>
+            </div>
+            <div className="relative right-10 w-112 mt-4  border-gray-100 border" />
+            <div>
+              <h2 className="text-lg font-medium mt-2 mb-2">Other Settings</h2>
 
-            <Button className="mt-4 ">Submit</Button>
+              <Input
+                type={"datetime-local"}
+                label="Order Datetime"
+                name="orderDatetime"
+              />
+              <Toggle className="mt-2" name="checkOpen">
+                Use Open Time of Restaurant (if available)
+              </Toggle>
+
+              <Button className="mt-4 ">Submit</Button>
+            </div>
           </form>
         </div>
         <DevTool placement="top-right" control={methods.control} />
