@@ -13,11 +13,7 @@ import (
 func RegisterOrders(api *gin.RouterGroup) {
 
 	pollTimerTime := os.Getenv("POLL_TIMER_TIME")
-	pollTimerTimeAsInt, err := strconv.Atoi(pollTimerTime)
-
-	if err != nil {
-		return
-	}
+	pollTimerTimeAsInt, _ := strconv.Atoi(pollTimerTime)
 
 	orderTimer := services.Timer()
 
@@ -33,6 +29,47 @@ func RegisterOrders(api *gin.RouterGroup) {
 	})
 
 	RegisterTimer(api, orderTimer)
+
+	api.GET("/orders/user/:name", func(context *gin.Context) {
+
+		jwt, ok := context.Get("user")
+
+		if !ok {
+			context.JSON(401, gin.H{"error": "unauthorized"})
+			return
+		}
+
+		user := services.User().GetUsername(jwt.(models.Jwt).Firstname, jwt.(models.Jwt).Lastname)
+
+		if user == "" {
+			context.JSON(400, gin.H{
+				"error": "user is required",
+			})
+			return
+		}
+
+		orders, err := services.DB().Order().GetByUser(user)
+
+		var res models.Order
+
+		for _, order := range *orders {
+			if order.Name == context.Param("name") {
+				res = order
+				break
+			}
+		}
+
+		if err != nil {
+			context.JSON(500, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		context.JSON(200, gin.H{
+			"order": res,
+		})
+	})
 
 	api.GET("/orders/user", func(context *gin.Context) {
 

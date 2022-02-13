@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
+import { Helmet } from "react-helmet";
 import { FormProvider, useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components/button/button";
+import { CreateOrderView } from "../components/create-order/create-order";
 import { OrderList } from "../components/order-list/order-list";
-import { Routes } from "../enums/routes.enum";
+import { Timer } from "../components/timer/timer";
+import {} from "../enums/routes.enum";
 import { useOrdersByUser } from "../hooks/ordersByUser.hook";
 import OrderService from "../services/order.service";
 
@@ -18,12 +21,18 @@ export interface Props {}
 export const OrderConfirmation: React.FC<Props> = () => {
   const { data: result } = useOrdersByUser();
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const methods = useForm();
+
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState<string | undefined>(undefined);
 
   return (
     <FormProvider {...methods}>
+      <Helmet>
+        <title>My Orders | TastyFood</title>
+      </Helmet>
       <div className="flex items-center justify-center w-full h-full">
+        <Timer></Timer>
         <OrderList
           headline="My Orders"
           items={
@@ -31,7 +40,8 @@ export const OrderConfirmation: React.FC<Props> = () => {
               headline: name ?? "",
               description: variants?.join(", ") ?? "",
               onEditClick: () => {
-                navigate(Routes.EDIT_ORDER.replace(":name", name ?? ""));
+                setName(name);
+                setOpen(true);
               },
               onDeleteClick: async () => {
                 const orderService = new OrderService();
@@ -50,13 +60,21 @@ export const OrderConfirmation: React.FC<Props> = () => {
             className="mt-4"
             type="button"
             onClick={() => {
-              navigate(Routes.NEW_ORDER);
+              setName(undefined);
+              setOpen(true);
             }}
           >
             Add
           </Button>
         </OrderList>
       </div>
+      <CreateOrderView
+        open={open}
+        name={name}
+        onClose={() => {
+          setOpen(false);
+        }}
+      />
     </FormProvider>
   );
 };

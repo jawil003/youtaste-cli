@@ -4,7 +4,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { Button } from "../button/button";
 import { Input } from "../input/input";
 import { Select } from "../select/select";
-import { BsX } from "react-icons/bs";
+import { XIcon } from "@heroicons/react/solid";
 import { ProviderSidebar } from "../provider-sidebar/provider-sidebar";
 import PollService from "../../services/poll.service";
 export interface Props {
@@ -42,7 +42,7 @@ export const AnotherPollOption: React.FC<Props> = ({ onClose, open }) => {
               onClick={() => onClose()}
               className="absolute top-3 right-3"
             >
-              <BsX size="2rem" />
+              <XIcon width="1.25rem" />
             </button>
             <div className="background-card-title">Add another Restaurant</div>
             <div className="mt-8">
@@ -71,7 +71,7 @@ export const AnotherPollOption: React.FC<Props> = ({ onClose, open }) => {
           </div>
         </div>
       </FormProvider>,
-      document.body
+      document.getElementById("modal") as HTMLElement
     );
   return null;
 };

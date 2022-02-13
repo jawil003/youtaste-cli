@@ -1,5 +1,5 @@
 import React from "react";
-import { BsFillTrashFill, BsPencilFill } from "react-icons/bs";
+import { TrashIcon, PencilIcon } from "@heroicons/react/solid";
 export interface Props {
   headline: string;
   items: {
@@ -22,7 +22,7 @@ export const OrderList: React.FC<Props> = ({ headline, children, items }) => {
     <div className="flex flex-col max-w-md p-8 bg-white rounded-lg shadow max-h-3/4">
       <div className="background-card-title">{headline}</div>
 
-      <div className="container flex flex-col mx-auto items-center overflow-x-hidden overflow-y-scroll w-80">
+      <div className="container flex flex-col mx-auto items-center overflow-x-hidden overflow-y-scroll w-80 mt-8 mb-4">
         <ul className="flex flex-col w-full gap-2">
           {items.map(
             ({
@@ -42,12 +42,12 @@ export const OrderList: React.FC<Props> = ({ headline, children, items }) => {
                   <div className="text-gray-600 text-xs">{size}x</div>
                   {onEditClick && (
                     <button onClick={onEditClick}>
-                      <BsPencilFill className="ml-4" />
+                      <PencilIcon width={"1.25rem"} className="ml-4" />
                     </button>
                   )}
                   {onDeleteClick && (
                     <button onClick={onDeleteClick}>
-                      <BsFillTrashFill className="ml-2" />
+                      <TrashIcon width={"1.25rem"} className="ml-2" />
                     </button>
                   )}
                   {onClick && (

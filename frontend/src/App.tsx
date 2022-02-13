@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { CreateNewUserView } from "./views/create-new-user";
-import { CreateOrderView } from "./views/create-order";
+import { CreateOrderView } from "./components/create-order/create-order";
 import { ErrorView } from "./views/error";
 import { Routes as NRoutes } from "./enums/routes.enum";
 import { Background } from "./components/background/background";
@@ -30,70 +30,59 @@ logger.info(process.env, "Environment loaded");
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <CookiesProvider>
-        <Background>
-          <Helmet>
-            <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-          </Helmet>
-          <BrowserRouter basename="/app">
-            <Routes>
-              <Route
-                path={NRoutes.NEW}
-                element={
-                  <Auth mode="NO_USER">
-                    <CreateNewUserView />
-                  </Auth>
-                }
-              />
-              <Route
-                path={NRoutes.NEW_ORDER}
-                element={
-                  <Auth>
-                    <CreateOrderView />
-                  </Auth>
-                }
-              />
-              <Route
-                path={NRoutes["ADMIN_NEW"]}
-                element={
-                  <Auth mode="ADMIN">
-                    <AdminNewView />
-                  </Auth>
-                }
-              />
-              <Route
-                path={NRoutes["ADMIN_OVERVIEW"]}
-                element={
-                  <Auth mode="ADMIN">
-                    <AdminNewView />
-                  </Auth>
-                }
-              />
-              <Route
-                path={NRoutes.EDIT_ORDER}
-                element={
-                  <Auth>
-                    <CreateOrderView />
-                  </Auth>
-                }
-              />
-              <Route
-                path={NRoutes.ORDER_CONFIRM}
-                element={
-                  <Auth>
-                    <OrderConfirmation />
-                  </Auth>
-                }
-              />
-              <Route path={NRoutes.POLLS} element={<Poll />} />
-              <Route path={NRoutes.ERROR} element={<ErrorView />} />
-              <Route index element={<Navigate to={NRoutes.NEW} />} />
-            </Routes>
-          </BrowserRouter>
-        </Background>
-      </CookiesProvider>
-    </QueryClientProvider>
+    <>
+      <QueryClientProvider client={queryClient}>
+        <CookiesProvider>
+          <Background>
+            <Helmet>
+              <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+            </Helmet>
+            <BrowserRouter basename="/app">
+              <Routes>
+                <Route
+                  path={NRoutes.NEW}
+                  element={
+                    <Auth mode="NO_USER">
+                      <CreateNewUserView />
+                    </Auth>
+                  }
+                />
+
+                <Route
+                  path={NRoutes["ADMIN_NEW"]}
+                  element={
+                    <Auth mode="ADMIN">
+                      <AdminNewView />
+                    </Auth>
+                  }
+                />
+                <Route
+                  path={NRoutes["ADMIN_OVERVIEW"]}
+                  element={
+                    <Auth mode="ADMIN">
+                      <AdminNewView />
+                    </Auth>
+                  }
+                />
+
+                <Route
+                  path={NRoutes.ORDER_CONFIRM}
+                  element={
+                    <Auth>
+                      <OrderConfirmation />
+                    </Auth>
+                  }
+                />
+                <Route path={NRoutes.POLLS} element={<Poll />} />
+                <Route path={NRoutes.ERROR} element={<ErrorView />} />
+                <Route index element={<Navigate to={NRoutes.NEW} />} />
+              </Routes>
+            </BrowserRouter>
+          </Background>
+        </CookiesProvider>
+      </QueryClientProvider>{" "}
+      <div id="modal" className="absolute top-0 left-0 w-0 h-0 z-10" />
+    </>
   );
 }
 

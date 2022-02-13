@@ -7,27 +7,30 @@ import PollService from "../../services/poll.service";
 
 dayjs.extend(duration);
 
-export interface Props {}
+export interface Props {
+  mode?: "POLL" | "ORDER";
+}
 
 /**
  * An Timer React Component.
  * @author Jannik Will
  * @version 0.1
  */
-export const Timer: React.FC<Props> = () => {
+export const Timer: React.FC<Props> = ({ mode }) => {
   const [initialTimeUpdated, setInitialTimeUpdated] = useState(false);
   const [time, setTime] = React.useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
-    (async () => {
-      const pollService = new PollService();
+    if (mode === "POLL")
+      (async () => {
+        const pollService = new PollService();
 
-      const initialtime = await pollService.getTime();
-      setTime(initialtime?.time);
-      setInitialTimeUpdated(true);
-    })();
-  }, []);
+        const initialtime = await pollService.getTime();
+        setTime(initialtime?.time);
+        setInitialTimeUpdated(true);
+      })();
+  }, [mode]);
 
   useEffect(() => {
     let intervalId: number;
@@ -35,7 +38,7 @@ export const Timer: React.FC<Props> = () => {
     const countDown = () => {
       if (time <= 0) {
         window.clearInterval(intervalId);
-        navigate(Routes.NEW_ORDER);
+        navigate(Routes.ORDER_CONFIRM);
         return;
       }
 
@@ -55,3 +58,5 @@ export const Timer: React.FC<Props> = () => {
     </div>
   );
 };
+
+Timer.defaultProps = { mode: "POLL" };
