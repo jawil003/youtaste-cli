@@ -8,7 +8,7 @@ import { OrderList } from "../components/order-list/order-list";
 import { Queries } from "../enums/queries.enum";
 import { useOrdersByUser } from "../hooks/ordersByUser.hook";
 import OrderService from "../services/order.service";
-
+import { useTranslation } from "react-i18next";
 export interface Props {}
 
 /**
@@ -20,6 +20,7 @@ export const OrderConfirmation: React.FC<Props> = () => {
   const { data: result } = useOrdersByUser();
   const queryClient = useQueryClient();
   const methods = useForm();
+  const { t } = useTranslation("order-confirmation");
 
   const [open, setOpen] = useState(false);
   const [name, setName] = useState<string | undefined>(undefined);
@@ -27,12 +28,12 @@ export const OrderConfirmation: React.FC<Props> = () => {
   return (
     <FormProvider {...methods}>
       <Helmet>
-        <title>My Orders | TastyFood</title>
+        <title>{t("headline")} | TastyFood</title>
       </Helmet>
       <div className="flex items-center justify-center w-full h-full">
         {/*<Timer></Timer>*/}
         <OrderList
-          headline="My Orders"
+          headline={t("headline")}
           items={
             result?.orders?.map(({ name, variants }) => ({
               headline: name ?? "",
@@ -62,7 +63,7 @@ export const OrderConfirmation: React.FC<Props> = () => {
               setOpen(true);
             }}
           >
-            Add
+            {t("addButton")}
           </Button>
         </OrderList>
       </div>

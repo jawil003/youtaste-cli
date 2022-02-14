@@ -7,7 +7,7 @@ import { ProviderSidebar } from "../components/provider-sidebar/provider-sidebar
 import { Timer } from "../components/timer/timer";
 import { usePolls } from "../hooks/polls.hook";
 import PollService from "../services/poll.service";
-
+import { useTranslation } from "react-i18next";
 export interface Props {}
 
 /**
@@ -17,6 +17,7 @@ export interface Props {}
  */
 export const Poll: React.FC<Props> = () => {
   const polls = usePolls();
+  const { t } = useTranslation("poll");
 
   const [open, setOpen] = useState(false);
 
@@ -25,12 +26,10 @@ export const Poll: React.FC<Props> = () => {
       <Timer />
       <ProviderSidebar />
       <Helmet>
-        <title>Choose Restaurant | TastyFood</title>
+        <title>{t("headline")} | TastyFood</title>
       </Helmet>
       <div className="flex flex-col background-card max-h-3/4">
-        <div className="background-card-title mb-8">
-          Which Restaurant do you want to order from?
-        </div>
+        <div className="background-card-title mb-8">{t("headline")}</div>
         <div className="flex-1 overflow-auto no-scrollbar p-2">
           <div className="flex flex-col gap-4 flex-1">
             {Object.entries(polls)?.map(([poll, count]) => (
@@ -48,7 +47,7 @@ export const Poll: React.FC<Props> = () => {
           </div>
         </div>
         <Button onClick={() => setOpen(true)} className="mt-8">
-          Add another
+          {t("addAnother")}
         </Button>
       </div>
       <AnotherPollOption open={open} onClose={() => setOpen(false)} />

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { CreateNewUserView } from "./views/create-new-user";
 import { ErrorView } from "./views/error";
@@ -8,12 +8,12 @@ import { Helmet } from "react-helmet";
 import { OrderConfirmation } from "./views/order-confirmation";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { logger } from "./config/logger";
-import { CookiesProvider } from "react-cookie";
 import { Auth } from "./components/auth/auth";
 import { Poll } from "./views/poll";
 import { AdminNewView } from "./views/admin/new";
 import { PositionTrackerDefault } from "./components/position-tracker/position-tracker";
 import { ActiveOnRoutes } from "./components/activeOnRoutes";
+import "./translations/i18n";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,9 +31,9 @@ logger.info(process.env, "Environment loaded");
 
 function App() {
   return (
-    <BrowserRouter basename="/app">
-      <QueryClientProvider client={queryClient}>
-        <CookiesProvider>
+    <QueryClientProvider client={queryClient}>
+      <Suspense fallback={<div />}>
+        <BrowserRouter basename="/app">
           <Background>
             <Helmet>
               <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -99,10 +99,11 @@ function App() {
               </ActiveOnRoutes>
             </div>
           </Background>
-        </CookiesProvider>
-      </QueryClientProvider>
-      <div id="modal" className="absolute top-0 left-0 w-0 h-0 z-50" />
-    </BrowserRouter>
+
+          <div id="modal" className="absolute top-0 left-0 w-0 h-0 z-50" />
+        </BrowserRouter>
+      </Suspense>
+    </QueryClientProvider>
   );
 }
 

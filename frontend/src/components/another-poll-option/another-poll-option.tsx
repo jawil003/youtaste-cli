@@ -7,6 +7,7 @@ import { Select } from "../select/select";
 import { XIcon } from "@heroicons/react/solid";
 import { ProviderSidebar } from "../provider-sidebar/provider-sidebar";
 import PollService from "../../services/poll.service";
+import { useTranslation } from "react-i18next";
 export interface Props {
   open: boolean;
   onClose: () => void;
@@ -19,7 +20,7 @@ export interface Props {
  */
 export const AnotherPollOption: React.FC<Props> = ({ onClose, open }) => {
   const methods = useForm({ defaultValues: { provider: "youtaste" } });
-
+  const { t } = useTranslation("poll");
   const handleSubmit = async (values: { name?: string; provider: string }) => {
     const pollService = new PollService();
 
@@ -44,7 +45,7 @@ export const AnotherPollOption: React.FC<Props> = ({ onClose, open }) => {
             >
               <XIcon width="1.25rem" />
             </button>
-            <div className="background-card-title">Add another Restaurant</div>
+            <div className="background-card-title">{t("addAnother")}</div>
             <div className="mt-8">
               <form onSubmit={methods.handleSubmit(handleSubmit)} noValidate>
                 <Select
@@ -54,18 +55,18 @@ export const AnotherPollOption: React.FC<Props> = ({ onClose, open }) => {
                   ]}
                   placeholder="YouTaste"
                   required
-                  label="Provider"
+                  label={t("provider")}
                   name="provider"
                 />
                 <div className="mt-2" />
                 <Input
                   required
-                  label="Restaurantname"
+                  label={t("restaurantName")}
                   placeholder="Restaurant am Markt"
                   name="name"
                 />
 
-                <Button className=" mt-8">Add</Button>
+                <Button className=" mt-8">{t("addButton")}</Button>
               </form>
             </div>
           </div>

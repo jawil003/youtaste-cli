@@ -11,6 +11,7 @@ import { useStore } from "../store/store";
 import UserService from "../services/user.service";
 import { useQueryClient } from "react-query";
 import { Queries } from "../enums/queries.enum";
+import { useTranslation } from "react-i18next";
 
 export interface Props {}
 
@@ -32,6 +33,8 @@ interface FormData {
 export const CreateNewUserView: React.FC<Props> = () => {
   const [loadingButtonEnabled, setLoadingButtonEnabled] = useState(false);
   const { setUser } = useStore();
+
+  const { t } = useTranslation("create-new-user");
 
   useEffect(() => {
     const firstname = localStorage.getItem("firstname");
@@ -65,28 +68,28 @@ export const CreateNewUserView: React.FC<Props> = () => {
   return (
     <div className="w-full h-full flex items-center justify-center">
       <Helmet>
-        <title>New User | TastyFood</title>
+        <title>{t("headline")} | TastyFood</title>
       </Helmet>
       <div className="background-card flex flex-col">
-        <div className="background-card-title">Who are you?</div>
+        <div className="background-card-title">{t("headline")}</div>
         <div className="mt-8">
           <FormProvider {...methods}>
             <form noValidate onSubmit={methods.handleSubmit(onSubmit)}>
               <Input
                 required
                 name="firstname"
-                label="Firstname"
-                placeholder="Maxine"
+                label={t("firstname")}
+                placeholder={t("firstnamePlaceholder")}
               />
               <div className="h-2" />
               <Input
                 required
                 name="lastname"
-                label="Lastname"
-                placeholder="Smith"
+                label={t("lastname")}
+                placeholder={t("lastnamePlaceholder")}
               />
               <div className="flex w-full mt-8 flex-col">
-                <Button className="mb-2">Register</Button>
+                <Button className="mb-2">{t("submit")}</Button>
                 {loadingButtonEnabled && (
                   <Button
                     onClick={() => {
@@ -101,7 +104,7 @@ export const CreateNewUserView: React.FC<Props> = () => {
                     type="button"
                     variant="secondary"
                   >
-                    Load
+                    {t("load")}
                   </Button>
                 )}
               </div>

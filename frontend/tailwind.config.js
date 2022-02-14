@@ -2,6 +2,9 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      minWidth: {
+        11: "2.75rem",
+      },
       colors: {
         black: {
           20: "rgba(0, 0, 0, 0.2)",

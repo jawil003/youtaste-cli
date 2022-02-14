@@ -1,0 +1,9 @@
+{
+  "headline": "Neue(r) Benutzer/in anlegen",
+  "firstname": "Vorname",
+  "lastname": "Nachname",
+  "firstnamePlaceholder": "Maxine",
+  "lastnamePlaceholder": "Musterfrau",
+  "submit": "Benutzer/in anlegen",
+  "load": "Aus dem Speicher laden"
+}

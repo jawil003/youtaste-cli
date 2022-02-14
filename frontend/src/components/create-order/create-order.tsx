@@ -10,7 +10,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import ReactDOM from "react-dom";
 import { XIcon } from "@heroicons/react/solid";
 import { Queries } from "../../enums/queries.enum";
-
+import { useTranslation } from "react-i18next";
+import { PlusIcon } from "@heroicons/react/solid";
 export interface Props {
   open: boolean;
   name?: string;
@@ -37,6 +38,8 @@ export const CreateOrderView: React.FC<Props> = ({ open, name, onClose }) => {
     defaultValues: { mealName: "", variant: "", variants: [] },
     resolver: yupResolver(schema),
   });
+
+  const { t } = useTranslation("order-confirmation");
 
   useEffect(() => {
     console.log(name);
@@ -77,7 +80,7 @@ export const CreateOrderView: React.FC<Props> = ({ open, name, onClose }) => {
           <button onClick={() => onClose()} className="absolute top-3 right-3">
             <XIcon width="1.25rem" />
           </button>
-          <div className="background-card-title">What do you like to eat?</div>
+          <div className="background-card-title">{t("addButton")}</div>
           <div className="mt-8">
             <FormProvider {...methods}>
               <form noValidate onSubmit={methods.handleSubmit(onSubmit)}>
@@ -85,18 +88,19 @@ export const CreateOrderView: React.FC<Props> = ({ open, name, onClose }) => {
                   required
                   className="mb-2"
                   name="mealName"
-                  placeholder="Pizza Cipola"
-                  label="Mealname"
+                  placeholder={t("mealNamePlaceholder")}
+                  label={t("mealName")}
                 />
                 <div className="flex">
                   <Input
                     className="flex-none"
                     name="variant"
-                    placeholder="Big"
-                    label="Variant"
+                    placeholder={t("variantPlaceholder")}
+                    label={t("variant")}
                   />
                   <div className="p-6">
                     <Button
+                      variant="secondary"
                       onClick={() => {
                         if (!variant) {
                           return;
@@ -104,10 +108,10 @@ export const CreateOrderView: React.FC<Props> = ({ open, name, onClose }) => {
                         methods.setValue("variants", [...variants, variant]);
                         methods.setValue("variant", "");
                       }}
-                      className="flex-auto"
+                      className="flex-auto h-10"
                       type="button"
                     >
-                      Add
+                      <PlusIcon width={"1.25rem"} />
                     </Button>
                   </div>
                 </div>
@@ -126,7 +130,7 @@ export const CreateOrderView: React.FC<Props> = ({ open, name, onClose }) => {
                     </Badge>
                   ))}
                 </div>
-                <Button className="mb-2">Submit</Button>
+                <Button className="mb-2">{t("addButton")}</Button>
               </form>
             </FormProvider>
           </div>
