@@ -9,15 +9,14 @@ module.exports = {
           60: "rgba(0, 0, 0, 0.6)",
         },
       },
-      width: {
-        112: "28rem",
-      },
-      maxHeight: {
+
+      spacing: {
         0: "0",
         "1/4": "25%",
         "1/2": "50%",
         "3/4": "75%",
         full: "100%",
+        112: "28rem",
       },
       margin: {
         "minus-2": "-2rem",

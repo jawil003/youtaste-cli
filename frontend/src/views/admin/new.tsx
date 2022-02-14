@@ -3,8 +3,6 @@ import { Helmet } from "react-helmet";
 import { FormProvider, useForm } from "react-hook-form";
 import { Button } from "../../components/button/button";
 import { Input } from "../../components/input/input";
-import { ReactComponent as LieferandoLogo } from "../../assets/lieferandoat-small.svg";
-import youtasteLogoUrl from "../../assets/youtaste-white-logo.png";
 import { Toggle } from "../../components/toggle/toggle";
 import dayjs from "dayjs";
 import { DevTool } from "@hookform/devtools";
