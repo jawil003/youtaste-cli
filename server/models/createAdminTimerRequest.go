@@ -1,6 +1,11 @@
 package models
 
+import "time"
+
 type CreateAdminTimerRequest struct {
-	PollTime  int `json:"pollTime"`
-	OrderTime int `json:"orderTime"`
+	OrderTime          time.Time `json:"orderTime"`
+	YoutastePhone      string    `json:"youtastePhone"`
+	YoutastePassword   string    `json:"youtastePassword"`
+	LieferandoUsername string    `json:"lieferandoUsername"`
+	LieferandoPassword string    `json:"lieferandoPassword"`
 }

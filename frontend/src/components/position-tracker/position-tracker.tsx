@@ -21,19 +21,19 @@ const resolveIconAndColor: (state?: "DISABLED" | "AVAILABLE" | "DONE") => {
   switch (state) {
     case "DISABLED": {
       return {
-        color: "red-400",
+        color: "bg-red-400",
         icon: <XIcon width={"0.8rem"} className="text-white" />,
       };
     }
     case "DONE": {
       return {
-        color: "green-400",
+        color: "bg-green-400",
         icon: <CheckIcon width={"0.8rem"} className="text-white" />,
       };
     }
     default: {
       return {
-        color: "blue-400",
+        color: "bg-blue-400",
         icon: <DotsHorizontalIcon width={"0.8rem"} className="text-white" />,
       };
     }
@@ -62,7 +62,7 @@ export const PositionTracker: React.FC<Props> = ({ items, stateFactory }) => {
         return (
           <li className="mb-10 ml-6">
             <span
-              className={`flex absolute -left-3 justify-center items-center w-6 h-6 bg-${color} rounded-full ring-8 ring-white`}
+              className={`flex absolute -left-3 justify-center items-center w-6 h-6 ${color} rounded-full ring-8 ring-white`}
             >
               {icon}
             </span>

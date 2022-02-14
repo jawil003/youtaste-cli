@@ -6,7 +6,21 @@ import { Input } from "../../components/input/input";
 import { Toggle } from "../../components/toggle/toggle";
 import dayjs from "dayjs";
 import { DevTool } from "@hookform/devtools";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import "yup-phone";
+
 export interface Props {}
+
+const schema = yup.object({
+  youtastePhone: yup
+    .string()
+    .required("Required")
+    .phone("de", true, "Invalid phone number"),
+  youtastePassword: yup.string().required("Required"),
+  lieferandoUsername: yup.string().required("Required"),
+  lieferandoPassword: yup.string().required("Required"),
+});
 
 /**
  * An AdminNewView React Component.
@@ -19,7 +33,10 @@ export const AdminNewView: React.FC<Props> = () => {
       orderDatetime: dayjs().add(30, "minutes").format("YYYY-MM-DDTHH:mm:ss"),
       checkOpen: false,
     },
+    resolver: yupResolver(schema),
   });
+
+  const onSubmit = (data: any) => {};
 
   return (
     <FormProvider {...methods}>
@@ -29,16 +46,23 @@ export const AdminNewView: React.FC<Props> = () => {
         </Helmet>
         <div className="background-card">
           <h1 className="background-card-title">Setup</h1>
-          <form className="flex flex-col gap-y-2 mt-8">
+          <form
+            className="flex flex-col gap-y-2 mt-8"
+            noValidate
+            onSubmit={methods.handleSubmit(onSubmit)}
+          >
             <div>
               <h2 className="text-lg font-medium mb-2">Youtaste Login</h2>
               <div className="flex gap-x-4">
                 <Input
+                  type="tel"
+                  required
                   className="bg-transparent"
                   label="Phone"
                   name="youtastePhone"
                 />
                 <Input
+                  required
                   type={"password"}
                   label="Password"
                   name="youtastePassword"
@@ -50,8 +74,9 @@ export const AdminNewView: React.FC<Props> = () => {
                 Lieferando Login
               </h2>
               <div className="flex gap-x-4">
-                <Input label="Username" name="lieferandoUsername" />
+                <Input required label="Username" name="lieferandoUsername" />
                 <Input
+                  required
                   type={"password"}
                   label="Password"
                   name="lieferandoPassword"
@@ -63,6 +88,7 @@ export const AdminNewView: React.FC<Props> = () => {
               <h2 className="text-lg font-medium mt-2 mb-2">Other Settings</h2>
 
               <Input
+                required
                 type={"datetime-local"}
                 label="Order Datetime"
                 name="orderDatetime"

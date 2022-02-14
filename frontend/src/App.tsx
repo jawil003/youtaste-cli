@@ -101,7 +101,7 @@ function App() {
           </Background>
         </CookiesProvider>
       </QueryClientProvider>
-      <div id="modal" className="absolute top-0 left-0 w-0 h-0 z-10" />
+      <div id="modal" className="absolute top-0 left-0 w-0 h-0 z-50" />
     </BrowserRouter>
   );
 }

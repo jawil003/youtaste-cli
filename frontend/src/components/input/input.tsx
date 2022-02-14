@@ -24,9 +24,7 @@ export const Input: React.FC<Props> = ({
     formState: { errors },
   } = useFormContext();
 
-  const isError = errors?.[name]
-    ? Object?.values?.(errors?.[name])?.length > 0
-    : false;
+  const errorMessage = errors?.[name]?.message as string | undefined;
 
   return (
     <div className={className}>
@@ -37,7 +35,7 @@ export const Input: React.FC<Props> = ({
             {required && (
               <span
                 className={
-                  isError ? "text-red-500 required-dot" : "text-gray-700"
+                  errorMessage ? "text-red-500 required-dot" : "text-gray-700"
                 }
               >
                 *
@@ -49,11 +47,11 @@ export const Input: React.FC<Props> = ({
           {...register(name)}
           type="text"
           className={`rounded-lg${
-            isError ? " ring-red-500 ring-2" : ""
+            errorMessage ? " ring-red-500 ring-2" : ""
           } flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent`}
           {...props}
         />
-        {isError && (
+        {errorMessage && (
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="15"
@@ -66,10 +64,8 @@ export const Input: React.FC<Props> = ({
           </svg>
         )}
       </div>
-      {isError && (
-        <p className="mt-1 text-sm text-red-500 -bottom-6">
-          {Object?.values?.(errors?.[name])?.join(" ")}
-        </p>
+      {errorMessage && (
+        <p className="mt-1 text-sm text-red-500 -bottom-6">{errorMessage}</p>
       )}
     </div>
   );
