@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { ReactComponent as CookieIcon } from "../assets/Fortune cookie-cuate.svg";
 import { Button } from "../components/button/button";
-import { Routes } from "../enums/routes.enum";
 export interface Props {}
 
 /**

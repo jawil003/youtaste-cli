@@ -2,7 +2,8 @@ import React from "react";
 import { CheckIcon, XIcon, DotsHorizontalIcon } from "@heroicons/react/solid";
 import { useLocation } from "react-router-dom";
 import { Routes } from "../../enums/routes.enum";
-
+import { useTranslation } from "react-i18next";
+import { useIsAdmin } from "../../hooks/isAdmin.hook";
 export interface Props {
   stateFactory: {
     activeHref: string;
@@ -76,60 +77,106 @@ export const PositionTracker: React.FC<Props> = ({ items, stateFactory }) => {
   );
 };
 
-export const PositionTrackerDefault = (
-  <PositionTracker
-    stateFactory={[
-      {
-        activeHref: Routes.NEW,
-        states: [
+export const PositionTrackerDefault: React.FC = () => {
+  const { t } = useTranslation("position-tracker-default");
+  const { data: isAdmin } = useIsAdmin();
+
+  return (
+    <PositionTracker
+      stateFactory={[
+        {
+          activeHref: Routes.ADMIN_NEW,
+          states: [
+            {
+              href: Routes.ADMIN_NEW,
+              state: "AVAILABLE",
+            },
+            {
+              href: Routes.NEW,
+              state: "DISABLED",
+            },
+            { href: Routes.POLLS, state: "DISABLED" },
+            { href: Routes.ORDER_CONFIRM, state: "DISABLED" },
+            { href: "", state: "DISABLED" },
+          ],
+        },
+        {
+          activeHref: Routes.NEW,
+          states: [
+            {
+              href: Routes.ADMIN_NEW,
+              state: "DONE",
+            },
+            {
+              href: Routes.NEW,
+              state: "AVAILABLE",
+            },
+            { href: Routes.POLLS, state: "DISABLED" },
+            { href: Routes.ORDER_CONFIRM, state: "DISABLED" },
+            { href: "", state: "DISABLED" },
+          ],
+        },
+        {
+          activeHref: Routes.POLLS,
+          states: [
+            {
+              href: Routes.ADMIN_NEW,
+              state: "DONE",
+            },
+            {
+              href: Routes.NEW,
+              state: "DONE",
+            },
+            { href: Routes.POLLS, state: "AVAILABLE" },
+            { href: Routes.ORDER_CONFIRM, state: "DISABLED" },
+            { href: "", state: "DISABLED" },
+          ],
+        },
+        {
+          activeHref: Routes.ORDER_CONFIRM,
+          states: [
+            {
+              href: Routes.ADMIN_NEW,
+              state: "DONE",
+            },
+            {
+              href: Routes.NEW,
+              state: "DONE",
+            },
+            { href: Routes.POLLS, state: "DONE" },
+            { href: Routes.ORDER_CONFIRM, state: "AVAILABLE" },
+            { href: "", state: "DISABLED" },
+          ],
+        },
+      ]}
+      items={(() => {
+        const base = [
           {
             href: Routes.NEW,
-            state: "AVAILABLE",
+            label: t("comeIn"),
           },
-          { href: Routes.POLLS, state: "DISABLED" },
-          { href: Routes.ORDER_CONFIRM, state: "DISABLED" },
-          { href: "", state: "DISABLED" },
-        ],
-      },
-      {
-        activeHref: Routes.POLLS,
-        states: [
           {
-            href: Routes.NEW,
-            state: "DONE",
+            href: Routes.POLLS,
+            label: t("voteResteraunt"),
           },
-          { href: Routes.POLLS, state: "AVAILABLE" },
-          { href: Routes.ORDER_CONFIRM, state: "DISABLED" },
-          { href: "", state: "DISABLED" },
-        ],
-      },
-      {
-        activeHref: Routes.ORDER_CONFIRM,
-        states: [
+          { href: Routes.ORDER_CONFIRM, label: t("myMeals") },
           {
-            href: Routes.NEW,
-            state: "DONE",
+            href: "",
+            label: t("orderOnTheWay"),
           },
-          { href: Routes.POLLS, state: "DONE" },
-          { href: Routes.ORDER_CONFIRM, state: "AVAILABLE" },
-          { href: "", state: "DISABLED" },
-        ],
-      },
-    ]}
-    items={[
-      {
-        href: Routes.NEW,
-        label: "Come In",
-      },
-      {
-        href: Routes.POLLS,
-        label: "Vote for your Restaurant",
-      },
-      { href: Routes.ORDER_CONFIRM, label: "Choose your Meal(s)" },
-      {
-        href: "",
-        label: "Order is on the way",
-      },
-    ]}
-  />
-);
+        ];
+
+        const admin = isAdmin
+          ? [
+              {
+                href: Routes.ADMIN_NEW,
+                label: t("setup"),
+              },
+            ]
+          : [];
+
+        return [...admin, ...base];
+      })()}
+    />
+  );
+};

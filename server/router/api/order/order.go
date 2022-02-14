@@ -28,9 +28,11 @@ func RegisterOrders(api *gin.RouterGroup) {
 		orderTimer.Start(int64(orderTimerTimeAsInt))
 	})
 
-	RegisterTimer(api, orderTimer)
+	orderGroup := api.Group("/orders")
 
-	api.GET("/orders/user/:name", func(context *gin.Context) {
+	RegisterTimer(orderGroup, orderTimer)
+
+	orderGroup.GET("/user/:name", func(context *gin.Context) {
 
 		jwt, ok := context.Get("user")
 
@@ -71,7 +73,7 @@ func RegisterOrders(api *gin.RouterGroup) {
 		})
 	})
 
-	api.GET("/orders/user", func(context *gin.Context) {
+	orderGroup.GET("/user", func(context *gin.Context) {
 
 		jwt, ok := context.Get("user")
 
@@ -103,7 +105,7 @@ func RegisterOrders(api *gin.RouterGroup) {
 		})
 	})
 
-	api.POST("/orders", func(context *gin.Context) {
+	orderGroup.POST("", func(context *gin.Context) {
 
 		jwt, ok := context.Get("user")
 
@@ -140,7 +142,7 @@ func RegisterOrders(api *gin.RouterGroup) {
 		})
 	})
 
-	api.DELETE("/orders/user/:name", func(context *gin.Context) {
+	orderGroup.DELETE("/user/:name", func(context *gin.Context) {
 		mealName := context.Param("name")
 
 		customJWT, ok := context.Get("user")
@@ -162,7 +164,7 @@ func RegisterOrders(api *gin.RouterGroup) {
 		context.JSON(200, gin.H{"status": "ok"})
 	})
 
-	api.DELETE("/orders/user", func(context *gin.Context) {
+	orderGroup.DELETE("/user", func(context *gin.Context) {
 
 		custonJWT, ok := context.Get("user")
 
@@ -187,7 +189,7 @@ func RegisterOrders(api *gin.RouterGroup) {
 		})
 	})
 
-	api.DELETE("/orders/all", func(context *gin.Context) {
+	orderGroup.DELETE("/all", func(context *gin.Context) {
 		err := services.DB().Order().ClearAll()
 		if err != nil {
 			context.JSON(400, gin.H{

@@ -4,5 +4,6 @@
   "variant": "Variante",
   "mealName": "Mahlzeit",
   "variantPlaceholder": "Groß",
-  "mealNamePlaceholder": "Pizza Cipola"
+  "mealNamePlaceholder": "Pizza Cipola",
+  "endPoll": "Bestellzeit beenden"
 }

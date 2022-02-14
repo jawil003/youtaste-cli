@@ -3,5 +3,6 @@
   "addAnother": "Ein weiteres Restaurant hinzufügen",
   "addButton": "Restaurant hinzufügen",
   "provider": "Anbieter",
-  "restaurantName": "Restaurantname"
+  "restaurantName": "Restaurantname",
+  "endPoll": "Umfrage beenden"
 }

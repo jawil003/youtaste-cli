@@ -9,6 +9,8 @@ import { Queries } from "../enums/queries.enum";
 import { useOrdersByUser } from "../hooks/ordersByUser.hook";
 import OrderService from "../services/order.service";
 import { useTranslation } from "react-i18next";
+import { Timer } from "../components/timer/timer";
+import { useIsAdmin } from "../hooks/isAdmin.hook";
 export interface Props {}
 
 /**
@@ -21,6 +23,7 @@ export const OrderConfirmation: React.FC<Props> = () => {
   const queryClient = useQueryClient();
   const methods = useForm();
   const { t } = useTranslation("order-confirmation");
+  const { data: isAdmin } = useIsAdmin();
 
   const [open, setOpen] = useState(false);
   const [name, setName] = useState<string | undefined>(undefined);
@@ -31,7 +34,7 @@ export const OrderConfirmation: React.FC<Props> = () => {
         <title>{t("headline")} | TastyFood</title>
       </Helmet>
       <div className="flex items-center justify-center w-full h-full">
-        {/*<Timer></Timer>*/}
+        <Timer />
         <OrderList
           headline={t("headline")}
           items={
@@ -65,6 +68,14 @@ export const OrderConfirmation: React.FC<Props> = () => {
           >
             {t("addButton")}
           </Button>
+          {isAdmin && (
+            <Button
+              onClick={() => console.log("Clicked!")}
+              className="bg-green-400 mt-2"
+            >
+              {t("endPoll")}
+            </Button>
+          )}
         </OrderList>
       </div>
       <CreateOrderView

@@ -42,7 +42,7 @@ function App() {
               <ActiveOnRoutes
                 routes={[NRoutes.NEW, NRoutes.POLLS, NRoutes.ORDER_CONFIRM]}
               >
-                {PositionTrackerDefault}
+                <PositionTrackerDefault />
               </ActiveOnRoutes>
               <div className="flex-1">
                 <Routes>

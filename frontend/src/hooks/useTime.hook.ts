@@ -1,17 +1,14 @@
 import { useEffect, useState } from "react";
-import PollService from "../services/poll.service";
+import OrderService from "../services/order.service";
 
 export const useTime = (mode: "POLL" | "ORDER") => {
   const [resTime, setResTime] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     (async () => {
-      if (mode === "POLL") {
-        const pollService = new PollService();
+      const orderService = new OrderService();
 
-        setResTime((await pollService.getTime()).time);
-      } else {
-      }
+      setResTime((await orderService.getTime()).time);
     })();
   }, [mode]);
 

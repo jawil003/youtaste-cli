@@ -23,4 +23,8 @@ export default class OrderService {
   public async deleteOrder(name: string) {
     return await backend.delete(`/api/orders/user/${name}`);
   }
+
+  public async getTime() {
+    return (await backend.get<{ time: number }>("/api/orders/timer"))?.data;
+  }
 }

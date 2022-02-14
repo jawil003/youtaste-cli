@@ -4,10 +4,10 @@ import { AnotherPollOption } from "../components/another-poll-option/another-pol
 import { Button } from "../components/button/button";
 import { PollOption } from "../components/poll-option/poll-option";
 import { ProviderSidebar } from "../components/provider-sidebar/provider-sidebar";
-import { Timer } from "../components/timer/timer";
 import { usePolls } from "../hooks/polls.hook";
 import PollService from "../services/poll.service";
 import { useTranslation } from "react-i18next";
+import { useIsAdmin } from "../hooks/isAdmin.hook";
 export interface Props {}
 
 /**
@@ -18,12 +18,12 @@ export interface Props {}
 export const Poll: React.FC<Props> = () => {
   const polls = usePolls();
   const { t } = useTranslation("poll");
+  const { data: isAdmin } = useIsAdmin();
 
   const [open, setOpen] = useState(false);
 
   return (
     <div className="flex w-full h-full justify-center items-center">
-      <Timer />
       <ProviderSidebar />
       <Helmet>
         <title>{t("headline")} | TastyFood</title>
@@ -49,6 +49,14 @@ export const Poll: React.FC<Props> = () => {
         <Button onClick={() => setOpen(true)} className="mt-8">
           {t("addAnother")}
         </Button>
+        {isAdmin && (
+          <Button
+            onClick={() => console.log("Clicked!")}
+            className="bg-green-400 mt-2"
+          >
+            {t("endPoll")}
+          </Button>
+        )}
       </div>
       <AnotherPollOption open={open} onClose={() => setOpen(false)} />
     </div>
