@@ -86,3 +86,32 @@ func (_ TreeService) Get(name string) (*datastructures.Tree, error) {
 
 	return &tree, nil
 }
+
+func (_ TreeService) Clear(name string) error {
+	db, err := OpenDbConnection()
+	defer db.Close()
+
+	if err != nil {
+		return err
+	}
+
+	err = db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket([]byte("tree"))
+		if bucket == nil {
+			return nil
+		}
+
+		err := bucket.Delete([]byte(name))
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

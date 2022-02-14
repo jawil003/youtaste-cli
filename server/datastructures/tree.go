@@ -35,14 +35,50 @@ func (tree *Tree) Next(Option string) (*Tree, error) {
 	return nil, errors.New("option not found")
 }
 
-func NewProgressTree() (*Tree, error) {
-	tree := Tree{Root: &Node{Value: "ADMIN_NEW", Steps: []*Node{{Value: "CHOOSE_RESTAURANT", Steps: []*Node{{Value: "CHOOSE_MEALS", Steps: []*Node{{Value: "DONE"}}}}}}}}
+var progressTree *Tree
 
-	err := services.DB().Tree().CreateOrUpdate(db.ProgressTree, tree)
+func ResetProgressTree() (*Tree, error) {
+	progressTree = nil
+
+	err := services.DB().Tree().Clear(db.ProgressTree)
+	if err != nil {
+		return nil, err
+	}
+
+	tree, err := NewProgressTree()
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &tree, nil
+	return tree, nil
+}
+
+func NewProgressTree() (*Tree, error) {
+
+	if progressTree != nil {
+		return progressTree, nil
+	}
+
+	tree, err := services.DB().Tree().Get(db.ProgressTree)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if tree != nil {
+		return tree, nil
+	}
+
+	tree = &Tree{Root: &Node{Value: "ADMIN_NEW", Steps: []*Node{{Value: "CHOOSE_RESTAURANT", Steps: []*Node{{Value: "CHOOSE_MEALS", Steps: []*Node{{Value: "DONE"}}}}}}}}
+
+	err = services.DB().Tree().CreateOrUpdate(db.ProgressTree, *tree)
+
+	if err != nil {
+		return nil, err
+	}
+
+	progressTree = tree
+
+	return tree, nil
 }
