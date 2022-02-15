@@ -61,4 +61,6 @@ func Register(r *gin.Engine) {
 
 	RegisterAdmin(api)
 
+	RegisterProgress(api)
+
 }
