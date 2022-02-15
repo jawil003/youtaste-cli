@@ -2,6 +2,7 @@ package db
 
 import (
 	"bs-to-scrapper/server/datastructures"
+	"bs-to-scrapper/server/datastructures/progress"
 	"encoding/json"
 	bolt "go.etcd.io/bbolt"
 )
@@ -16,7 +17,7 @@ func (_ ServiceCollection) ProgressTree() *ProgressTreeService {
 
 	if treeService == nil {
 
-		tree := datastructures.ProgressTree()
+		tree := progress.ProgressTree()
 
 		treeFromDb, err := getFromDb(ProgressTree)
 
@@ -68,7 +69,7 @@ func (ts *ProgressTreeService) Reset() (*datastructures.Tree, error) {
 		return nil, err
 	}
 
-	tree := datastructures.ProgressTree()
+	tree := progress.ProgressTree()
 
 	ts.Tree = tree
 
