@@ -63,4 +63,6 @@ func Register(r *gin.Engine) {
 
 	RegisterProgress(api)
 
+	RegisterScrapper(api)
+
 }
