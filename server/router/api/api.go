@@ -14,7 +14,7 @@ func Register(r *gin.Engine) {
 
 	api.Use(func(context *gin.Context) {
 
-		if context.Request.URL.Path == "/api/user/create" || context.Request.URL.Path == "/api/polls/ws" {
+		if context.Request.URL.Path == "/api/user/create" || context.Request.URL.Path == "/api/polls/ws" || context.Request.URL.Path == "/api/progress/ws" {
 			context.Next()
 			return
 		}

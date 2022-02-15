@@ -19,7 +19,7 @@ var wsupgrader = &websocket.Upgrader{
 
 func RegisterProgress(api *gin.RouterGroup) {
 
-	hub := observer.ProgressObserverHub{}
+	hub := observer.NewProgressObserverHub()
 
 	go hub.Run()
 
@@ -43,7 +43,7 @@ func RegisterProgress(api *gin.RouterGroup) {
 
 			client := &observer.ProgressObserverClient{
 				Conn: conn,
-				Hub:  &hub,
+				Hub:  hub,
 				Send: make(chan string, 256),
 			}
 
@@ -59,6 +59,7 @@ func RegisterProgress(api *gin.RouterGroup) {
 
 			if treeService.Tree.Root.Steps == nil || len(treeService.Tree.Root.Steps) == 0 {
 				context.JSON(400, gin.H{"error": errors.New("no steps left").Error()})
+				return
 			}
 
 			tree, err := treeService.Next(treeService.Tree.Root.Steps[0].Value)
@@ -66,6 +67,8 @@ func RegisterProgress(api *gin.RouterGroup) {
 			if err != nil {
 				return
 			}
+
+			hub.SendAll(tree.Root.Value)
 
 			context.JSON(200, gin.H{
 				"progress": tree.Root.Value,

@@ -6,6 +6,14 @@ type ProgressObserverHub struct {
 	Clients    map[*ProgressObserverClient]bool
 }
 
+func NewProgressObserverHub() *ProgressObserverHub {
+	return &ProgressObserverHub{
+		Register:   make(chan *ProgressObserverClient),
+		Unregister: make(chan *ProgressObserverClient),
+		Clients:    make(map[*ProgressObserverClient]bool),
+	}
+}
+
 func (c *ProgressObserverHub) Run() {
 	for {
 		select {
