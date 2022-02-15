@@ -1,8 +1,8 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { Routes } from "../../enums/routes.enum";
 import { useIsAdmin } from "../../hooks/isAdmin.hook";
 import { useUser } from "../../hooks/user.hook";
+import { useRedirector } from "../../hooks/useRedirector";
 
 export interface Props {
   mode?: "USER" | "NO_USER" | "ADMIN";
@@ -17,35 +17,32 @@ export const Auth: React.FC<Props> = ({ mode, children }) => {
   const { data: user, isFetching } = useUser();
   const { data: isAdmin, isFetching: isFetchingAdmin } = useIsAdmin();
 
+  const path = useRedirector();
+
   if (isFetching || isFetchingAdmin) return null;
 
   switch (mode) {
     case "ADMIN": {
       if (isAdmin) {
         return <>{children}</>;
-      } else {
-        if (user) {
-          return <Navigate to={Routes.ORDER_CONFIRM} />;
-        } else {
-          return <Navigate to={Routes.NEW} />;
-        }
       }
+      break;
     }
     case "USER": {
       if (user) {
         return <>{children}</>;
-      } else {
-        return <Navigate to={Routes.NEW} />;
       }
+      break;
     }
     default: {
       if (!user) {
         return <>{children}</>;
-      } else {
-        return null;
       }
+      break;
     }
   }
+
+  return <Navigate to={path} />;
 };
 
 Auth.defaultProps = { mode: "USER" };

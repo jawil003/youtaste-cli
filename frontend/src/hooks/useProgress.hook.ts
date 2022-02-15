@@ -1,8 +1,13 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ProgressService from "../services/progress.service";
 
 export const useProgress = () => {
   const [progress, setProgress] = useState<string | null>(null);
+  const [shouldRefetch, setShouldRefetch] = useState(false);
+
+  const refetch = useCallback(() => {
+    setShouldRefetch((prev) => !prev);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -33,7 +38,7 @@ export const useProgress = () => {
       websocket.onopen = null;
       websocket.close();
     };
-  }, []);
+  }, [shouldRefetch]);
 
-  return { progress, isFetched: !!progress };
+  return { progress, isFetched: !!progress, refetch };
 };
