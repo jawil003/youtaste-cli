@@ -4,14 +4,12 @@ import { Button } from "../components/button/button";
 import { Input } from "../components/input/input";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { useStore } from "../store/store";
 import UserService from "../services/user.service";
 import { useQueryClient } from "react-query";
 import { Queries } from "../enums/queries.enum";
 import { useTranslation } from "react-i18next";
-import { useRedirector } from "../hooks/useRedirector";
 
 export interface Props {}
 
@@ -33,7 +31,6 @@ interface FormData {
 export const CreateNewUserView: React.FC<Props> = () => {
   const [loadingButtonEnabled, setLoadingButtonEnabled] = useState(false);
   const { setUser } = useStore();
-  const route = useRedirector();
 
   const { t } = useTranslation("create-new-user");
 
@@ -45,7 +42,6 @@ export const CreateNewUserView: React.FC<Props> = () => {
 
   const queryClient = useQueryClient();
 
-  const navigate = useNavigate();
   const methods = useForm<FormData>({
     defaultValues: { firstname: "", lastname: "" },
     resolver: yupResolver(schema),
@@ -63,7 +59,6 @@ export const CreateNewUserView: React.FC<Props> = () => {
     await queryClient.invalidateQueries(Queries.USER);
 
     methods.reset();
-    navigate(route);
   };
 
   return (

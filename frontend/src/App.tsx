@@ -14,9 +14,9 @@ import { AdminNewView } from "./views/admin/new";
 import { PositionTrackerDefault } from "./components/position-tracker/position-tracker";
 import { ActiveOnRoutes } from "./components/activeOnRoutes";
 import "./translations/i18n";
+import { OrderOnTheWayView } from "./views/order-on-the-way";
 import { ProgressProviderWrapper } from "./components/progress-provider/progress-provider";
 import { Redirector } from "./components/redirector/redirector";
-import { OrderOnTheWayView } from "./views/order-on-the-way";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,11 +35,11 @@ logger.info(process.env, "Environment loaded");
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Suspense fallback={<div />}>
-        <ProgressProviderWrapper>
+      <ProgressProviderWrapper>
+        <Suspense fallback={<div />}>
           <BrowserRouter basename="/app">
-            <Redirector />
             <Background>
+              <Redirector />
               <Helmet>
                 <link rel="icon" type="image/x-icon" href="/favicon.ico" />
               </Helmet>
@@ -119,8 +119,8 @@ function App() {
 
             <div id="modal" className="absolute top-0 left-0 w-0 h-0 z-50" />
           </BrowserRouter>
-        </ProgressProviderWrapper>
-      </Suspense>
+        </Suspense>
+      </ProgressProviderWrapper>
     </QueryClientProvider>
   );
 }

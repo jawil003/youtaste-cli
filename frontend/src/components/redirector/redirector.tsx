@@ -14,7 +14,8 @@ export const Redirector: React.FC<Props> = () => {
 
   const pathname = useRedirector();
 
-  if (pathname !== currentPathname) return <Navigate to={pathname} />;
+  if (pathname && pathname !== currentPathname)
+    return <Navigate to={pathname} />;
 
   return null;
 };

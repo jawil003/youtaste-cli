@@ -1,20 +1,26 @@
 import { useCallback, useEffect, useState } from "react";
 import ProgressService from "../services/progress.service";
+import { useUser } from "./user.hook";
 
 export const useProgress = () => {
   const [progress, setProgress] = useState<string | null>(null);
   const [shouldRefetch, setShouldRefetch] = useState(false);
+  const { data: user } = useUser();
 
   const refetch = useCallback(() => {
     setShouldRefetch((prev) => !prev);
   }, []);
 
   useEffect(() => {
+    if (!user) return;
     (async () => {
       const progressService = new ProgressService();
-      const { progress } = await progressService.getProgress();
-      console.debug({ progress }, "useProgress: getProgress");
-      setProgress(progress);
+      const { progress: localProgress } = await progressService.getProgress();
+
+      if (localProgress === progress) return;
+
+      console.debug({ progress: localProgress }, "useProgress: getProgress");
+      setProgress(localProgress);
     })();
 
     const handleMessage = (event: MessageEvent<string>) => {
@@ -40,7 +46,8 @@ export const useProgress = () => {
       websocket.onopen = null;
       websocket.close();
     };
-  }, [shouldRefetch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shouldRefetch, user]);
 
   return { progress, isFetched: !!progress, refetch };
 };
