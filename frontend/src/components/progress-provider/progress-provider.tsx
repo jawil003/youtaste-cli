@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { logger } from "../../config/logger";
 import { useProgress } from "../../hooks/useProgress.hook";
 import { useUser } from "../../hooks/user.hook";
 
@@ -16,7 +17,10 @@ export const ProgressProviderWrapper: React.FC<Props> = ({ children }) => {
   const { data: user, isFetched } = useUser();
 
   useEffect(() => {
-    if (user && isFetched) refetch();
+    if (user && isFetched) {
+      refetch();
+      logger.debug({}, "ProgressProviderWrapper: refetching user");
+    }
   }, [refetch, user, isFetched]);
 
   return (

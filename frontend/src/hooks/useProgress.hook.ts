@@ -12,11 +12,13 @@ export const useProgress = () => {
   useEffect(() => {
     (async () => {
       const progressService = new ProgressService();
-
-      setProgress((await progressService.getProgress())?.progress);
+      const { progress } = await progressService.getProgress();
+      console.debug({ progress }, "useProgress: getProgress");
+      setProgress(progress);
     })();
 
     const handleMessage = (event: MessageEvent<string>) => {
+      console.debug({ progress: event.data }, "useProgress: updated via ws");
       setProgress(event.data);
     };
     const websocket = new WebSocket(

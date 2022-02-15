@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { ProgressProvider } from "../components/progress-provider/progress-provider";
+import { logger } from "../config/logger";
 import { mapStateToRoute } from "../config/mapStateToConfig";
 import { Routes } from "../enums/routes.enum";
 import { useUser } from "./user.hook";
@@ -12,8 +13,17 @@ export const useRedirector = () => {
 
   useEffect(() => {
     if (isFetched) {
-      if (user && progress) setRoute(mapStateToRoute[progress]);
-      else setRoute(Routes.NEW);
+      if (user && progress) {
+        const res = mapStateToRoute[progress];
+        logger.debug({ progress: res }, "useRedirector: progress updated");
+        setRoute(res);
+      } else {
+        setRoute(Routes.NEW);
+        logger.debug(
+          { progress: Routes.NEW },
+          "useRedirector: progress updated"
+        );
+      }
     }
   }, [progress, isFetched, user]);
 
