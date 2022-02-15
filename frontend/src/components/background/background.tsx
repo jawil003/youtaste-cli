@@ -1,7 +1,9 @@
 import React from "react";
 import { ReactComponent as BurgerLogo } from "../../assets/Hamburger-cuate.svg";
 import { Logo } from "../../assets/logo/logo";
+import { Routes } from "../../enums/routes.enum";
 import { useUser } from "../../hooks/user.hook";
+import { ActiveOnRoutes } from "../activeOnRoutes";
 import { Username } from "../username/username";
 export interface Props {}
 
@@ -23,7 +25,16 @@ export const Background: React.FC<Props> = ({ children }) => {
             </Username>
           )}
         </div>
-        <BurgerLogo />
+        <ActiveOnRoutes
+          routes={[
+            Routes.ADMIN_NEW,
+            Routes.NEW,
+            Routes.ORDER_CONFIRM,
+            Routes.POLLS,
+          ]}
+        >
+          <BurgerLogo />
+        </ActiveOnRoutes>
       </div>
 
       <div className="absolute top-0 left-0 w-full h-full z-10">{children}</div>

@@ -97,7 +97,7 @@ export const PositionTrackerDefault: React.FC = () => {
             },
             { href: Routes.POLLS, state: "DISABLED" },
             { href: Routes.ORDER_CONFIRM, state: "DISABLED" },
-            { href: "", state: "DISABLED" },
+            { href: Routes.ON_THE_WAY, state: "DISABLED" },
           ],
         },
         {
@@ -113,7 +113,7 @@ export const PositionTrackerDefault: React.FC = () => {
             },
             { href: Routes.POLLS, state: "DISABLED" },
             { href: Routes.ORDER_CONFIRM, state: "DISABLED" },
-            { href: "", state: "DISABLED" },
+            { href: Routes.ON_THE_WAY, state: "DISABLED" },
           ],
         },
         {
@@ -129,7 +129,7 @@ export const PositionTrackerDefault: React.FC = () => {
             },
             { href: Routes.POLLS, state: "AVAILABLE" },
             { href: Routes.ORDER_CONFIRM, state: "DISABLED" },
-            { href: "", state: "DISABLED" },
+            { href: Routes.ON_THE_WAY, state: "DISABLED" },
           ],
         },
         {
@@ -145,7 +145,23 @@ export const PositionTrackerDefault: React.FC = () => {
             },
             { href: Routes.POLLS, state: "DONE" },
             { href: Routes.ORDER_CONFIRM, state: "AVAILABLE" },
-            { href: "", state: "DISABLED" },
+            { href: Routes.ON_THE_WAY, state: "DISABLED" },
+          ],
+        },
+        {
+          activeHref: Routes.ON_THE_WAY,
+          states: [
+            {
+              href: Routes.ADMIN_NEW,
+              state: "DONE",
+            },
+            {
+              href: Routes.NEW,
+              state: "DONE",
+            },
+            { href: Routes.POLLS, state: "DONE" },
+            { href: Routes.ORDER_CONFIRM, state: "DONE" },
+            { href: Routes.ON_THE_WAY, state: "AVAILABLE" },
           ],
         },
       ]}
@@ -161,7 +177,7 @@ export const PositionTrackerDefault: React.FC = () => {
           },
           { href: Routes.ORDER_CONFIRM, label: t("myMeals") },
           {
-            href: "",
+            href: Routes.ON_THE_WAY,
             label: t("orderOnTheWay"),
           },
         ];

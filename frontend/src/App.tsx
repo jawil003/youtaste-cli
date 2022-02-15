@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { CreateNewUserView } from "./views/create-new-user";
 import { ErrorView } from "./views/error";
 import { Routes as NRoutes } from "./enums/routes.enum";
@@ -14,6 +14,9 @@ import { AdminNewView } from "./views/admin/new";
 import { PositionTrackerDefault } from "./components/position-tracker/position-tracker";
 import { ActiveOnRoutes } from "./components/activeOnRoutes";
 import "./translations/i18n";
+import { ProgressProviderWrapper } from "./components/progress-provider/progress-provider";
+import { Redirector } from "./components/redirector/redirector";
+import { OrderOnTheWayView } from "./views/order-on-the-way";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,75 +36,90 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Suspense fallback={<div />}>
-        <BrowserRouter basename="/app">
-          <Background>
-            <Helmet>
-              <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-            </Helmet>
-            <div className="flex h-full w-full">
-              <ActiveOnRoutes
-                routes={[NRoutes.NEW, NRoutes.POLLS, NRoutes.ORDER_CONFIRM]}
-              >
-                <PositionTrackerDefault />
-              </ActiveOnRoutes>
-              <div className="flex-1">
-                <Routes>
-                  <Route
-                    path={NRoutes.NEW}
-                    element={
-                      <Auth mode="NO_USER">
-                        <CreateNewUserView />
-                      </Auth>
-                    }
-                  />
+        <ProgressProviderWrapper>
+          <BrowserRouter basename="/app">
+            <Redirector />
+            <Background>
+              <Helmet>
+                <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+              </Helmet>
+              <div className="flex h-full w-full">
+                <ActiveOnRoutes
+                  routes={[
+                    NRoutes.NEW,
+                    NRoutes.POLLS,
+                    NRoutes.ORDER_CONFIRM,
+                    NRoutes.ON_THE_WAY,
+                  ]}
+                >
+                  <PositionTrackerDefault />
+                </ActiveOnRoutes>
+                <div className="flex-1">
+                  <Routes>
+                    <Route
+                      path={NRoutes.NEW}
+                      element={
+                        <Auth mode="NO_USER">
+                          <CreateNewUserView />
+                        </Auth>
+                      }
+                    />
 
-                  <Route
-                    path={NRoutes["ADMIN_NEW"]}
-                    element={
-                      <Auth mode="ADMIN">
-                        <AdminNewView />
-                      </Auth>
-                    }
-                  />
-                  <Route
-                    path={NRoutes["ADMIN_OVERVIEW"]}
-                    element={
-                      <Auth mode="ADMIN">
-                        <AdminNewView />
-                      </Auth>
-                    }
-                  />
+                    <Route
+                      path={NRoutes["ADMIN_NEW"]}
+                      element={
+                        <Auth mode="ADMIN">
+                          <AdminNewView />
+                        </Auth>
+                      }
+                    />
+                    <Route
+                      path={NRoutes["ADMIN_OVERVIEW"]}
+                      element={
+                        <Auth mode="ADMIN">
+                          <AdminNewView />
+                        </Auth>
+                      }
+                    />
 
-                  <Route
-                    path={NRoutes.ORDER_CONFIRM}
-                    element={
-                      <Auth>
-                        <OrderConfirmation />
-                      </Auth>
-                    }
-                  />
-                  <Route
-                    path={NRoutes.POLLS}
-                    element={
-                      <Auth>
-                        <Poll />
-                      </Auth>
-                    }
-                  />
-                  <Route path={NRoutes.ERROR} element={<ErrorView />} />
-                  <Route index element={<Navigate to={NRoutes.NEW} />} />
-                </Routes>
+                    <Route
+                      path={NRoutes.ORDER_CONFIRM}
+                      element={
+                        <Auth>
+                          <OrderConfirmation />
+                        </Auth>
+                      }
+                    />
+                    <Route
+                      path={NRoutes.POLLS}
+                      element={
+                        <Auth>
+                          <Poll />
+                        </Auth>
+                      }
+                    />
+                    <Route
+                      path={NRoutes["ON_THE_WAY"]}
+                      element={
+                        <Auth>
+                          <OrderOnTheWayView />
+                        </Auth>
+                      }
+                    />
+                    <Route path={NRoutes.ERROR} element={<ErrorView />} />
+                  </Routes>
+                </div>
+                <ActiveOnRoutes
+                  routes={[NRoutes.NEW, NRoutes.POLLS, NRoutes.ORDER_CONFIRM]}
+                >
+                  <div className="w-40" />
+                </ActiveOnRoutes>
               </div>
-              <ActiveOnRoutes
-                routes={[NRoutes.NEW, NRoutes.POLLS, NRoutes.ORDER_CONFIRM]}
-              >
-                <div className="w-40" />
-              </ActiveOnRoutes>
-            </div>
-          </Background>
+            </Background>
 
-          <div id="modal" className="absolute top-0 left-0 w-0 h-0 z-50" />
-        </BrowserRouter>
+            <div id="modal" className="absolute top-0 left-0 w-0 h-0 z-50" />
+          </BrowserRouter>
+        </ProgressProviderWrapper>
       </Suspense>
     </QueryClientProvider>
   );
