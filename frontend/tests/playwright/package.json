@@ -4,7 +4,9 @@
   "description": "",
   "scripts": {
     "codegen": "playwright codegen http://localhost:3000/app",
-    "run": "playwright test"
+    "run": "playwright test",
+    "show-report": "playwright show-report",
+    "show-trace": "playwright show-trace"
   },
   "keywords": [],
   "author": "",
