@@ -1,10 +1,12 @@
 {
   "private": true,
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "tests/*"
   ],
   "scripts": {
     "start": "yarn workspace @tastyfood/ui run start",
-    "build": "BUILD_PATH='../../dist' yarn workspace @tastyfood/ui run build"
+    "build": "BUILD_PATH='../../dist/apps/ui' yarn workspace @tastyfood/ui run build",
+    "playwright:codegen": "yarn workspace @tastyfood/playwright run codegen"
   }
 }
