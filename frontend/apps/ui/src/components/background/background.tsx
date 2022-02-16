@@ -15,9 +15,9 @@ export interface Props {}
 export const Background: React.FC<Props> = ({ children }) => {
   const { data: user } = useUser();
   return (
-    <div className="relative w-screen h-screen overflow-hidden">
+    <div className="relative w-screen h-screen overflow-hidden ">
       <div className="absolute top-0 left-0 w-full h-full">
-        <div className="relative w-full flex justify-between p-5 z-30">
+        <div className="relative w-full flex justify-between p-5 z-10">
           <Logo className="" />
           {user && (
             <Username>
@@ -37,7 +37,7 @@ export const Background: React.FC<Props> = ({ children }) => {
         </ActiveOnRoutes>
       </div>
 
-      <div className="absolute top-0 left-0 w-full h-full z-10">{children}</div>
+      <div className="absolute top-0 left-0 w-full h-full">{children}</div>
     </div>
   );
 };

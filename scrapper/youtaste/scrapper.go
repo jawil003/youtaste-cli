@@ -20,34 +20,69 @@ func OpenInCurrentBrowserAndJoinYouTaste() *rod.Page {
 	return page
 }
 
-func OpenInNewBrowserAndJoinYouTaste() *rod.Page {
-	page := rod.New().MustConnect().MustPage("https://youtaste.com/")
+func OpenInNewBrowserAndJoinYouTaste() (*rod.Page, error) {
+	browser := rod.New()
 
-	return page
+	err := browser.Connect()
+	if err != nil {
+		return nil, err
+	}
+	page, err := browser.Page(proto.TargetCreateTarget{URL: "https://youtaste.com/"})
+	if err != nil {
+		return nil, err
+	}
+
+	return page, nil
 }
 
 func Login(phoneNumber, password string, page *rod.Page) (*rod.Page, error) {
 
-	err := page.MustElementR("#navigation a", "Einloggen").Click(proto.InputMouseButtonLeft)
+	element, err := page.ElementR("#navigation a", "Einloggen")
 	if err != nil {
 		return nil, err
 	}
 
-	page.MustWaitNavigation()
-
-	phoneInput := page.MustElement("input[placeholder=\"Telefonnummer\"]")
-
-	phoneInput.MustInput(phoneNumber)
-
-	passwordInput := page.MustElement("input[placeholder=\"Passwort\"]")
-	passwordInput.MustInput(password)
-
-	err = page.MustElementR("button", "Anmelden").Click(proto.InputMouseButtonLeft)
+	wait := page.WaitNavigation(proto.PageLifecycleEventNameNetworkAlmostIdle)
+	err = element.Click(proto.InputMouseButtonLeft)
 	if err != nil {
 		return nil, err
 	}
 
-	page.MustWaitNavigation()
+	wait()
+
+	phoneInput, err := page.Element("input[placeholder=\"Telefonnummer\"]")
+	if err != nil {
+		return nil, err
+	}
+
+	err = phoneInput.Input(phoneNumber)
+	if err != nil {
+		return nil, err
+	}
+
+	passwordInput, err := page.Element("input[placeholder=\"Passwort\"]")
+	if err != nil {
+		return nil, err
+	}
+
+	err = passwordInput.Input(password)
+	if err != nil {
+		return nil, err
+	}
+
+	loginButton, err := page.ElementR("button", "Anmelden")
+	if err != nil {
+		return nil, err
+	}
+
+	wait = page.WaitNavigation(proto.PageLifecycleEventNameNetworkAlmostIdle)
+
+	err = loginButton.Click(proto.InputMouseButtonLeft)
+	if err != nil {
+		return nil, err
+	}
+
+	wait()
 
 	return page, nil
 
@@ -55,19 +90,34 @@ func Login(phoneNumber, password string, page *rod.Page) (*rod.Page, error) {
 
 func SearchForRestaurant(name string, page *rod.Page) (*rod.Page, error) {
 
-	searchInput := page.MustElement("input#search-restaurant-input")
-	searchInput.MustInput(name)
-	searchInput.MustPress(input.Enter)
+	searchInput, err := page.Element("input#search-restaurant-input")
+	if err != nil {
+		return nil, err
+	}
+	err = searchInput.Input(name)
+	if err != nil {
+		return nil, err
+	}
+	err = searchInput.Press(input.Enter)
+	if err != nil {
+		return nil, err
+	}
 
-	resterauntElement := page.MustElement("#restaurantList a")
+	resterauntElement, err := page.Element("#restaurantList a")
+	if err != nil {
+		return nil, err
+	}
 
-	err := resterauntElement.Click(proto.InputMouseButtonLeft)
+	err = resterauntElement.Click(proto.InputMouseButtonLeft)
 
 	if err != nil {
 		return nil, err
 	}
 
-	page.MustWaitLoad()
+	err = page.WaitLoad()
+	if err != nil {
+		return nil, err
+	}
 
 	return page, nil
 }
@@ -82,15 +132,22 @@ func SelectProduct(name string, variants []string, page *rod.Page) error {
 
 	for _, variant := range variants {
 		regex := fmt.Sprintf("/\\s*%s\\s*/gmi", variant)
-		element = page.MustElementR("#productModalForm div.text-black", regex)
+		element, err = page.ElementR("#productModalForm div.text-black", regex)
+		if err != nil {
+			return err
+		}
 		err := element.Click(proto.InputMouseButtonLeft)
 		if err != nil {
 			return err
 		}
 	}
 
-	page.MustElement("input[type=\"submit\"]").MustClick()
+	submitBtn, err := page.Element("input[type=\"submit\"]")
+	if err != nil {
+		return err
+	}
 
+	err = submitBtn.Click(proto.InputMouseButtonLeft)
 	if err != nil {
 		return err
 	}
@@ -104,7 +161,11 @@ func GetOpeningTimes(page *rod.Page) (datastructures.Weekdays, error) {
 
 	page.MustScreenshot("screenshot.png")
 
-	openingTimesElements := page.MustElements("div#openhours li")
+	openingTimesElements, err := page.Elements("div#openhours li")
+
+	if err != nil {
+		return weekdays, err
+	}
 
 	weekdays.Monday = openingTimesElements[0].MustText()
 	weekdays.Tuesday = openingTimesElements[1].MustText()
@@ -117,6 +178,13 @@ func GetOpeningTimes(page *rod.Page) (datastructures.Weekdays, error) {
 	return weekdays, nil
 }
 
-func GetUrl(page *rod.Page) string {
-	return page.MustEval("window.location.href").Str()
+func GetUrl(page *rod.Page) (*string, error) {
+	rem, err := page.Eval("window.location.href")
+	if err != nil {
+		return nil, err
+	}
+
+	res := rem.Value.Str()
+
+	return &res, nil
 }
