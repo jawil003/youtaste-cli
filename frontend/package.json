@@ -5,6 +5,6 @@
   ],
   "scripts": {
     "start": "yarn workspace @tastyfood/ui run start",
-    "build": "yarn workspace @tastyfood/ui run build"
+    "build": "BUILD_PATH='../../dist' yarn workspace @tastyfood/ui run build"
   }
 }
