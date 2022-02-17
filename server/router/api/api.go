@@ -2,6 +2,7 @@ package api
 
 import (
 	"bs-to-scrapper/server/models"
+	"bs-to-scrapper/server/observer"
 	"bs-to-scrapper/server/router/api/order"
 	"bs-to-scrapper/server/router/api/poll"
 	"bs-to-scrapper/server/services"
@@ -55,15 +56,17 @@ func Register(r *gin.Engine) {
 
 	timer := services.Timer()
 
+	hub := observer.NewProgressObserverHub()
+
 	RegisterUser(api)
 
-	order.RegisterOrders(api)
+	order.RegisterOrders(api, timer)
 
 	poll.RegisterPolls(api)
 
-	RegisterAdmin(api, timer)
+	RegisterAdmin(api, timer, hub)
 
-	RegisterProgress(api)
+	RegisterProgress(api, hub)
 
 	RegisterScrapper(api)
 

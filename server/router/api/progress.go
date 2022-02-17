@@ -3,7 +3,6 @@ package api
 import (
 	"bs-to-scrapper/server/observer"
 	"bs-to-scrapper/server/services"
-	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -17,9 +16,7 @@ var wsupgrader = &websocket.Upgrader{
 	},
 }
 
-func RegisterProgress(api *gin.RouterGroup) {
-
-	hub := observer.NewProgressObserverHub()
+func RegisterProgress(api *gin.RouterGroup, hub *observer.ProgressObserverHub) {
 
 	go hub.Run()
 
@@ -51,28 +48,6 @@ func RegisterProgress(api *gin.RouterGroup) {
 
 			go client.ReadPump()
 			go client.WritePump()
-
-		})
-
-		progress.PUT("", func(context *gin.Context) {
-			treeService := services.DB().ProgressTree()
-
-			if treeService.Tree.Root.Steps == nil || len(treeService.Tree.Root.Steps) == 0 {
-				context.JSON(400, gin.H{"error": errors.New("no steps left").Error()})
-				return
-			}
-
-			tree, err := treeService.Next(treeService.Tree.Root.Steps[0].Value)
-
-			if err != nil {
-				return
-			}
-
-			hub.SendAll(tree.Root.Value)
-
-			context.JSON(200, gin.H{
-				"progress": tree.Root.Value,
-			})
 
 		})
 	}

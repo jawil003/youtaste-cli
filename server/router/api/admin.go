@@ -3,6 +3,7 @@ package api
 import (
 	"bs-to-scrapper/server/datastructures/progress"
 	"bs-to-scrapper/server/models"
+	"bs-to-scrapper/server/observer"
 	"bs-to-scrapper/server/services"
 	"bs-to-scrapper/server/services/db"
 	"github.com/gin-gonic/gin"
@@ -70,7 +71,7 @@ func initializeVariables(timerService *services.TimerService) {
 	timerService.Start(timeResolved)
 }
 
-func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService) {
+func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub *observer.ProgressObserverHub) {
 
 	initializeVariables(timerService)
 
@@ -247,6 +248,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService) {
 				return
 			}
 
+			hub.SendAll(next.Root.Value)
 			context.JSON(200, gin.H{
 				"status": next.Root.Value,
 			})
