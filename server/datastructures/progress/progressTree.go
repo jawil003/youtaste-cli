@@ -3,15 +3,15 @@ package progress
 import "bs-to-scrapper/server/datastructures"
 
 const (
-	adminNew         = "ADMIN_NEW"
-	chooseRestaurant = "CHOOSE_RESTAURANT"
-	chooseMeals      = "CHOOSE_MEALS"
-	done             = "DONE"
+	AdminNew         = "ADMIN_NEW"
+	ChooseRestaurant = "CHOOSE_RESTAURANT"
+	ChooseMeals      = "CHOOSE_MEALS"
+	Done             = "DONE"
 )
 
 func ProgressTree() *datastructures.Tree {
 
-	tree := &datastructures.Tree{Root: &datastructures.Node{Value: adminNew, Steps: []*datastructures.Node{{Value: chooseRestaurant, Steps: []*datastructures.Node{{Value: chooseMeals, Steps: []*datastructures.Node{{Value: done}}}}}}}}
+	tree := &datastructures.Tree{Root: &datastructures.Node{Value: AdminNew, Steps: []*datastructures.Node{{Value: ChooseRestaurant, Steps: []*datastructures.Node{{Value: ChooseMeals, Steps: []*datastructures.Node{{Value: Done}}}}}}}}
 
 	return tree
 }

@@ -1,15 +1,17 @@
 package api
 
 import (
+	"bs-to-scrapper/server/datastructures/progress"
 	"bs-to-scrapper/server/models"
 	"bs-to-scrapper/server/services"
 	"bs-to-scrapper/server/services/db"
 	"github.com/gin-gonic/gin"
 	"github.com/thoas/go-funk"
 	"os"
+	"time"
 )
 
-func initializeVariables() {
+func initializeVariables(timerService *services.TimerService) {
 	ordertime, err := services.DB().Settings().Get(db.ORDER_TIME)
 	if err != nil {
 		return
@@ -59,11 +61,18 @@ func initializeVariables() {
 		_ = os.Setenv(db.LIEFERANDO_PASSWORD, lieferandoPassword)
 
 	}
+
+	timeResolved, err := time.Parse(time.RFC3339, ordertime)
+	if err != nil {
+		return
+	}
+
+	timerService.Start(timeResolved)
 }
 
-func RegisterAdmin(r *gin.RouterGroup) {
+func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService) {
 
-	initializeVariables()
+	initializeVariables(timerService)
 
 	admin := r.Group("/admin")
 
@@ -102,9 +111,18 @@ func RegisterAdmin(r *gin.RouterGroup) {
 
 	admin.POST("/set", func(context *gin.Context) {
 
-		var createTimerRequest *models.CreateAdminTimerRequest
+		progressTree := services.DB().ProgressTree()
 
-		err := context.BindJSON(createTimerRequest)
+		if progressTree.Tree.Root.Value != progress.AdminNew {
+			context.JSON(400, gin.H{
+				"error": "progress tree is not in admin new state",
+			})
+			return
+		}
+
+		createTimerRequest := models.CreateAdminTimerRequest{}
+
+		err := context.BindJSON(&createTimerRequest)
 		if err != nil {
 			context.JSON(400, gin.H{
 				"error": err.Error(),
@@ -118,7 +136,7 @@ func RegisterAdmin(r *gin.RouterGroup) {
 			})
 			return
 		}
-		err = os.Setenv(db.ORDER_TIME, createTimerRequest.OrderTime.String())
+		err = os.Setenv(db.ORDER_TIME, createTimerRequest.OrderTime.Format(time.RFC3339))
 		if err != nil {
 			context.JSON(400, gin.H{
 				"error": err.Error(),
@@ -193,31 +211,10 @@ func RegisterAdmin(r *gin.RouterGroup) {
 			return
 		}
 
-		context.JSON(200, gin.H{
-			"message": "success",
-		})
-	})
+		_, err = progressTree.Next(progressTree.Tree.Root.Steps[0].Value)
 
-	admin.POST("/lieferando", func(context *gin.Context) {
+		timerService.Start(createTimerRequest.OrderTime)
 
-		var createLieferandoRequest *models.CreateProviderLoginRequest
-
-		err := context.BindJSON(createLieferandoRequest)
-		if err != nil {
-			context.JSON(400, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
-
-		err = os.Setenv("LIEFERANDO_USERNAME", createLieferandoRequest.Username)
-		if err != nil {
-			context.JSON(400, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
-		err = os.Setenv("LIEFERANDO_PASSWORD", createLieferandoRequest.Password)
 		if err != nil {
 			context.JSON(400, gin.H{
 				"error": err.Error(),
@@ -230,34 +227,37 @@ func RegisterAdmin(r *gin.RouterGroup) {
 		})
 	})
 
-	admin.POST("/youtaste", func(context *gin.Context) {
-		var createLieferandoRequest *models.CreateProviderLoginRequest
+	admin.PUT("/next", func(context *gin.Context) {
 
-		err := context.BindJSON(createLieferandoRequest)
-		if err != nil {
+		tree := services.DB().ProgressTree()
+
+		if tree.Tree.Root.Value == progress.AdminNew {
 			context.JSON(400, gin.H{
-				"error": err.Error(),
+				"error": "admin is only changeable by providing config",
 			})
 			return
 		}
 
-		err = os.Setenv("YOUTASTE_PHONE", createLieferandoRequest.Phone)
-		if err != nil {
-			context.JSON(400, gin.H{
-				"error": err.Error(),
+		if len(tree.Tree.Root.Steps) > 0 {
+			next, err := tree.Next(tree.Tree.Root.Steps[0].Value)
+			if err != nil {
+				context.JSON(400, gin.H{
+					"error": err.Error(),
+				})
+				return
+			}
+
+			context.JSON(200, gin.H{
+				"status": next.Root.Value,
 			})
 			return
-		}
-		err = os.Setenv("YOUTASTE_PASSWORD", createLieferandoRequest.Password)
-		if err != nil {
+
+		} else {
 			context.JSON(400, gin.H{
-				"error": err.Error(),
+				"error": "end state reached",
 			})
 			return
 		}
 
-		context.JSON(200, gin.H{
-			"message": "success",
-		})
 	})
 }

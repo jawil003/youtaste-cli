@@ -10,8 +10,21 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import "yup-phone";
 import { useTranslation } from "react-i18next";
+import AdminService from "../../services/admin.service";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
-export interface Props {}
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+export interface FormData {
+  orderDatetime: string;
+  checkOpen: boolean;
+  youtastePhone: string;
+  youtastePassword: string;
+  lieferandoUsername: string;
+  lieferandoPassword: string;
+}
 
 const schema = yup.object({
   youtastePhone: yup
@@ -28,8 +41,8 @@ const schema = yup.object({
  * @author Jannik Will
  * @version 0.1
  */
-export const AdminNewView: React.FC<Props> = () => {
-  const methods = useForm({
+export const AdminNewView: React.FC = () => {
+  const methods = useForm<FormData>({
     defaultValues: {
       orderDatetime: dayjs().add(30, "minutes").format("YYYY-MM-DDTHH:mm:ss"),
       checkOpen: false,
@@ -37,7 +50,19 @@ export const AdminNewView: React.FC<Props> = () => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data: any) => {};
+  const onSubmit = async (data: FormData) => {
+    const adminService = new AdminService();
+
+    await adminService.setConfig({
+      lieferandoPassword: data.lieferandoPassword,
+      lieferandoUsername: data.lieferandoUsername,
+      youtastePassword: data.youtastePassword,
+      youtastePhone: data.youtastePhone,
+      orderTime: dayjs(data.orderDatetime).toDate(),
+    });
+
+    methods.reset();
+  };
 
   const { t } = useTranslation("admin-new");
 
@@ -75,7 +100,7 @@ export const AdminNewView: React.FC<Props> = () => {
             </div>
             <div>
               <h2 className="text-lg font-medium mt-2 mb-2">
-                Lieferando Login
+                {t("lieferandoLogin")}
               </h2>
               <div className="flex gap-x-4">
                 <Input

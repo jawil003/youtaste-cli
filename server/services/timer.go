@@ -4,21 +4,21 @@ import "time"
 
 type TimerService struct {
 	startTime         *time.Time
-	millisecondsToRun int64
+	millisecondsToRun *time.Time
 }
 
-func (t *TimerService) Start(millisecondsToRun int64) {
+func (t *TimerService) Start(dateTilRun time.Time) {
 	newTimer := time.Now()
 	t.startTime = &newTimer
-	t.millisecondsToRun = millisecondsToRun
+	t.millisecondsToRun = &dateTilRun
 }
 
 func (t *TimerService) IsRunning() bool {
-	return time.Since(*t.startTime).Milliseconds() <= t.millisecondsToRun
+	return t.millisecondsToRun.Sub(*t.startTime).Milliseconds() > 0
 }
 
 func (t TimerService) IsActive() bool {
-	return t.startTime != nil && t.millisecondsToRun > 0
+	return t.startTime != nil && t.millisecondsToRun != nil
 }
 
 func (t *TimerService) GetRemainingTime() int64 {
@@ -26,7 +26,7 @@ func (t *TimerService) GetRemainingTime() int64 {
 		return 0
 	}
 
-	remainingTime := t.startTime.Add(time.Millisecond * time.Duration(t.millisecondsToRun)).Sub(time.Now()).Milliseconds()
+	remainingTime := t.millisecondsToRun.Sub(*t.startTime).Milliseconds()
 
 	if remainingTime > 0 {
 		return remainingTime
@@ -37,5 +37,5 @@ func (t *TimerService) GetRemainingTime() int64 {
 
 func (t *TimerService) Clear() {
 	t.startTime = nil
-	t.millisecondsToRun = 0
+	t.millisecondsToRun = nil
 }

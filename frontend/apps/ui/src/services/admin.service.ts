@@ -1,31 +1,9 @@
 import { backend } from "../config/backend";
+import { BackendConfig } from "../types/config.type";
 
 export default class AdminService {
-  public async setTimeout(value: { pollMs: number; orderMs: number }) {
-    return (
-      await backend.post("/api/admin/timer", {
-        pollTime: value.pollMs,
-        orderTime: value.orderMs,
-      })
-    )?.data;
-  }
-
-  public async setLieferandoLogin(username: string, password: string) {
-    return (
-      await backend.post("/api/admin/lieferando", {
-        username,
-        password,
-      })
-    )?.data;
-  }
-
-  public async setYouTasteLogin(phone: string, password: string) {
-    return (
-      await backend.post("/api/admin/youtaste", {
-        phone,
-        password,
-      })
-    )?.data;
+  public async setConfig(value: BackendConfig) {
+    return (await backend.post("/api/admin/set", value))?.data;
   }
 
   public async isAdmin() {
@@ -33,5 +11,9 @@ export default class AdminService {
       (await backend.get<{ isAdmin: boolean }>("/api/admin/isAdmin"))?.data
         ?.isAdmin ?? false
     );
+  }
+
+  public async next() {
+    return await backend.put("/api/admin/next");
   }
 }

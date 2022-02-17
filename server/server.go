@@ -42,7 +42,7 @@ func main() {
 		corsUrl := strings.Split(corsUrlConn, ",")
 
 		r.Use(cors.New(cors.Config{
-			AllowMethods:     []string{"POST", "GET", "DELETE"},
+			AllowMethods:     []string{"POST", "GET", "DELETE", "PUT"},
 			AllowHeaders:     []string{"Origin", "Content-Type", "X-Requested-With", "Accept"},
 			ExposeHeaders:    []string{"Content-Length", "Set-Cookie"},
 			AllowCredentials: true,

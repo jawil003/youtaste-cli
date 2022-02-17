@@ -8,6 +8,7 @@ import { usePolls } from "../hooks/polls.hook";
 import PollService from "../services/poll.service";
 import { useTranslation } from "react-i18next";
 import { useIsAdmin } from "../hooks/isAdmin.hook";
+import AdminService from "../services/admin.service";
 export interface Props {}
 
 /**
@@ -51,7 +52,10 @@ export const Poll: React.FC<Props> = () => {
         </Button>
         {isAdmin && (
           <Button
-            onClick={() => console.log("Clicked!")}
+            onClick={async () => {
+              const adminService = new AdminService();
+              await adminService.next();
+            }}
             className="bg-green-400 mt-2"
           >
             {t("endPoll")}

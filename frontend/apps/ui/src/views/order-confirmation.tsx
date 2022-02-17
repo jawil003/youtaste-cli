@@ -11,6 +11,7 @@ import OrderService from "../services/order.service";
 import { useTranslation } from "react-i18next";
 import { Timer } from "../components/timer/timer";
 import { useIsAdmin } from "../hooks/isAdmin.hook";
+import AdminService from "../services/admin.service";
 export interface Props {}
 
 /**
@@ -70,7 +71,10 @@ export const OrderConfirmation: React.FC<Props> = () => {
           </Button>
           {isAdmin && (
             <Button
-              onClick={() => console.log("Clicked!")}
+              onClick={async () => {
+                const adminService = new AdminService();
+                await adminService.next();
+              }}
               className="bg-green-400 mt-2"
             >
               {t("endPoll")}
