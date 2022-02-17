@@ -26,6 +26,8 @@ func (t *TimerService) GetRemainingTime() int64 {
 		return 0
 	}
 
+	//TODO: Fix logic to calc remaining time
+
 	remainingTime := t.millisecondsToRun.Sub(*t.startTime).Milliseconds()
 
 	if remainingTime > 0 {
