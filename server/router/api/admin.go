@@ -1,6 +1,8 @@
 package api
 
 import (
+	"bs-to-scrapper/scrapper/lieferando"
+	"bs-to-scrapper/scrapper/youtaste"
 	"bs-to-scrapper/server/datastructures/progress"
 	"bs-to-scrapper/server/models"
 	"bs-to-scrapper/server/observer"
@@ -13,53 +15,53 @@ import (
 )
 
 func initializeVariables(timerService *services.TimerService) {
-	ordertime, err := services.DB().Settings().Get(db.ORDER_TIME)
+	ordertime, err := services.DB().Settings().Get(db.OrderTime)
 	if err != nil {
 		return
 	}
 
 	if ordertime != "" {
-		_ = os.Setenv(db.ORDER_TIME, ordertime)
+		_ = os.Setenv(db.OrderTime, ordertime)
 
 	}
 
-	youtastePhone, err := services.DB().Settings().Get(db.YOUTASTE_PHONE)
+	youtastePhone, err := services.DB().Settings().Get(db.YoutastePhone)
 	if err != nil {
 		return
 	}
 
 	if youtastePhone != "" {
-		_ = os.Setenv(db.YOUTASTE_PHONE, youtastePhone)
+		_ = os.Setenv(db.YoutastePhone, youtastePhone)
 
 	}
 
-	youtastePassword, err := services.DB().Settings().Get(db.YOUTASTE_PASSWORD)
+	youtastePassword, err := services.DB().Settings().Get(db.YoutastePassword)
 	if err != nil {
 		return
 	}
 
 	if youtastePassword != "" {
-		_ = os.Setenv(db.YOUTASTE_PASSWORD, youtastePassword)
+		_ = os.Setenv(db.YoutastePassword, youtastePassword)
 
 	}
 
-	lieferandoUsername, err := services.DB().Settings().Get(db.LIEFERANDO_USERNAME)
+	lieferandoUsername, err := services.DB().Settings().Get(db.LieferandoUsername)
 	if err != nil {
 		return
 	}
 
 	if lieferandoUsername != "" {
-		_ = os.Setenv(db.LIEFERANDO_USERNAME, lieferandoUsername)
+		_ = os.Setenv(db.LieferandoUsername, lieferandoUsername)
 
 	}
 
-	lieferandoPassword, err := services.DB().Settings().Get(db.LIEFERANDO_PASSWORD)
+	lieferandoPassword, err := services.DB().Settings().Get(db.LieferandoPassword)
 	if err != nil {
 		return
 	}
 
 	if lieferandoPassword != "" {
-		_ = os.Setenv(db.LIEFERANDO_PASSWORD, lieferandoPassword)
+		_ = os.Setenv(db.LieferandoPassword, lieferandoPassword)
 
 	}
 
@@ -137,29 +139,14 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 			})
 			return
 		}
-		err = os.Setenv(db.ORDER_TIME, createTimerRequest.OrderTime.Format(time.RFC3339))
+		err = os.Setenv(db.OrderTime, createTimerRequest.OrderTime.Format(time.RFC3339))
 		if err != nil {
 			context.JSON(400, gin.H{
 				"error": err.Error(),
 			})
 			return
 		}
-		err = services.DB().Settings().Create(db.ORDER_TIME, createTimerRequest.OrderTime.String())
-		if err != nil {
-			context.JSON(400, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
-
-		err = os.Setenv(db.YOUTASTE_PHONE, createTimerRequest.YoutastePhone)
-		if err != nil {
-			context.JSON(400, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
-		err = services.DB().Settings().Create(db.YOUTASTE_PHONE, createTimerRequest.YoutastePhone)
+		err = services.DB().Settings().Create(db.OrderTime, createTimerRequest.OrderTime.String())
 		if err != nil {
 			context.JSON(400, gin.H{
 				"error": err.Error(),
@@ -167,29 +154,14 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 			return
 		}
 
-		err = os.Setenv(db.YOUTASTE_PASSWORD, createTimerRequest.YoutastePassword)
+		err = os.Setenv(db.YoutastePhone, createTimerRequest.YoutastePhone)
 		if err != nil {
 			context.JSON(400, gin.H{
 				"error": err.Error(),
 			})
 			return
 		}
-		err = services.DB().Settings().Create(db.YOUTASTE_PASSWORD, createTimerRequest.YoutastePassword)
-		if err != nil {
-			context.JSON(400, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
-
-		err = os.Setenv(db.LIEFERANDO_USERNAME, createTimerRequest.LieferandoUsername)
-		if err != nil {
-			context.JSON(400, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
-		err = services.DB().Settings().Create(db.LIEFERANDO_USERNAME, createTimerRequest.LieferandoUsername)
+		err = services.DB().Settings().Create(db.YoutastePhone, createTimerRequest.YoutastePhone)
 		if err != nil {
 			context.JSON(400, gin.H{
 				"error": err.Error(),
@@ -197,14 +169,44 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 			return
 		}
 
-		err = os.Setenv(db.LIEFERANDO_PASSWORD, createTimerRequest.LieferandoPassword)
+		err = os.Setenv(db.YoutastePassword, createTimerRequest.YoutastePassword)
 		if err != nil {
 			context.JSON(400, gin.H{
 				"error": err.Error(),
 			})
 			return
 		}
-		err = services.DB().Settings().Create(db.LIEFERANDO_PASSWORD, createTimerRequest.LieferandoPassword)
+		err = services.DB().Settings().Create(db.YoutastePassword, createTimerRequest.YoutastePassword)
+		if err != nil {
+			context.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		err = os.Setenv(db.LieferandoUsername, createTimerRequest.LieferandoUsername)
+		if err != nil {
+			context.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		err = services.DB().Settings().Create(db.LieferandoUsername, createTimerRequest.LieferandoUsername)
+		if err != nil {
+			context.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		err = os.Setenv(db.LieferandoPassword, createTimerRequest.LieferandoPassword)
+		if err != nil {
+			context.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		err = services.DB().Settings().Create(db.LieferandoPassword, createTimerRequest.LieferandoPassword)
 		if err != nil {
 			context.JSON(400, gin.H{
 				"error": err.Error(),
@@ -240,6 +242,31 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 		}
 
 		if len(tree.Tree.Root.Steps) > 0 {
+
+			switch tree.Tree.Root.Value {
+			case progress.ChooseRestaurant:
+				{
+					highestPoll, err := services.DB().Poll().PersistFinalResult()
+
+					if err != nil {
+						context.JSON(400, gin.H{
+							"error": err.Error(),
+						})
+						return
+					}
+
+					if highestPoll.Provider == "youtaste" {
+						go services.Scrapper().ScrapUrlAndOpeningTimes(youtaste.YoutasteScrapper{}, *highestPoll)
+
+					} else if highestPoll.Provider == "lieferando" {
+						go services.Scrapper().ScrapUrlAndOpeningTimes(lieferando.LieferandoScrapper{}, *highestPoll)
+					}
+
+					break
+				}
+
+			}
+
 			next, err := tree.Next(tree.Tree.Root.Steps[0].Value)
 			if err != nil {
 				context.JSON(400, gin.H{

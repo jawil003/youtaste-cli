@@ -144,3 +144,37 @@ func (_ PollService) GetAll() ([]models.PollWithCount, error) {
 
 	return pollsWithCount, nil
 }
+
+func (ps PollService) PersistFinalResult() (*models.PollWithCount, error) {
+	polls, err := ps.GetAll()
+
+	if err != nil {
+		return nil, err
+	}
+
+	var highestPoll *models.PollWithCount
+
+	for _, poll := range polls {
+		if highestPoll == nil {
+			highestPoll = &poll
+		} else {
+			if poll.Count > highestPoll.Count {
+				highestPoll = &poll
+			}
+		}
+	}
+
+	str, err := json.Marshal(highestPoll)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = SettingsService{}.Create(ChoosenRestaurant, string(str))
+	if err != nil {
+		return nil, err
+	}
+
+	return highestPoll, nil
+
+}

@@ -10,12 +10,14 @@ type SettingsService struct {
 }
 
 const (
-	ORDER_TIME          = "order_time"
-	YOUTASTE_PHONE      = "youtaste_phone"
-	YOUTASTE_PASSWORD   = "youtaste_password"
-	LIEFERANDO_USERNAME = "lieferando_username"
-	LIEFERANDO_PASSWORD = "lieferando_password"
-	POLL_ACTIVE         = "poll_active"
+	OrderTime          = "order_time"
+	YoutastePhone      = "youtaste_phone"
+	YoutastePassword   = "youtaste_password"
+	LieferandoUsername = "lieferando_username"
+	LieferandoPassword = "lieferando_password"
+	ChoosenRestaurant  = "choosen_restaurant"
+	RestaurantUrl      = "restaurant_url"
+	OpeningTimes       = "opening_times"
 )
 
 func (_ SettingsService) Create(key string, value string) error {

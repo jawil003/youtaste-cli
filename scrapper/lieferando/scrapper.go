@@ -1,11 +1,22 @@
 package lieferando
 
 import (
+	"bs-to-scrapper/server/datastructures"
+	"bs-to-scrapper/server/models"
+	"errors"
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/proto"
 )
 
-func OpenInNewBrowserAndJoinLieferando() (*rod.Page, error) {
+type LieferandoScrapper struct {
+	models.Scrapper
+}
+
+func (_ LieferandoScrapper) Login(_, _ string, page *rod.Page) (*rod.Page, error) {
+	return page, nil
+}
+
+func (_ LieferandoScrapper) OpenInNewBrowserAndJoin() (*rod.Page, error) {
 	browser := rod.New()
 
 	err := browser.Connect()
@@ -20,7 +31,7 @@ func OpenInNewBrowserAndJoinLieferando() (*rod.Page, error) {
 	return page, nil
 }
 
-func SearchForRestaurant(name string, page *rod.Page) (*rod.Page, error) {
+func (_ LieferandoScrapper) SearchForRestaurant(name string, page *rod.Page) (*rod.Page, error) {
 	element, err := page.Element("input[type=search]")
 	if err != nil {
 		return nil, err
@@ -51,7 +62,7 @@ func SearchForRestaurant(name string, page *rod.Page) (*rod.Page, error) {
 
 }
 
-func GetOpeningTimes(page *rod.Page) ([]string, error) {
+func (_ LieferandoScrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, error) {
 
 	button, err := page.Element("button[\"role=button\"][data-qa=\"restaurant-header-action-info\"]")
 	if err != nil {
@@ -76,16 +87,54 @@ func GetOpeningTimes(page *rod.Page) ([]string, error) {
 		return nil, err
 	}
 
-	var openingTimes []string
-
-	for _, element := range elements {
-		text, err := element.Text()
-		if err != nil {
-			return nil, err
-		}
-		openingTimes = append(openingTimes, text)
+	if len(elements) < 13 {
+		return nil, errors.New("no opening times found")
 	}
 
-	return openingTimes, nil
+	openingTimes := datastructures.Weekdays{}
+
+	openingTimes.Monday, err = elements[1].Text()
+
+	if err != nil {
+		return nil, err
+	}
+
+	openingTimes.Tuesday, err = elements[3].Text()
+
+	if err != nil {
+		return nil, err
+	}
+
+	openingTimes.Wednesday, err = elements[5].Text()
+
+	if err != nil {
+		return nil, err
+	}
+
+	openingTimes.Thursday, err = elements[7].Text()
+
+	if err != nil {
+		return nil, err
+	}
+
+	openingTimes.Friday, err = elements[9].Text()
+
+	if err != nil {
+		return nil, err
+	}
+
+	openingTimes.Saturday, err = elements[11].Text()
+
+	if err != nil {
+		return nil, err
+	}
+
+	openingTimes.Sunday, err = elements[13].Text()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &openingTimes, nil
 
 }

@@ -21,3 +21,7 @@ func User() UserService {
 func Timer() *TimerService {
 	return &TimerService{}
 }
+
+func Scrapper() *ScrapperService {
+	return &ScrapperService{}
+}

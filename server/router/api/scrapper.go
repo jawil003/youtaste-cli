@@ -23,7 +23,7 @@ func RegisterScrapper(ap *gin.RouterGroup) {
 
 			page = page.Timeout(2 * time.Second)
 
-			page, err = youtaste.Login(os.Getenv(db.YOUTASTE_PHONE), os.Getenv(db.YOUTASTE_PASSWORD), page)
+			page, err = youtaste.Login(os.Getenv(db.YoutastePhone), os.Getenv(db.YoutastePassword), page)
 
 			if err != nil {
 
@@ -72,7 +72,7 @@ func RegisterScrapper(ap *gin.RouterGroup) {
 				return
 			}
 
-			page, err = youtaste.Login(os.Getenv(db.YOUTASTE_PHONE), os.Getenv(db.YOUTASTE_PASSWORD), page)
+			page, err = youtaste.Login(os.Getenv(db.YoutastePhone), os.Getenv(db.YoutastePassword), page)
 
 			if err != nil {
 				context.JSON(500, gin.H{
