@@ -231,7 +231,9 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 			return
 		}
 
-		_, err = progressTree.Next(progressTree.Tree.Root.Steps[0].Value)
+		next, err := progressTree.Next(progressTree.Tree.Root.Steps[0].Value)
+
+		hub.SendAll(next.Root.Value)
 
 		timerService.Start(createTimerRequest.OrderTime)
 

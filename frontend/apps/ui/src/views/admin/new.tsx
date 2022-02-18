@@ -13,6 +13,8 @@ import { useTranslation } from "react-i18next";
 import AdminService from "../../services/admin.service";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import { Navigate, useNavigate } from "react-router-dom";
+import { Routes } from "../../enums/routes.enum";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -50,6 +52,8 @@ export const AdminNewView: React.FC = () => {
     resolver: yupResolver(schema),
   });
 
+  const navigate = useNavigate();
+
   const onSubmit = async (data: FormData) => {
     const adminService = new AdminService();
 
@@ -62,6 +66,8 @@ export const AdminNewView: React.FC = () => {
     });
 
     methods.reset();
+
+    navigate(Routes.POLLS);
   };
 
   const { t } = useTranslation("admin-new");

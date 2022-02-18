@@ -61,5 +61,46 @@ test("Running trough Process as Admin", async ({ page }) => {
     .click();
 
   // Click button:has-text("Submit")
-  await page.locator('button:has-text("Submit")').click();
+  await Promise.all([
+    page.waitForNavigation(/*{ url: 'http://localhost:3000/app/poll' }*/),
+    page.locator('button:has-text("Submit")').click(),
+  ]);
+
+  // Click text=Ein weiteres Restaurant hinzufügen
+  await page.locator("text=Ein weiteres Restaurant hinzufügen").click();
+  // Click [placeholder="Restaurant\ am\ Markt"]
+  await page.locator('[placeholder="Restaurant\\ am\\ Markt"]').click();
+  // Fill [placeholder="Restaurant\ am\ Markt"]
+  await page
+    .locator('[placeholder="Restaurant\\ am\\ Markt"]')
+    .fill("Resteraunt am Markt");
+  // Click #modal button:has-text("Restaurant hinzufügen")
+  await page.locator('#modal button:has-text("Restaurant hinzufügen")').click();
+  // Click text=Umfrage beenden
+  await Promise.all([
+    page.waitForNavigation(/*{ url: 'http://localhost:3000/app/confirm' }*/),
+    page.locator("text=Umfrage beenden").click(),
+  ]);
+  // Click text=Bestellung hinzufügen
+  await page.locator("text=Bestellung hinzufügen").click();
+  // Click [placeholder="Pizza\ Cipola"]
+  await page.locator('[placeholder="Pizza\\ Cipola"]').click();
+  // Fill [placeholder="Pizza\ Cipola"]
+  await page.locator('[placeholder="Pizza\\ Cipola"]').fill("Pizza Cipola");
+  // Press Tab
+  await page.locator('[placeholder="Pizza\\ Cipola"]').press("Tab");
+  // Fill [placeholder="Groß"]
+  await page.locator('[placeholder="Groß"]').fill("Normal");
+  // Click text=Mahlzeit*VarianteBestellung hinzufügen >> button >> nth=0
+  await page
+    .locator("text=Mahlzeit*VarianteBestellung hinzufügen >> button")
+    .first()
+    .click();
+  // Click #modal button:has-text("Bestellung hinzufügen")
+  await page.locator('#modal button:has-text("Bestellung hinzufügen")').click();
+  // Click text=Bestellzeit beenden
+  await Promise.all([
+    page.waitForNavigation(/*{ url: 'http://localhost:3000/app/on-the-way' }*/),
+    page.locator("text=Bestellzeit beenden").click(),
+  ]);
 });
