@@ -116,12 +116,17 @@ func (_ PollService) GetAll() ([]models.PollWithCount, error) {
 
 	err = db.View(func(tx *bolt.Tx) error {
 		bucketPollsCount := tx.Bucket([]byte("polls_count"))
+		bucketPollsByProvider := tx.Bucket([]byte("polls_provider"))
 
 		cursor := bucketPollsCount.Cursor()
 
 		for k, v := cursor.First(); k != nil; k, v = cursor.Next() {
+
+			provider := bucketPollsByProvider.Get(k)
+
 			poll := models.Poll{
 				RestaurantName: string(k),
+				Provider:       string(provider),
 			}
 
 			stringCOnvInt, err := strconv.Atoi(string(v))

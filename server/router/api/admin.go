@@ -65,6 +65,7 @@ func initializeVariables(timerService *services.TimerService) {
 
 	}
 
+	//TODO: Time Parsing got wrong
 	timeResolved, err := time.Parse(time.RFC3339, ordertime)
 	if err != nil {
 		return

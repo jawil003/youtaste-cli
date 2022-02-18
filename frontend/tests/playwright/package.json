@@ -5,11 +5,11 @@
   "scripts": {
     "codegen": "playwright codegen http://localhost:3000/app",
     "run": "playwright test",
-    "run:headed": "playwright test --headed",
+    "run:headed": "playwright test --headed --debug",
     "run:chrome": "playwright test --project chromium",
-    "run:chrome-headed": "playwright test --project chromium --headed",
+    "run:chrome-headed": "playwright test --project chromium --headed --debug",
     "run:firefox": "playwright test --project firefox",
-    "run:firefox-headed": "playwright test --project firefox --headed",
+    "run:firefox-headed": "playwright test --project firefox --headed --debug",
     "show-report": "playwright show-report",
     "show-trace": "playwright show-trace"
   },
