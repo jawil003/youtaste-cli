@@ -23,7 +23,7 @@ func (t *TimerService) GetRemainingTime() int64 {
 		return 0
 	}
 
-	remainingTime := time.Since(*t.endTime).Milliseconds()
+	remainingTime := t.endTime.Sub(time.Now()).Milliseconds()
 
 	if remainingTime > 0 {
 		return remainingTime

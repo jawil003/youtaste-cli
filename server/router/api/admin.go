@@ -65,13 +65,15 @@ func initializeVariables(timerService *services.TimerService) {
 
 	}
 
-	//TODO: Time Parsing got wrong
-	timeResolved, err := time.Parse(time.RFC3339, ordertime)
-	if err != nil {
-		return
-	}
+	if ordertime != "" {
 
-	timerService.Start(timeResolved)
+		timeResolved, err := time.Parse(time.RFC3339, ordertime)
+		if err != nil {
+			return
+		}
+
+		timerService.Start(timeResolved)
+	}
 
 	url, err := services.DB().Settings().Get(db.RestaurantUrl)
 	if err != nil {
@@ -164,7 +166,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 			})
 			return
 		}
-		err = services.DB().Settings().Create(db.OrderTime, createTimerRequest.OrderTime.String())
+		err = services.DB().Settings().Create(db.OrderTime, createTimerRequest.OrderTime.Format(time.RFC3339))
 		if err != nil {
 			context.JSON(400, gin.H{
 				"error": err.Error(),
