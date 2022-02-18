@@ -71,11 +71,12 @@ export const OrderConfirmation: React.FC<Props> = () => {
           </Button>
           {isAdmin && (
             <Button
+              color="green"
               onClick={async () => {
                 const adminService = new AdminService();
                 await adminService.next();
               }}
-              className="bg-green-400 mt-2"
+              className="mt-2"
             >
               {t("endPoll")}
             </Button>
