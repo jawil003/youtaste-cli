@@ -71,6 +71,23 @@ func initializeVariables(timerService *services.TimerService) {
 	}
 
 	timerService.Start(timeResolved)
+
+	url, err := services.DB().Settings().Get(db.RestaurantUrl)
+	if err != nil {
+		return
+	}
+
+	if url != "" {
+		_ = os.Setenv(db.RestaurantUrl, url)
+	}
+
+	openingTimes, err := services.DB().Settings().Get(db.OpeningTimes)
+	if err != nil {
+		return
+	}
+	if openingTimes != "" {
+		_ = os.Setenv(db.OpeningTimes, openingTimes)
+	}
 }
 
 func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub *observer.ProgressObserverHub) {
