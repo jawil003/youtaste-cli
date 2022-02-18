@@ -3,32 +3,27 @@ package services
 import "time"
 
 type TimerService struct {
-	startTime         *time.Time
-	millisecondsToRun *time.Time
+	endTime *time.Time
 }
 
 func (t *TimerService) Start(dateTilRun time.Time) {
-	newTimer := time.Now()
-	t.startTime = &newTimer
-	t.millisecondsToRun = &dateTilRun
+	t.endTime = &dateTilRun
 }
 
 func (t *TimerService) IsRunning() bool {
-	return t.millisecondsToRun.Sub(*t.startTime).Milliseconds() > 0
+	return t.endTime.Sub(*t.endTime).Milliseconds() > 0
 }
 
 func (t TimerService) IsActive() bool {
-	return t.startTime != nil && t.millisecondsToRun != nil
+	return t.endTime != nil
 }
 
 func (t *TimerService) GetRemainingTime() int64 {
-	if t == nil || t.startTime == nil {
+	if t == nil || t.endTime == nil {
 		return 0
 	}
 
-	//TODO: Fix logic to calc remaining time
-
-	remainingTime := t.millisecondsToRun.Sub(*t.startTime).Milliseconds()
+	remainingTime := time.Since(*t.endTime).Milliseconds()
 
 	if remainingTime > 0 {
 		return remainingTime
@@ -38,6 +33,5 @@ func (t *TimerService) GetRemainingTime() int64 {
 }
 
 func (t *TimerService) Clear() {
-	t.startTime = nil
-	t.millisecondsToRun = nil
+	t.endTime = nil
 }
