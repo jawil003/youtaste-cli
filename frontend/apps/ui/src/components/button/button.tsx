@@ -6,6 +6,8 @@ export interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary";
 }
 
+//TODO: Check the way the bg color is generated (not good working with tailwind)
+
 /**
  * An Button React Component.
  * @author Jannik Will
