@@ -1,6 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { Button } from "../components/button/button";
 import { ReactComponent as DeliveryGuy } from "../assets/delivery-animate.svg";
 import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
@@ -27,9 +25,9 @@ export const OrderOnTheWayView: React.FC<Props> = () => {
           <p className="font-light text-xl text-gray-800 mt-4">
             {t("moreInformation")}
           </p>
-          <Link to={"/"} className="ml-0 mt-8">
+          {/*<Link to={"/"} className="ml-0 mt-8">
             <Button>{t("moreInfosButton")}</Button>
-          </Link>
+  </Link>*/}
         </div>
       </div>
       <div className="block flex-1 mx-auto mt-6 md:mt-0 relative">
