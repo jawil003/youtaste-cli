@@ -1,3 +1,6 @@
 {
-  "compilerOptions": { "baseUrl": ".", "paths": { "ui": ["apps/ui/src"] } }
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": { "@tastyfood/ui": ["apps/ui/src"] }
+  }
 }

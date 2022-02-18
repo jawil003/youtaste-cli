@@ -1,5 +1,9 @@
 import type { PlaywrightTestConfig } from "@playwright/test";
 import { devices } from "@playwright/test";
+import * as dotenv from "dotenv";
+import * as path from "path";
+
+const result = dotenv.config({ path: path.join(__dirname, "/.env") });
 
 const config: PlaywrightTestConfig = {
   testDir: "./src",
@@ -16,6 +20,13 @@ const config: PlaywrightTestConfig = {
   workers: process.env.CI ? 1 : undefined,
 
   reporter: "html",
+
+  webServer: {
+    command: "cd ../.. && npm run start",
+    port: 3000,
+    timeout: 120 * 1000,
+    reuseExistingServer: !process.env.CI,
+  },
 
   use: {
     video: { mode: "on", size: { width: 1920, height: 1080 } },
