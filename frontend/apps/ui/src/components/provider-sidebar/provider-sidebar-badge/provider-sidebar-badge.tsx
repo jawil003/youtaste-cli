@@ -1,9 +1,11 @@
 import React from "react";
 import { ReactComponent as LieferandoLogo } from "../../../assets/lieferandoat-small.svg";
 import youtasteImg from "../../../assets/youtaste-white-logo.png";
+import { Spinner } from "../../spinner/spinner";
 
 export interface Props {
   url: string;
+  pending?: boolean;
 }
 
 /**
@@ -11,7 +13,7 @@ export interface Props {
  * @author Jannik Will
  * @version 0.1
  */
-export const ProviderSidebarBadge: React.FC<Props> = ({ url }) => {
+export const ProviderSidebarBadge: React.FC<Props> = ({ url, pending }) => {
   if (url.includes("lieferando")) {
     return (
       <a
@@ -20,6 +22,7 @@ export const ProviderSidebarBadge: React.FC<Props> = ({ url }) => {
         rel="noopener noreferrer"
         className="rounded-l-lg bg-orange-300 p-2 w-full flex items-center justify-center"
       >
+        {pending && <Spinner />}
         <LieferandoLogo width={40} />
       </a>
     );
@@ -36,3 +39,5 @@ export const ProviderSidebarBadge: React.FC<Props> = ({ url }) => {
     );
   }
 };
+
+ProviderSidebarBadge.defaultProps = { pending: false };
