@@ -1,6 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { logger } from "../../config/logger";
+import useInterval from "../../hooks/interval.hook";
 import { useRestaurantUrl } from "../../hooks/restaurantUrl.hook";
+import { Spinner } from "../spinner/spinner";
 import { ProviderSidebarBadge } from "./provider-sidebar-badge/provider-sidebar-badge";
 
 export interface Props {}
@@ -13,21 +15,21 @@ export interface Props {}
 export const ProviderSidebarOrders: React.FC<Props> = () => {
   const { data: restaurant, refetch } = useRestaurantUrl();
 
-  useEffect(() => {
-    if (restaurant?.pending) {
-      window.setTimeout(async () => {
-        const res = await refetch();
-        logger.debug(
-          { old: restaurant, new: res },
-          "ProviderSidebarOrders: Refetched url"
-        );
-      }, 1000);
-    }
-  }, [restaurant?.pending, refetch, restaurant]);
+  useInterval(
+    async () => {
+      const res = await refetch();
+      logger.debug(
+        { old: restaurant, new: res },
+        "ProviderSidebarOrders: Refetched url"
+      );
+    },
+    restaurant?.pending ? 1000 : null
+  );
 
   return (
     <div className="absolute top-0 right-0 h-full flex items-center justify-center flex-col gap-y-2 z-50">
       <ProviderSidebarBadge url={restaurant?.url ?? ""} />
+      {restaurant?.pending && <Spinner />}
     </div>
   );
 };
