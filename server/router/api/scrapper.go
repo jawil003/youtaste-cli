@@ -52,17 +52,17 @@ func RegisterScrapper(ap *gin.RouterGroup) {
 
 				switch highestPoll.Provider {
 				case "youtaste":
-					res = "https://www.youtaste.de"
+					res = "https://www.youtaste.com"
 				case "lieferando":
-					res = "https://www.lieferando.com"
+					res = "https://www.lieferando.de"
 				}
 
-				context.JSON(200, gin.H{"url": res, "pending": true})
+				context.JSON(200, gin.H{"url": res, "pending": true, "provider": highestPoll.Provider})
 				return
 
 			}
 
-			context.JSON(200, gin.H{"url": res, "pending": false})
+			context.JSON(200, gin.H{"url": res, "pending": false, "provider": highestPoll.Provider})
 
 		})
 	}

@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { Timer } from "../components/timer/timer";
 import { useIsAdmin } from "../hooks/isAdmin.hook";
 import AdminService from "../services/admin.service";
+import { ProviderSidebarOrders } from "../components/provider-sidebar/provider-sidebar-orders";
 export interface Props {}
 
 /**
@@ -35,6 +36,7 @@ export const OrderConfirmation: React.FC<Props> = () => {
         <title>{t("headline")} | TastyFood</title>
       </Helmet>
       <div className="flex items-center justify-center w-full h-full">
+        <ProviderSidebarOrders />
         <Timer />
         <OrderList
           headline={t("headline")}
