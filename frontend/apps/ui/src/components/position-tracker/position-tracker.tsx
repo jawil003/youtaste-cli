@@ -61,7 +61,7 @@ export const PositionTracker: React.FC<Props> = ({ items, stateFactory }) => {
         const { color, icon } = resolveIconAndColor(elementState);
 
         return (
-          <li className="mb-10 ml-6">
+          <li className="mb-10 ml-6" key={href}>
             <span
               className={`flex absolute -left-3 justify-center items-center w-6 h-6 ${color} rounded-full ring-8 ring-white`}
             >
