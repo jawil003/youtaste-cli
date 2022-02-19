@@ -2,6 +2,8 @@ package api
 
 import (
 	"bs-to-scrapper/server/datastructures"
+	"bs-to-scrapper/server/models"
+	"bs-to-scrapper/server/services"
 	"bs-to-scrapper/server/services/db"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
@@ -29,9 +31,38 @@ func RegisterScrapper(ap *gin.RouterGroup) {
 
 		scrapper.GET("/url", func(context *gin.Context) {
 
+			restaurant, err := services.DB().Settings().Get(db.ChoosenRestaurant)
+
+			if err != nil {
+				context.JSON(400, gin.H{"error": err.Error()})
+				return
+			}
+
+			var highestPoll *models.PollWithCount
+
+			err = json.Unmarshal([]byte(restaurant), &highestPoll)
+			if err != nil {
+				context.JSON(400, gin.H{"error": err.Error()})
+				return
+			}
+
 			res := os.Getenv(db.RestaurantUrl)
 
-			context.JSON(200, gin.H{"url": res})
+			if res == "" {
+
+				switch highestPoll.Provider {
+				case "youtaste":
+					res = "https://www.youtaste.de"
+				case "lieferando":
+					res = "https://www.lieferando.com"
+				}
+
+				context.JSON(200, gin.H{"url": res, "pending": true})
+				return
+
+			}
+
+			context.JSON(200, gin.H{"url": res, "pending": false})
 
 		})
 	}
