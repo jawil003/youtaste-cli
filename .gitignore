@@ -2,3 +2,4 @@
 *.db
 .gitsecret/keys/random_seed
 !*.secret
+/gin-bin
