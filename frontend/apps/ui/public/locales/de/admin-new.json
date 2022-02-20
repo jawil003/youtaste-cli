@@ -6,5 +6,6 @@
   "username": "Benutzername",
   "otherSettings": "Andere Einstellungen",
   "orderDate": "Bestelldatum",
-  "toggleMessage": "Öffnungszeiten des Restaurants bevorzugen (falls verfügbar und verwendbar)"
+  "toggleMessage": "Öffnungszeiten des Restaurants bevorzugen (falls verfügbar und verwendbar)",
+  "save": "Speichern"
 }

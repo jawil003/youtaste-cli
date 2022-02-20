@@ -140,7 +140,7 @@ export const AdminNewView: React.FC = () => {
                 {t("toggleMessage")}
               </Toggle>
 
-              <Button className="mt-4 ">Submit</Button>
+              <Button className="mt-4 ">{t("save")}}</Button>
             </div>
           </form>
         </div>

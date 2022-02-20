@@ -65,6 +65,12 @@ export const AnotherPollOption: React.FC<Props> = ({ onClose, open }) => {
                   placeholder="Restaurant am Markt"
                   name="name"
                 />
+                <div className="mt-2" />
+                <Input
+                  label={t("restaurantUrl")}
+                  placeholder="https://www.lieferando.de/speisekarte/american-food-factory"
+                  name="url"
+                />
 
                 <Button className=" mt-8">{t("addButton")}</Button>
               </form>

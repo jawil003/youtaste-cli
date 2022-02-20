@@ -4,5 +4,6 @@
   "addButton": "Restaurant hinzufügen",
   "provider": "Anbieter",
   "restaurantName": "Restaurantname",
+  "restaurantUrl": "Restaurantaddresse",
   "endPoll": "Umfrage beenden"
 }
