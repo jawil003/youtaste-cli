@@ -10,11 +10,11 @@ import (
 	"github.com/go-rod/rod/lib/proto"
 )
 
-type YoutasteScrapper struct {
+type Scrapper struct {
 	models.Scrapper
 }
 
-func (_ YoutasteScrapper) OpenInCurrentBrowserAndJoin() *rod.Page {
+func (_ Scrapper) OpenInCurrentBrowserAndJoin() *rod.Page {
 	u := launcher.NewUserMode().
 		MustLaunch()
 
@@ -25,8 +25,20 @@ func (_ YoutasteScrapper) OpenInCurrentBrowserAndJoin() *rod.Page {
 	return page
 }
 
-func (_ YoutasteScrapper) OpenInNewBrowserAndJoin() (*rod.Page, error) {
-	browser := rod.New()
+func (_ Scrapper) OpenInNewBrowserAndJoin(headless bool) (*rod.Page, error) {
+	var browser *rod.Browser
+
+	if !headless {
+		u, err := launcher.New().Headless(true).Launch()
+
+		if err != nil {
+			return nil, err
+		}
+
+		browser = rod.New().ControlURL(u)
+	} else {
+		browser = rod.New()
+	}
 
 	err := browser.Connect()
 	if err != nil {
@@ -40,7 +52,7 @@ func (_ YoutasteScrapper) OpenInNewBrowserAndJoin() (*rod.Page, error) {
 	return page, nil
 }
 
-func (_ YoutasteScrapper) Login(phoneNumber, password string, page *rod.Page) (*rod.Page, error) {
+func (_ Scrapper) Login(phoneNumber, password string, page *rod.Page) (*rod.Page, error) {
 
 	element, err := page.ElementR("#navigation a", "Einloggen")
 	if err != nil {
@@ -93,7 +105,7 @@ func (_ YoutasteScrapper) Login(phoneNumber, password string, page *rod.Page) (*
 
 }
 
-func (_ YoutasteScrapper) SearchForRestaurant(name string, page *rod.Page) (*rod.Page, error) {
+func (_ Scrapper) SearchForRestaurant(name string, page *rod.Page) (*rod.Page, error) {
 
 	searchInput, err := page.Element("input#search-restaurant-input")
 	if err != nil {
@@ -127,7 +139,7 @@ func (_ YoutasteScrapper) SearchForRestaurant(name string, page *rod.Page) (*rod
 	return page, nil
 }
 
-func (_ YoutasteScrapper) SelectProduct(name string, variants []string, page *rod.Page) error {
+func (_ Scrapper) SelectProduct(name string, variants []string, page *rod.Page) error {
 	element, err := page.ElementR("#search-content-div a", name)
 	if err != nil {
 		return err
@@ -160,7 +172,7 @@ func (_ YoutasteScrapper) SelectProduct(name string, variants []string, page *ro
 	return nil
 }
 
-func (_ YoutasteScrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, error) {
+func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, error) {
 
 	weekdays := datastructures.Weekdays{}
 
@@ -183,7 +195,7 @@ func (_ YoutasteScrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekd
 	return &weekdays, nil
 }
 
-func (_ YoutasteScrapper) GetUrl(page *rod.Page) (*string, error) {
+func (_ Scrapper) GetUrl(page *rod.Page) (*string, error) {
 	rem, err := page.Eval("window.location.href")
 	if err != nil {
 		return nil, err

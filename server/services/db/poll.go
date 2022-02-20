@@ -1,6 +1,7 @@
 package db
 
 import (
+	"bs-to-scrapper/server/enums"
 	"bs-to-scrapper/server/models"
 	"encoding/json"
 	"errors"
@@ -21,10 +22,10 @@ func (_ PollService) Create(poll models.Poll, user string, provider string) erro
 	defer db.Close()
 
 	err = db.Update(func(tx *bolt.Tx) error {
-		bucketPollsCount := tx.Bucket([]byte(PollsCount))
-		bucketPollsByUser := tx.Bucket([]byte(PollsUser))
-		bucketPollsByProvider := tx.Bucket([]byte(PollsProvider))
-		bucketPollsByUrl := tx.Bucket([]byte(PollsUrl))
+		bucketPollsCount := tx.Bucket([]byte(enums.PollsCount))
+		bucketPollsByUser := tx.Bucket([]byte(enums.PollsUser))
+		bucketPollsByProvider := tx.Bucket([]byte(enums.PollsProvider))
+		bucketPollsByUrl := tx.Bucket([]byte(enums.PollsUrl))
 
 		pollsByUserString := bucketPollsByUser.Get([]byte(user))
 
@@ -121,9 +122,9 @@ func (_ PollService) GetAll() ([]models.PollWithCount, error) {
 	pollsWithCount := make([]models.PollWithCount, 0)
 
 	err = db.View(func(tx *bolt.Tx) error {
-		bucketPollsCount := tx.Bucket([]byte(PollsCount))
-		bucketPollsByProvider := tx.Bucket([]byte(PollsProvider))
-		bucketPollsByUrl := tx.Bucket([]byte(PollsUrl))
+		bucketPollsCount := tx.Bucket([]byte(enums.PollsCount))
+		bucketPollsByProvider := tx.Bucket([]byte(enums.PollsProvider))
+		bucketPollsByUrl := tx.Bucket([]byte(enums.PollsUrl))
 
 		cursor := bucketPollsCount.Cursor()
 
@@ -185,7 +186,7 @@ func (ps PollService) PersistFinalResult() (*models.PollWithCount, error) {
 		return nil, err
 	}
 
-	err = SettingsService{}.Create(ChoosenRestaurant, string(str))
+	err = SettingsService{}.Create(enums.ChoosenRestaurant, string(str))
 	if err != nil {
 		return nil, err
 	}

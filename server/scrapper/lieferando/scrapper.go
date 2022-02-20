@@ -5,19 +5,33 @@ import (
 	"bs-to-scrapper/server/models"
 	"errors"
 	"github.com/go-rod/rod"
+	"github.com/go-rod/rod/lib/launcher"
 	"github.com/go-rod/rod/lib/proto"
 )
 
-type LieferandoScrapper struct {
+type Scrapper struct {
 	models.Scrapper
 }
 
-func (_ LieferandoScrapper) Login(_, _ string, page *rod.Page) (*rod.Page, error) {
+func (_ Scrapper) Login(_, _ string, page *rod.Page) (*rod.Page, error) {
 	return page, nil
 }
 
-func (_ LieferandoScrapper) OpenInNewBrowserAndJoin() (*rod.Page, error) {
-	browser := rod.New()
+func (_ Scrapper) OpenInNewBrowserAndJoin(headless bool) (*rod.Page, error) {
+
+	var browser *rod.Browser
+
+	if !headless {
+		u, err := launcher.New().Headless(true).Launch()
+
+		if err != nil {
+			return nil, err
+		}
+
+		browser = rod.New().ControlURL(u)
+	} else {
+		browser = rod.New()
+	}
 
 	err := browser.Connect()
 	if err != nil {
@@ -31,7 +45,7 @@ func (_ LieferandoScrapper) OpenInNewBrowserAndJoin() (*rod.Page, error) {
 	return page, nil
 }
 
-func (_ LieferandoScrapper) SearchForRestaurant(name string, page *rod.Page) (*rod.Page, error) {
+func (_ Scrapper) SearchForRestaurant(name string, page *rod.Page) (*rod.Page, error) {
 	element, err := page.Element("input[type=search]")
 	if err != nil {
 		return nil, err
@@ -62,7 +76,7 @@ func (_ LieferandoScrapper) SearchForRestaurant(name string, page *rod.Page) (*r
 
 }
 
-func (_ LieferandoScrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, error) {
+func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, error) {
 
 	button, err := page.Element("button[\"role=button\"][data-qa=\"restaurant-header-action-info\"]")
 	if err != nil {

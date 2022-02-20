@@ -6,7 +6,7 @@ import (
 )
 
 type Scrapper interface {
-	OpenInNewBrowserAndJoin() (*rod.Page, error)
+	OpenInNewBrowserAndJoin(headless bool) (*rod.Page, error)
 	Login(phoneNumber, password string, page *rod.Page) (*rod.Page, error)
 	SearchForRestaurant(name string, page *rod.Page) (*rod.Page, error)
 	GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, error)

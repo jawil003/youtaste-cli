@@ -1,13 +1,13 @@
 package api
 
 import (
-	"bs-to-scrapper/scrapper/lieferando"
-	"bs-to-scrapper/scrapper/youtaste"
 	"bs-to-scrapper/server/datastructures/progress"
+	"bs-to-scrapper/server/enums"
 	"bs-to-scrapper/server/models"
 	"bs-to-scrapper/server/observer"
+	"bs-to-scrapper/server/scrapper/lieferando"
+	"bs-to-scrapper/server/scrapper/youtaste"
 	"bs-to-scrapper/server/services"
-	"bs-to-scrapper/server/services/db"
 	"github.com/gin-gonic/gin"
 	"github.com/thoas/go-funk"
 	"os"
@@ -15,53 +15,53 @@ import (
 )
 
 func initializeVariables(timerService *services.TimerService) {
-	ordertime, err := services.DB().Settings().Get(db.OrderTime)
+	ordertime, err := services.DB().Settings().Get(enums.OrderTime)
 	if err != nil {
 		return
 	}
 
 	if ordertime != "" {
-		_ = os.Setenv(db.OrderTime, ordertime)
+		_ = os.Setenv(enums.OrderTime, ordertime)
 
 	}
 
-	youtastePhone, err := services.DB().Settings().Get(db.YoutastePhone)
+	youtastePhone, err := services.DB().Settings().Get(enums.YoutastePhone)
 	if err != nil {
 		return
 	}
 
 	if youtastePhone != "" {
-		_ = os.Setenv(db.YoutastePhone, youtastePhone)
+		_ = os.Setenv(enums.YoutastePhone, youtastePhone)
 
 	}
 
-	youtastePassword, err := services.DB().Settings().Get(db.YoutastePassword)
+	youtastePassword, err := services.DB().Settings().Get(enums.YoutastePassword)
 	if err != nil {
 		return
 	}
 
 	if youtastePassword != "" {
-		_ = os.Setenv(db.YoutastePassword, youtastePassword)
+		_ = os.Setenv(enums.YoutastePassword, youtastePassword)
 
 	}
 
-	lieferandoUsername, err := services.DB().Settings().Get(db.LieferandoUsername)
+	lieferandoUsername, err := services.DB().Settings().Get(enums.LieferandoUsername)
 	if err != nil {
 		return
 	}
 
 	if lieferandoUsername != "" {
-		_ = os.Setenv(db.LieferandoUsername, lieferandoUsername)
+		_ = os.Setenv(enums.LieferandoUsername, lieferandoUsername)
 
 	}
 
-	lieferandoPassword, err := services.DB().Settings().Get(db.LieferandoPassword)
+	lieferandoPassword, err := services.DB().Settings().Get(enums.LieferandoPassword)
 	if err != nil {
 		return
 	}
 
 	if lieferandoPassword != "" {
-		_ = os.Setenv(db.LieferandoPassword, lieferandoPassword)
+		_ = os.Setenv(enums.LieferandoPassword, lieferandoPassword)
 
 	}
 
@@ -75,21 +75,21 @@ func initializeVariables(timerService *services.TimerService) {
 		timerService.Start(timeResolved)
 	}
 
-	url, err := services.DB().Settings().Get(db.RestaurantUrl)
+	url, err := services.DB().Settings().Get(enums.RestaurantUrl)
 	if err != nil {
 		return
 	}
 
 	if url != "" {
-		_ = os.Setenv(db.RestaurantUrl, url)
+		_ = os.Setenv(enums.RestaurantUrl, url)
 	}
 
-	openingTimes, err := services.DB().Settings().Get(db.OpeningTimes)
+	openingTimes, err := services.DB().Settings().Get(enums.OpeningTimes)
 	if err != nil {
 		return
 	}
 	if openingTimes != "" {
-		_ = os.Setenv(db.OpeningTimes, openingTimes)
+		_ = os.Setenv(enums.OpeningTimes, openingTimes)
 	}
 }
 
@@ -159,29 +159,14 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 			})
 			return
 		}
-		err = os.Setenv(db.OrderTime, createTimerRequest.OrderTime.Format(time.RFC3339))
+		err = os.Setenv(enums.OrderTime, createTimerRequest.OrderTime.Format(time.RFC3339))
 		if err != nil {
 			context.JSON(400, gin.H{
 				"error": err.Error(),
 			})
 			return
 		}
-		err = services.DB().Settings().Create(db.OrderTime, createTimerRequest.OrderTime.Format(time.RFC3339))
-		if err != nil {
-			context.JSON(400, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
-
-		err = os.Setenv(db.YoutastePhone, createTimerRequest.YoutastePhone)
-		if err != nil {
-			context.JSON(400, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
-		err = services.DB().Settings().Create(db.YoutastePhone, createTimerRequest.YoutastePhone)
+		err = services.DB().Settings().Create(enums.OrderTime, createTimerRequest.OrderTime.Format(time.RFC3339))
 		if err != nil {
 			context.JSON(400, gin.H{
 				"error": err.Error(),
@@ -189,29 +174,14 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 			return
 		}
 
-		err = os.Setenv(db.YoutastePassword, createTimerRequest.YoutastePassword)
+		err = os.Setenv(enums.YoutastePhone, createTimerRequest.YoutastePhone)
 		if err != nil {
 			context.JSON(400, gin.H{
 				"error": err.Error(),
 			})
 			return
 		}
-		err = services.DB().Settings().Create(db.YoutastePassword, createTimerRequest.YoutastePassword)
-		if err != nil {
-			context.JSON(400, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
-
-		err = os.Setenv(db.LieferandoUsername, createTimerRequest.LieferandoUsername)
-		if err != nil {
-			context.JSON(400, gin.H{
-				"error": err.Error(),
-			})
-			return
-		}
-		err = services.DB().Settings().Create(db.LieferandoUsername, createTimerRequest.LieferandoUsername)
+		err = services.DB().Settings().Create(enums.YoutastePhone, createTimerRequest.YoutastePhone)
 		if err != nil {
 			context.JSON(400, gin.H{
 				"error": err.Error(),
@@ -219,14 +189,44 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 			return
 		}
 
-		err = os.Setenv(db.LieferandoPassword, createTimerRequest.LieferandoPassword)
+		err = os.Setenv(enums.YoutastePassword, createTimerRequest.YoutastePassword)
 		if err != nil {
 			context.JSON(400, gin.H{
 				"error": err.Error(),
 			})
 			return
 		}
-		err = services.DB().Settings().Create(db.LieferandoPassword, createTimerRequest.LieferandoPassword)
+		err = services.DB().Settings().Create(enums.YoutastePassword, createTimerRequest.YoutastePassword)
+		if err != nil {
+			context.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		err = os.Setenv(enums.LieferandoUsername, createTimerRequest.LieferandoUsername)
+		if err != nil {
+			context.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		err = services.DB().Settings().Create(enums.LieferandoUsername, createTimerRequest.LieferandoUsername)
+		if err != nil {
+			context.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		err = os.Setenv(enums.LieferandoPassword, createTimerRequest.LieferandoPassword)
+		if err != nil {
+			context.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+		err = services.DB().Settings().Create(enums.LieferandoPassword, createTimerRequest.LieferandoPassword)
 		if err != nil {
 			context.JSON(400, gin.H{
 				"error": err.Error(),
@@ -277,11 +277,11 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 						return
 					}
 
-					if highestPoll.Provider == "youtaste" {
-						go services.Scrapper().ScrapUrlAndOpeningTimes(youtaste.YoutasteScrapper{}, *highestPoll)
+					if highestPoll.Provider == enums.YouTaste {
+						go services.Scrapper().ScrapUrlAndOpeningTimes(youtaste.Scrapper{}, *highestPoll)
 
-					} else if highestPoll.Provider == "lieferando" {
-						go services.Scrapper().ScrapUrlAndOpeningTimes(lieferando.LieferandoScrapper{}, *highestPoll)
+					} else if highestPoll.Provider == enums.Lieferando {
+						go services.Scrapper().ScrapUrlAndOpeningTimes(lieferando.Scrapper{}, *highestPoll)
 					}
 
 					break

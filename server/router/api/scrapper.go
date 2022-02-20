@@ -2,9 +2,9 @@ package api
 
 import (
 	"bs-to-scrapper/server/datastructures"
+	"bs-to-scrapper/server/enums"
 	"bs-to-scrapper/server/models"
 	"bs-to-scrapper/server/services"
-	"bs-to-scrapper/server/services/db"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"os"
@@ -15,7 +15,7 @@ func RegisterScrapper(ap *gin.RouterGroup) {
 	{
 		scrapper.GET("/openingTime", func(context *gin.Context) {
 
-			res := os.Getenv(db.OpeningTimes)
+			res := os.Getenv(enums.OpeningTimes)
 
 			var weekdays *datastructures.Weekdays
 
@@ -31,7 +31,7 @@ func RegisterScrapper(ap *gin.RouterGroup) {
 
 		scrapper.GET("/url", func(context *gin.Context) {
 
-			restaurant, err := services.DB().Settings().Get(db.ChoosenRestaurant)
+			restaurant, err := services.DB().Settings().Get(enums.ChoosenRestaurant)
 
 			if err != nil {
 				context.JSON(400, gin.H{"error": err.Error()})
@@ -46,7 +46,7 @@ func RegisterScrapper(ap *gin.RouterGroup) {
 				return
 			}
 
-			res := os.Getenv(db.RestaurantUrl)
+			res := os.Getenv(enums.RestaurantUrl)
 
 			if res == "" {
 

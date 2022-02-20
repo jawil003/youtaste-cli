@@ -1,8 +1,8 @@
 package services
 
 import (
+	"bs-to-scrapper/server/enums"
 	"bs-to-scrapper/server/models"
-	"bs-to-scrapper/server/services/db"
 	"encoding/json"
 	"os"
 )
@@ -11,12 +11,12 @@ type ScrapperService struct {
 }
 
 func (_ ScrapperService) ScrapUrlAndOpeningTimes(scrapper models.Scrapper, highestPoll models.PollWithCount) {
-	page, err := scrapper.OpenInNewBrowserAndJoin()
+	page, err := scrapper.OpenInNewBrowserAndJoin(true)
 	if err != nil {
 		return
 	}
 
-	page, err = scrapper.Login(os.Getenv(db.YoutastePhone), os.Getenv(db.YoutastePassword), page)
+	page, err = scrapper.Login(os.Getenv(enums.YoutastePhone), os.Getenv(enums.YoutastePassword), page)
 	if err != nil {
 		return
 	}
@@ -31,12 +31,12 @@ func (_ ScrapperService) ScrapUrlAndOpeningTimes(scrapper models.Scrapper, highe
 		return
 	}
 
-	err = DB().Settings().Create(db.RestaurantUrl, *url)
+	err = DB().Settings().Create(enums.RestaurantUrl, *url)
 	if err != nil {
 		return
 	}
 
-	err = os.Setenv(db.RestaurantUrl, *url)
+	err = os.Setenv(enums.RestaurantUrl, *url)
 	if err != nil {
 		return
 	}
@@ -48,12 +48,12 @@ func (_ ScrapperService) ScrapUrlAndOpeningTimes(scrapper models.Scrapper, highe
 
 	openingString, err := json.Marshal(openingTimes)
 
-	err = DB().Settings().Create(db.OpeningTimes, string(openingString))
+	err = DB().Settings().Create(enums.OpeningTimes, string(openingString))
 	if err != nil {
 		return
 	}
 
-	err = os.Setenv(db.OpeningTimes, string(openingString))
+	err = os.Setenv(enums.OpeningTimes, string(openingString))
 	if err != nil {
 		return
 	}

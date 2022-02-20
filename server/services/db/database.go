@@ -1,16 +1,8 @@
 package db
 
 import (
+	"bs-to-scrapper/server/enums"
 	bolt "go.etcd.io/bbolt"
-)
-
-const (
-	Orders        = "orders"
-	PollsCount    = "polls_count"
-	PollsUser     = "polls_user"
-	PollsProvider = "polls_provider"
-	Settings      = "settings"
-	PollsUrl      = "polls_url"
 )
 
 type ServiceCollection struct{}
@@ -23,12 +15,12 @@ func OpenDbConnection() (*bolt.DB, error) {
 	}
 
 	err = open.Update(func(tx *bolt.Tx) error {
-		_, err := tx.CreateBucketIfNotExists([]byte(Orders))
-		_, err = tx.CreateBucketIfNotExists([]byte(PollsCount))
-		_, err = tx.CreateBucketIfNotExists([]byte(PollsUser))
-		_, err = tx.CreateBucketIfNotExists([]byte(PollsProvider))
-		_, err = tx.CreateBucketIfNotExists([]byte(Settings))
-		_, err = tx.CreateBucketIfNotExists([]byte(PollsUrl))
+		_, err := tx.CreateBucketIfNotExists([]byte(enums.Orders))
+		_, err = tx.CreateBucketIfNotExists([]byte(enums.PollsCount))
+		_, err = tx.CreateBucketIfNotExists([]byte(enums.PollsUser))
+		_, err = tx.CreateBucketIfNotExists([]byte(enums.PollsProvider))
+		_, err = tx.CreateBucketIfNotExists([]byte(enums.Settings))
+		_, err = tx.CreateBucketIfNotExists([]byte(enums.PollsUrl))
 
 		if err != nil {
 			return err
