@@ -82,6 +82,12 @@ func Serve() {
 
 	port := ":80"
 
+	portVar := os.Getenv("PORT")
+
+	if portVar != "" {
+		port = ":" + portVar
+	}
+
 	fmt.Printf("Server running at http://%s%s\n", ip4Addresses[0], port)
 
 	err = r.Run(port)
