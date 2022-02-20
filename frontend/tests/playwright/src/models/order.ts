@@ -7,7 +7,7 @@ export class OrderPage {
     await this.page.goto("/order");
   }
 
-  public async createOrder(value: { name: string; variants: string[] }) {
+  public async createOrder(value: { name: string; variants?: string[] }) {
     // Click text=Bestellung hinzufügen
     await this.page.locator("text=Bestellung hinzufügen").click();
     // Click [placeholder="Pizza\ Cipola"]
@@ -17,7 +17,7 @@ export class OrderPage {
     // Press Tab
     await this.page.locator('[placeholder="Pizza\\ Cipola"]').press("Tab");
 
-    for (const variant of value.variants) {
+    for (const variant of value?.variants ?? []) {
       await this.page.locator('[placeholder="Groß"]').fill(variant);
       // Click text=Mahlzeit*VarianteBestellung hinzufügen >> button >> nth=0
       await this.page

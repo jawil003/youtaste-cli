@@ -98,7 +98,7 @@ export const CreateNewUserView: React.FC<Props> = () => {
                       }
                     }}
                     type="button"
-                    variant="secondary"
+                    color="white"
                   >
                     {t("load")}
                   </Button>

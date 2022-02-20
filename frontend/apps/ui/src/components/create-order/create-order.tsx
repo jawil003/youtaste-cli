@@ -100,7 +100,7 @@ export const CreateOrderView: React.FC<Props> = ({ open, name, onClose }) => {
                   />
                   <div className="p-6">
                     <Button
-                      variant="secondary"
+                      color="white"
                       onClick={() => {
                         if (!variant) {
                           return;

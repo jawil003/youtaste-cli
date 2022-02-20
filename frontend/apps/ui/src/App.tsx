@@ -46,6 +46,7 @@ function App() {
               <div className="flex h-full w-full">
                 <ActiveOnRoutes
                   routes={[
+                    NRoutes.ADMIN_NEW,
                     NRoutes.NEW,
                     NRoutes.POLLS,
                     NRoutes.ORDER_CONFIRM,

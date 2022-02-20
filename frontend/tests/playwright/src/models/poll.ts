@@ -7,9 +7,17 @@ export class PollPage {
     await this.page.goto("/poll");
   }
 
-  public async addRestaurant(name: string) {
+  public async addRestaurant(name: string, checkLieferando?: boolean) {
     // Click text=Ein weiteres Restaurant hinzufügen
     await this.page.locator("text=Ein weiteres Restaurant hinzufügen").click();
+    // Click button:has-text("YouTaste")
+    if (checkLieferando) {
+      await this.page.locator('button:has-text("YouTaste")').click();
+      // Click ul[role="listbox"] div:has-text("Lieferando")
+      await this.page
+        .locator('ul[role="listbox"] div:has-text("Lieferando")')
+        .click();
+    }
     // Click [placeholder="Restaurant\ am\ Markt"]
     await this.page.locator('[placeholder="Restaurant\\ am\\ Markt"]').click();
     // Fill [placeholder="Restaurant\ am\ Markt"]
