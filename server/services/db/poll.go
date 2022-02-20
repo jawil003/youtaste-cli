@@ -24,6 +24,7 @@ func (_ PollService) Create(poll models.Poll, user string, provider string) erro
 		bucketPollsCount := tx.Bucket([]byte("polls_count"))
 		bucketPollsByUser := tx.Bucket([]byte("polls_user"))
 		bucketPollsByProvider := tx.Bucket([]byte("polls_provider"))
+		bucketPollsByUrl := tx.Bucket([]byte("polls_url"))
 
 		pollsByUserString := bucketPollsByUser.Get([]byte(user))
 
@@ -93,6 +94,11 @@ func (_ PollService) Create(poll models.Poll, user string, provider string) erro
 			if err != nil {
 				return err
 			}
+
+			err = bucketPollsByUrl.Put([]byte(poll.RestaurantName), []byte(poll.Url))
+			if err != nil {
+				return err
+			}
 		}
 
 		return nil
@@ -117,6 +123,7 @@ func (_ PollService) GetAll() ([]models.PollWithCount, error) {
 	err = db.View(func(tx *bolt.Tx) error {
 		bucketPollsCount := tx.Bucket([]byte("polls_count"))
 		bucketPollsByProvider := tx.Bucket([]byte("polls_provider"))
+		bucketPollsByUrl := tx.Bucket([]byte("polls_url"))
 
 		cursor := bucketPollsCount.Cursor()
 
@@ -124,9 +131,12 @@ func (_ PollService) GetAll() ([]models.PollWithCount, error) {
 
 			provider := bucketPollsByProvider.Get(k)
 
+			url := bucketPollsByUrl.Get(k)
+
 			poll := models.Poll{
 				RestaurantName: string(k),
 				Provider:       string(provider),
+				Url:            string(url),
 			}
 
 			stringCOnvInt, err := strconv.Atoi(string(v))
