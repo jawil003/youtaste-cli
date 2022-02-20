@@ -1,3 +1,5 @@
+GIN = $(gin)
+
 frontend-build:
 	cd frontend && npm run build
 
@@ -8,10 +10,10 @@ server-build-windows: build-frontend
 	GOOS=windows go build -o bin/windows/frontend.exe
 
 server-run-dev:
-	GIN_MODE=debug gin run server/server.go
+	GIN_MODE=debug go run main.go
 
 server-run-test:
-	GIN_MODE=test go run server/server.go
+	GIN_MODE=test go run main.go
 
 server-run-prod:
-	GIN_MODE=release go run server/server.go
+	GIN_MODE=release go run main.go

@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"bs-to-scrapper/server/router/api"
@@ -26,7 +26,7 @@ type Product struct {
 	Variant []string
 }
 
-func main() {
+func Serve() {
 
 	err := godotenv.Load()
 	if err != nil {
