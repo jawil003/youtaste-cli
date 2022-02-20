@@ -21,10 +21,10 @@ func (_ PollService) Create(poll models.Poll, user string, provider string) erro
 	defer db.Close()
 
 	err = db.Update(func(tx *bolt.Tx) error {
-		bucketPollsCount := tx.Bucket([]byte("polls_count"))
-		bucketPollsByUser := tx.Bucket([]byte("polls_user"))
-		bucketPollsByProvider := tx.Bucket([]byte("polls_provider"))
-		bucketPollsByUrl := tx.Bucket([]byte("polls_url"))
+		bucketPollsCount := tx.Bucket([]byte(PollsCount))
+		bucketPollsByUser := tx.Bucket([]byte(PollsUser))
+		bucketPollsByProvider := tx.Bucket([]byte(PollsProvider))
+		bucketPollsByUrl := tx.Bucket([]byte(PollsUrl))
 
 		pollsByUserString := bucketPollsByUser.Get([]byte(user))
 
@@ -121,9 +121,9 @@ func (_ PollService) GetAll() ([]models.PollWithCount, error) {
 	pollsWithCount := make([]models.PollWithCount, 0)
 
 	err = db.View(func(tx *bolt.Tx) error {
-		bucketPollsCount := tx.Bucket([]byte("polls_count"))
-		bucketPollsByProvider := tx.Bucket([]byte("polls_provider"))
-		bucketPollsByUrl := tx.Bucket([]byte("polls_url"))
+		bucketPollsCount := tx.Bucket([]byte(PollsCount))
+		bucketPollsByProvider := tx.Bucket([]byte(PollsProvider))
+		bucketPollsByUrl := tx.Bucket([]byte(PollsUrl))
 
 		cursor := bucketPollsCount.Cursor()
 

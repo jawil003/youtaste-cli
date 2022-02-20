@@ -5,11 +5,12 @@ import (
 )
 
 const (
-	ORDERS         = "orders"
-	POLLS_COUNT    = "polls_count"
-	POLLS_USER     = "polls_user"
-	POLLS_PROVIDER = "polls_provider"
-	SETTINGS       = "settings"
+	Orders        = "orders"
+	PollsCount    = "polls_count"
+	PollsUser     = "polls_user"
+	PollsProvider = "polls_provider"
+	Settings      = "settings"
+	PollsUrl      = "polls_url"
 )
 
 type ServiceCollection struct{}
@@ -22,11 +23,12 @@ func OpenDbConnection() (*bolt.DB, error) {
 	}
 
 	err = open.Update(func(tx *bolt.Tx) error {
-		_, err := tx.CreateBucketIfNotExists([]byte(ORDERS))
-		_, err = tx.CreateBucketIfNotExists([]byte(POLLS_COUNT))
-		_, err = tx.CreateBucketIfNotExists([]byte(POLLS_USER))
-		_, err = tx.CreateBucketIfNotExists([]byte(POLLS_PROVIDER))
-		_, err = tx.CreateBucketIfNotExists([]byte(SETTINGS))
+		_, err := tx.CreateBucketIfNotExists([]byte(Orders))
+		_, err = tx.CreateBucketIfNotExists([]byte(PollsCount))
+		_, err = tx.CreateBucketIfNotExists([]byte(PollsUser))
+		_, err = tx.CreateBucketIfNotExists([]byte(PollsProvider))
+		_, err = tx.CreateBucketIfNotExists([]byte(Settings))
+		_, err = tx.CreateBucketIfNotExists([]byte(PollsUrl))
 
 		if err != nil {
 			return err
