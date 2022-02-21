@@ -92,6 +92,8 @@ func (_ Scrapper) SearchForRestaurant(name string, page *rod.Page) (*rod.Page, e
 
 func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, error) {
 
+	//FIXME: Fix getting Opening Times for Lieferando
+
 	button, err := page.Element("button[\"role=button\"][data-qa=\"restaurant-header-action-info\"]")
 	if err != nil {
 		return nil, err
