@@ -7,6 +7,7 @@ import (
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
 	"github.com/go-rod/rod/lib/proto"
+	"time"
 )
 
 type Scrapper struct {
@@ -22,7 +23,7 @@ func (_ Scrapper) OpenInNewBrowserAndJoin(headless bool) (*rod.Page, error) {
 	var browser *rod.Browser
 
 	if !headless {
-		u, err := launcher.New().Headless(true).Launch()
+		u, err := launcher.New().Headless(false).Launch()
 
 		if err != nil {
 			return nil, err
@@ -46,6 +47,16 @@ func (_ Scrapper) OpenInNewBrowserAndJoin(headless bool) (*rod.Page, error) {
 }
 
 func (_ Scrapper) SearchForRestaurant(name string, page *rod.Page) (*rod.Page, error) {
+
+	err := page.Wait(nil, `
+			() => {
+				return document.querySelectorAll('div[data-qa=\"restaurant-card\"]')?.length > 0
+			}
+`, nil)
+	if err != nil {
+		return nil, err
+	}
+
 	element, err := page.Element("input[type=search]")
 	if err != nil {
 		return nil, err
@@ -55,6 +66,11 @@ func (_ Scrapper) SearchForRestaurant(name string, page *rod.Page) (*rod.Page, e
 	if err != nil {
 		return nil, err
 	}
+
+	wait := page.WaitRequestIdle(time.Duration(10)*time.Second, []string{"/search"}, []string{})
+	wait()
+
+	page.MustScreenshot("test.png")
 
 	element, err = page.Element("a[data-qa=link]")
 
@@ -151,4 +167,15 @@ func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, err
 
 	return &openingTimes, nil
 
+}
+
+func (_ Scrapper) GetUrl(page *rod.Page) (*string, error) {
+	rem, err := page.Eval("window.location.href")
+	if err != nil {
+		return nil, err
+	}
+
+	res := rem.Value.Str()
+
+	return &res, nil
 }

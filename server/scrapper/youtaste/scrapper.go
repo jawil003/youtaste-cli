@@ -29,7 +29,7 @@ func (_ Scrapper) OpenInNewBrowserAndJoin(headless bool) (*rod.Page, error) {
 	var browser *rod.Browser
 
 	if !headless {
-		u, err := launcher.New().Headless(true).Launch()
+		u, err := launcher.New().Headless(false).Launch()
 
 		if err != nil {
 			return nil, err
@@ -175,8 +175,6 @@ func (_ Scrapper) SelectProduct(name string, variants []string, page *rod.Page) 
 func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, error) {
 
 	weekdays := datastructures.Weekdays{}
-
-	page.MustScreenshot("screenshot.png")
 
 	openingTimesElements, err := page.Elements("div#openhours li")
 

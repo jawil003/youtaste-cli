@@ -18,7 +18,7 @@
     <kind value="FILE" />
     <package value="bs-to-scrapper" />
     <directory value="$PROJECT_DIR$" />
-    <filePath value="$PROJECT_DIR$/server/server.go" />
+    <filePath value="$PROJECT_DIR$/main.go" />
     <method v="2" />
   </configuration>
 </component>

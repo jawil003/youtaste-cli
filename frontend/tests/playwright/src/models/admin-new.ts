@@ -50,7 +50,7 @@ export default class AdminNewPage {
   public async submit() {
     await Promise.all([
       this.page.waitForNavigation(/*{ url: 'http://localhost:3000/app/poll' }*/),
-      this.page.locator('button:has-text("Submit")').click(),
+      this.page.locator('button:has-text("Speichern")').click(),
     ]);
   }
 }
