@@ -70,8 +70,6 @@ func (_ Scrapper) SearchForRestaurant(name string, page *rod.Page) (*rod.Page, e
 	wait := page.WaitRequestIdle(time.Duration(10)*time.Second, []string{"/search"}, []string{})
 	wait()
 
-	page.MustScreenshot("test.png")
-
 	element, err = page.Element("a[data-qa=link]")
 
 	if err != nil {
