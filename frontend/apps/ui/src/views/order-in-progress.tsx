@@ -11,7 +11,7 @@ export interface Props {}
  * @version 0.1
  */
 export const OrderInProgressView: React.FC<Props> = () => {
-  const { t } = useTranslation("wait-for-scrap-url-and-ordertime");
+  const { t } = useTranslation("order-in-progress");
 
   return (
     <div className="bg-white w-full h-full px-12 mt-6 flex flex-row justify-between items-center relative">
@@ -21,10 +21,10 @@ export const OrderInProgressView: React.FC<Props> = () => {
       <div className="flex-1">
         <div className="flex flex-1 m-auto max-w-lg  justify-center items-start flex-col mb-16">
           <h1 className="font-thin max-w-lg text-6xl text-gray-800">
-            {t("waitToChooseRestaurant")}
+            {t("orderInProgress")}
           </h1>
           <p className="font-light text-xl text-gray-800 mt-4">
-            {t("willInformYouSoon")}
+            {t("orderIsSoonDone")}
           </p>
         </div>
       </div>
