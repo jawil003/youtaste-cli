@@ -6,8 +6,8 @@ import (
 	"bs-to-scrapper/server/models"
 	"bs-to-scrapper/server/observer"
 	"bs-to-scrapper/server/scrapper/lieferando"
-	"bs-to-scrapper/server/scrapper/youtaste"
 	"bs-to-scrapper/server/services"
+	"bs-to-scrapper/server/services/db"
 	"github.com/gin-gonic/gin"
 	"github.com/thoas/go-funk"
 	"os"
@@ -278,15 +278,39 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 					}
 
 					if highestPoll.Provider == enums.YouTaste {
-						go services.Scrapper().ScrapUrlAndOpeningTimes(youtaste.Scrapper{}, *highestPoll)
+						go func() {
+							services.Scrapper().ScrapUrlAndOpeningTimes(lieferando.Scrapper{}, *highestPoll)
+							defer func(tree *db.ProgressTreeService, option string) {
+								_, _ = tree.Next(option)
+
+							}(services.DB().ProgressTree(), services.DB().ProgressTree().Tree.Root.Steps[0].Value)
+						}()
 
 					} else if highestPoll.Provider == enums.Lieferando {
-						go services.Scrapper().ScrapUrlAndOpeningTimes(lieferando.Scrapper{}, *highestPoll)
+						go func() {
+							services.Scrapper().ScrapUrlAndOpeningTimes(lieferando.Scrapper{}, *highestPoll)
+							defer func(tree *db.ProgressTreeService, option string) {
+								_, _ = tree.Next(option)
+
+							}(services.DB().ProgressTree(), services.DB().ProgressTree().Tree.Root.Steps[0].Value)
+							if err != nil {
+								return
+							}
+						}()
 					}
 
 					break
 				}
-
+			case progress.GetUrlAndOpeningTimes:
+				{
+					context.JSON(400, gin.H{"error": "need to wait for server action to complete"})
+					return
+				}
+			case progress.Order:
+				{
+					context.JSON(400, gin.H{"error": "need to wait for server action to complete"})
+					return
+				}
 			}
 
 			next, err := tree.Next(tree.Tree.Root.Steps[0].Value)

@@ -17,7 +17,7 @@ func (_ ServiceCollection) ProgressTree() *ProgressTreeService {
 
 	if treeService == nil {
 
-		tree := progress.ProgressTree()
+		tree := progress.Tree()
 
 		treeFromDb, err := getFromDb(ProgressTree)
 
@@ -69,7 +69,7 @@ func (ts *ProgressTreeService) Reset() (*datastructures.Tree, error) {
 		return nil, err
 	}
 
-	tree := progress.ProgressTree()
+	tree := progress.Tree()
 
 	ts.Tree = tree
 
@@ -85,7 +85,7 @@ func createOrUpdate(name string, tree datastructures.Tree) error {
 	}
 
 	err = db.Update(func(tx *bolt.Tx) error {
-		bucket, err := tx.CreateBucketIfNotExists([]byte("ProgressTree"))
+		bucket, err := tx.CreateBucketIfNotExists([]byte("Tree"))
 		if err != nil {
 			return err
 		}
@@ -122,7 +122,7 @@ func getFromDb(name string) (*datastructures.Tree, error) {
 	var tree datastructures.Tree
 
 	err = db.View(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket([]byte("ProgressTree"))
+		bucket := tx.Bucket([]byte("Tree"))
 		if bucket == nil {
 			return nil
 		}
@@ -155,7 +155,7 @@ func clear(name string) error {
 	}
 
 	err = db.Update(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket([]byte("ProgressTree"))
+		bucket := tx.Bucket([]byte("Tree"))
 		if bucket == nil {
 			return nil
 		}

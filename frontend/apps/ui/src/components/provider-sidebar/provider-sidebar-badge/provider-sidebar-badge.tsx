@@ -26,7 +26,7 @@ export const ProviderSidebarBadge: React.FC<Props> = ({ url, pending }) => {
         <LieferandoLogo width={40} />
       </a>
     );
-  } else {
+  } else if (url.includes("youtaste")) {
     return (
       <a
         href={url}
@@ -38,6 +38,8 @@ export const ProviderSidebarBadge: React.FC<Props> = ({ url, pending }) => {
       </a>
     );
   }
+
+  return null;
 };
 
 ProviderSidebarBadge.defaultProps = { pending: false };
