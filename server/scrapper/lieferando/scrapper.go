@@ -112,6 +112,8 @@ func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, err
 		return nil, err
 	}
 
+	page.MustScreenshot("/tmp/lieferando.png")
+
 	elements, err := page.Elements("*[data-qa=restaurant-info-modal-info-shipping-times-element-element] *[data-qa=text]")
 	if err != nil {
 		return nil, err

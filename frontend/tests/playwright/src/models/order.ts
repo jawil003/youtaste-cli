@@ -39,4 +39,20 @@ export class OrderPage {
       this.page.locator("text=Bestellzeit beenden").click(),
     ]);
   }
+
+  public async waitForSpinner() {
+    await this.page.waitForSelector('*[data-qa="loading-spinner"]');
+  }
+
+  public async waitForPendingEnd() {
+    await this.page.waitForFunction(
+      () => {
+        const res = document.querySelectorAll('*[data-qa="loading-spinner"]');
+
+        return res.length === 0;
+      },
+      undefined,
+      { timeout: 300000 }
+    );
+  }
 }

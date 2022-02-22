@@ -22,7 +22,7 @@ export const ProviderSidebarBadge: React.FC<Props> = ({ url, pending }) => {
         rel="noopener noreferrer"
         className="rounded-l-lg bg-orange-300 p-2 w-full flex items-center justify-center"
       >
-        {pending && <Spinner />}
+        {pending && <Spinner data-qa="loading-spinner" />}
         <LieferandoLogo width={40} />
       </a>
     );
