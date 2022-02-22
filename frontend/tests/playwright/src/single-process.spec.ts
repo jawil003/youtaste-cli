@@ -29,8 +29,7 @@ test("Running trough Process as Admin", async ({ page }) => {
 
   const orderPage = new OrderPage(page);
 
-  await orderPage.waitForSpinner();
-  await orderPage.waitForPendingEnd();
+  await orderPage.waitForPage();
 
   await orderPage.createOrder({ name: "Pizza Cipola", variants: ["Normal"] });
   await orderPage.cancelOrderTime();

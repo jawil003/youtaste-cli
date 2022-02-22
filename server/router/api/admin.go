@@ -281,7 +281,8 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 						go func() {
 							services.Scrapper().ScrapUrlAndOpeningTimes(lieferando.Scrapper{}, *highestPoll)
 							defer func(tree *db.ProgressTreeService, option string) {
-								_, _ = tree.Next(option)
+								next, _ := tree.Next(option)
+								hub.SendAll(next.Root.Value)
 
 							}(services.DB().ProgressTree(), services.DB().ProgressTree().Tree.Root.Steps[0].Value)
 						}()
@@ -290,7 +291,8 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 						go func() {
 							services.Scrapper().ScrapUrlAndOpeningTimes(lieferando.Scrapper{}, *highestPoll)
 							defer func(tree *db.ProgressTreeService, option string) {
-								_, _ = tree.Next(option)
+								next, _ := tree.Next(option)
+								hub.SendAll(next.Root.Value)
 
 							}(services.DB().ProgressTree(), services.DB().ProgressTree().Tree.Root.Steps[0].Value)
 							if err != nil {

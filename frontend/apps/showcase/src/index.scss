@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .background-card {
+    @apply max-w-md w-full px-10 py-8 bg-white rounded-lg shadow;
+  }
+  .background-card-title {
+    @apply self-center text-xl font-light text-gray-600 sm:text-2xl;
+  }
+}
+
+@layer utilities {
+  /* Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}

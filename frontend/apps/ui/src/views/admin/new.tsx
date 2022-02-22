@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 import AdminService from "../../services/admin.service";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Routes } from "../../enums/routes.enum";
 
 dayjs.extend(utc);

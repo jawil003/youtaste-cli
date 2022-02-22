@@ -22,7 +22,7 @@ const config: PlaywrightTestConfig = {
   reporter: "html",
 
   webServer: {
-    command: "cd ../.. && npm run start",
+    command: "cd ../../apps/ui && npm run start",
     port: 3000,
     timeout: 120 * 1000,
     reuseExistingServer: !process.env.CI,

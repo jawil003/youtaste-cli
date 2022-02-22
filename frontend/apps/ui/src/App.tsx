@@ -17,6 +17,8 @@ import "./translations/i18n";
 import { OrderOnTheWayView } from "./views/order-on-the-way";
 import { ProgressProviderWrapper } from "./components/progress-provider/progress-provider";
 import { Redirector } from "./components/redirector/redirector";
+import { WaitForScrapUrlAndOrdertimeView } from "./views/wait-for-scrap-url-and-ordertime";
+import { OrderInProgressView } from "./views/order-in-progress";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -51,6 +53,8 @@ function App() {
                     NRoutes.POLLS,
                     NRoutes.ORDER_CONFIRM,
                     NRoutes.ON_THE_WAY,
+                    NRoutes.WAIT_FOR_SCRAPPING_URL_AND_OPENING_TIMES,
+                    NRoutes.ORDER_IN_PROGRESS,
                   ]}
                 >
                   <PositionTrackerDefault />
@@ -62,6 +66,14 @@ function App() {
                       element={
                         <Auth mode="NO_USER">
                           <CreateNewUserView />
+                        </Auth>
+                      }
+                    />
+                    <Route
+                      path={NRoutes.WAIT_FOR_SCRAPPING_URL_AND_OPENING_TIMES}
+                      element={
+                        <Auth>
+                          <WaitForScrapUrlAndOrdertimeView />
                         </Auth>
                       }
                     />
@@ -88,6 +100,14 @@ function App() {
                       element={
                         <Auth>
                           <OrderConfirmation />
+                        </Auth>
+                      }
+                    />
+                    <Route
+                      path={NRoutes.ORDER_IN_PROGRESS}
+                      element={
+                        <Auth>
+                          <OrderInProgressView />
                         </Auth>
                       }
                     />

@@ -7,6 +7,16 @@ export class OrderPage {
     await this.page.goto("/order");
   }
 
+  public async waitForPage() {
+    await this.page.waitForFunction(
+      () => {
+        return window.location.pathname === "/app/confirm";
+      },
+      undefined,
+      { timeout: 300000 }
+    );
+  }
+
   public async createOrder(value: { name: string; variants?: string[] }) {
     // Click text=Bestellung hinzufügen
     await this.page.locator("text=Bestellung hinzufügen").click();

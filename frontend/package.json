@@ -3,14 +3,5 @@
   "workspaces": [
     "apps/*",
     "tests/*"
-  ],
-  "scripts": {
-    "start": "yarn workspace @tastyfood/ui run start",
-    "build": "BUILD_PATH='../../dist/apps/ui' yarn workspace @tastyfood/ui run build",
-    "playwright:codegen": "yarn workspace @tastyfood/playwright run codegen",
-    "playwright:youtaste": "yarn workspace @tastyfood/playwright run youtaste:run:chrome",
-    "playwright:lieferando": "yarn workspace @tastyfood/playwright run lieferando:run:chrome",
-    "playwright:show-report": "yarn workspace @tastyfood/playwright run show-report",
-    "playwright:show-trace": "yarn workspace @tastyfood/playwright run show-trace"
-  }
+  ]
 }

@@ -133,6 +133,22 @@ export const PositionTrackerDefault: React.FC = () => {
           ],
         },
         {
+          activeHref: Routes.WAIT_FOR_SCRAPPING_URL_AND_OPENING_TIMES,
+          states: [
+            {
+              href: Routes.ADMIN_NEW,
+              state: "DONE",
+            },
+            {
+              href: Routes.NEW,
+              state: "DONE",
+            },
+            { href: Routes.POLLS, state: "DONE" },
+            { href: Routes.ORDER_CONFIRM, state: "DISABLED" },
+            { href: Routes.ON_THE_WAY, state: "DISABLED" },
+          ],
+        },
+        {
           activeHref: Routes.ORDER_CONFIRM,
           states: [
             {
@@ -145,6 +161,22 @@ export const PositionTrackerDefault: React.FC = () => {
             },
             { href: Routes.POLLS, state: "DONE" },
             { href: Routes.ORDER_CONFIRM, state: "AVAILABLE" },
+            { href: Routes.ON_THE_WAY, state: "DISABLED" },
+          ],
+        },
+        {
+          activeHref: Routes.ORDER_IN_PROGRESS,
+          states: [
+            {
+              href: Routes.ADMIN_NEW,
+              state: "DONE",
+            },
+            {
+              href: Routes.NEW,
+              state: "DONE",
+            },
+            { href: Routes.POLLS, state: "DONE" },
+            { href: Routes.ORDER_CONFIRM, state: "DONE" },
             { href: Routes.ON_THE_WAY, state: "DISABLED" },
           ],
         },
