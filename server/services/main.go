@@ -22,6 +22,10 @@ func Timer() *TimerService {
 	return &TimerService{}
 }
 
+func Time() *TimeService {
+	return &TimeService{}
+}
+
 func Scrapper() *ScrapperService {
 	return &ScrapperService{}
 }
