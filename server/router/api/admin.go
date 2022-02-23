@@ -308,6 +308,12 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 
 					if highestPoll.Provider == enums.YouTaste {
 						go func() {
+							defer func(tree *db.ProgressTreeService, option string) {
+								next, _ := tree.Next(option)
+								hub.SendAll(next.Root.Value)
+
+							}(services.DB().ProgressTree(), services.DB().ProgressTree().Tree.Root.Steps[0].Value)
+
 							res, err := services.Scrapper().ScrapUrlAndOpeningTimes(lieferando.Scrapper{}, *highestPoll)
 
 							currentWeekday := time.Now().Weekday().String()
@@ -328,15 +334,23 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 
 							}
 
-							defer func(tree *db.ProgressTreeService, option string) {
-								next, _ := tree.Next(option)
-								hub.SendAll(next.Root.Value)
-
-							}(services.DB().ProgressTree(), services.DB().ProgressTree().Tree.Root.Steps[0].Value)
 						}()
 
 					} else if highestPoll.Provider == enums.Lieferando {
 						go func() {
+							defer func() {
+
+								progressTreeService := services.DB().ProgressTree()
+
+								next, err := progressTreeService.Next(progressTreeService.Tree.Root.Steps[0].Value)
+								if err != nil {
+									return
+								}
+
+								hub.SendAll(next.Root.Value)
+
+							}()
+
 							res, err := services.Scrapper().ScrapUrlAndOpeningTimes(lieferando.Scrapper{}, *highestPoll)
 
 							currentWeekday := time.Now().Weekday().String()
@@ -355,15 +369,6 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 									timerService.Start(*res)
 								}
 
-							}
-
-							defer func(tree *db.ProgressTreeService, option string) {
-								next, _ := tree.Next(option)
-								hub.SendAll(next.Root.Value)
-
-							}(services.DB().ProgressTree(), services.DB().ProgressTree().Tree.Root.Steps[0].Value)
-							if err != nil {
-								return
 							}
 						}()
 					}

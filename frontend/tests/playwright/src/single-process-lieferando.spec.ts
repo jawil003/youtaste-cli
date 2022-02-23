@@ -4,6 +4,8 @@ import { NewUserPage } from "./models/new-user";
 import { OrderPage } from "./models/order";
 import { PollPage } from "./models/poll";
 
+test.setTimeout(300000);
+
 test("Running trough Process as Admin", async ({ page }) => {
   const userPage = new NewUserPage(page);
 
