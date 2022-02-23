@@ -76,12 +76,22 @@ func (_ Scrapper) SearchForRestaurant(name string, page *rod.Page) (*rod.Page, e
 		return nil, err
 	}
 
+	eval, err := page.Eval("window.location.href")
+	if err != nil {
+		return nil, err
+	}
+
+	oldUrl := eval.Value.Str()
+
 	err = element.Click(proto.InputMouseButtonLeft)
 	if err != nil {
 		return nil, err
 	}
 
-	err = page.WaitLoad()
+	err = page.Wait(nil, `(oldUrl) => {
+		return window.location.href !== oldUrl;
+	}`, []interface{}{oldUrl})
+
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +104,7 @@ func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, err
 
 	//FIXME: Fix getting Opening Times for Lieferando
 
-	button, err := page.Element("button[\"role=button\"][data-qa=\"restaurant-header-action-info\"]")
+	button, err := page.Element("*[role=\"button\"][data-qa=\"restaurant-header-action-info\"]")
 	if err != nil {
 		return nil, err
 	}
@@ -111,8 +121,6 @@ func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, err
 	if err != nil {
 		return nil, err
 	}
-
-	page.MustScreenshot("/tmp/lieferando.png")
 
 	elements, err := page.Elements("*[data-qa=restaurant-info-modal-info-shipping-times-element-element] *[data-qa=text]")
 	if err != nil {
