@@ -1,6 +1,7 @@
 package order
 
 import (
+	"bs-to-scrapper/server/logger"
 	"bs-to-scrapper/server/models"
 	"bs-to-scrapper/server/services"
 	"fmt"
@@ -18,6 +19,7 @@ func RegisterOrders(api *gin.RouterGroup, orderTimer *services.TimerService) {
 		jwt, ok := context.Get("user")
 
 		if !ok {
+			logger.Logger().Error.Println("JWT not found")
 			context.JSON(401, gin.H{"error": "unauthorized"})
 			return
 		}
@@ -25,6 +27,7 @@ func RegisterOrders(api *gin.RouterGroup, orderTimer *services.TimerService) {
 		user := services.User().GetUsername(jwt.(models.Jwt).Firstname, jwt.(models.Jwt).Lastname)
 
 		if user == "" {
+			logger.Logger().Error.Println("JWT not found")
 			context.JSON(400, gin.H{
 				"error": "user is required",
 			})
@@ -33,6 +36,14 @@ func RegisterOrders(api *gin.RouterGroup, orderTimer *services.TimerService) {
 
 		orders, err := services.DB().Order().GetByUser(user)
 
+		if err != nil {
+			logger.Logger().Error.Println(err)
+			context.JSON(400, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
 		var res models.Order
 
 		for _, order := range *orders {
@@ -40,13 +51,6 @@ func RegisterOrders(api *gin.RouterGroup, orderTimer *services.TimerService) {
 				res = order
 				break
 			}
-		}
-
-		if err != nil {
-			context.JSON(500, gin.H{
-				"error": err.Error(),
-			})
-			return
 		}
 
 		context.JSON(200, gin.H{

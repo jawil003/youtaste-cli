@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bs-to-scrapper/server/logger"
 	"bs-to-scrapper/server/models"
 	"bs-to-scrapper/server/services"
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,7 @@ func RegisterUser(api *gin.RouterGroup) {
 		err := c.BindJSON(&request)
 
 		if err != nil {
+			logger.Logger().Error.Println(err)
 			c.JSON(400, gin.H{
 				"error": err.Error(),
 			})
@@ -28,6 +30,7 @@ func RegisterUser(api *gin.RouterGroup) {
 		})
 
 		if err != nil {
+			logger.Logger().Error.Println(err)
 			c.JSON(400, gin.H{
 				"error": err.Error(),
 			})
@@ -60,6 +63,7 @@ func RegisterUser(api *gin.RouterGroup) {
 		jwt, ok := context.Get("user")
 
 		if !ok {
+			logger.Logger().Error.Println("user not found")
 			context.JSON(400, gin.H{
 				"error": "user not found",
 			})

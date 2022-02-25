@@ -3,6 +3,7 @@ package api
 import (
 	"bs-to-scrapper/server/datastructures"
 	"bs-to-scrapper/server/enums"
+	"bs-to-scrapper/server/logger"
 	"bs-to-scrapper/server/models"
 	"bs-to-scrapper/server/services"
 	"encoding/json"
@@ -21,6 +22,7 @@ func RegisterScrapper(ap *gin.RouterGroup) {
 
 			err := json.Unmarshal([]byte(res), &weekdays)
 			if err != nil {
+				logger.Logger().Error.Println(err)
 				context.JSON(400, gin.H{"error": err.Error()})
 				return
 			}
@@ -34,6 +36,7 @@ func RegisterScrapper(ap *gin.RouterGroup) {
 			restaurant, err := services.DB().Settings().Get(enums.ChoosenRestaurant)
 
 			if err != nil {
+				logger.Logger().Error.Println(err)
 				context.JSON(400, gin.H{"error": err.Error()})
 				return
 			}
@@ -42,6 +45,7 @@ func RegisterScrapper(ap *gin.RouterGroup) {
 
 			err = json.Unmarshal([]byte(restaurant), &highestPoll)
 			if err != nil {
+				logger.Logger().Error.Println(err)
 				context.JSON(400, gin.H{"error": err.Error()})
 				return
 			}
@@ -51,9 +55,9 @@ func RegisterScrapper(ap *gin.RouterGroup) {
 			if res == "" {
 
 				switch highestPoll.Provider {
-				case "youtaste":
+				case enums.YouTaste:
 					res = "https://www.youtaste.com"
-				case "lieferando":
+				case enums.Lieferando:
 					res = "https://www.lieferando.de"
 				}
 

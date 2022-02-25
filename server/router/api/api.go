@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bs-to-scrapper/server/logger"
 	"bs-to-scrapper/server/models"
 	"bs-to-scrapper/server/observer"
 	"bs-to-scrapper/server/router/api/order"
@@ -16,6 +17,7 @@ func Register(r *gin.Engine) {
 	api.Use(func(context *gin.Context) {
 
 		if context.Request.URL.Path == "/api/user/create" || context.Request.URL.Path == "/api/polls/ws" || context.Request.URL.Path == "/api/progress/ws" || context.Request.URL.Path == "/api/admin/isAdmin" {
+			logger.Logger().Info.Println("Skip authentication for ", context.Request.URL.Path)
 			context.Next()
 			return
 		}
@@ -23,6 +25,8 @@ func Register(r *gin.Engine) {
 		authorization, err := context.Cookie("token")
 
 		if err != nil {
+			logger.Logger().Error.Println("Error while getting token from cookie: ", err)
+			logger.Logger().Info.Println("Token is empty")
 			context.JSON(404, gin.H{
 				"error": "user doesn't exist",
 			})
@@ -31,6 +35,7 @@ func Register(r *gin.Engine) {
 		}
 
 		if authorization == "" {
+			logger.Logger().Info.Println("Token is empty")
 			context.JSON(404, gin.H{
 				"error": "user doesn't exist",
 			})
@@ -43,6 +48,7 @@ func Register(r *gin.Engine) {
 		_, err = services.JWT().Decode(authorization, &jwt)
 
 		if err != nil {
+			logger.Logger().Error.Println(err)
 			context.JSON(404, gin.H{
 				"error": "user doesn't exist",
 			})

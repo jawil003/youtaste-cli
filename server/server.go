@@ -1,15 +1,17 @@
 package server
 
 import (
+	"bs-to-scrapper/server/enums"
+	"bs-to-scrapper/server/logger"
 	"bs-to-scrapper/server/router/api"
 	"bs-to-scrapper/server/services"
-	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	_ "github.com/jweslley/localtunnel"
 	"github.com/thoas/go-funk"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -28,12 +30,23 @@ type Product struct {
 
 func Serve() {
 
-	err := godotenv.Load()
+	f, err := os.OpenFile(enums.LogFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		return
+		logger.Logger().Error.Panic(err)
+	}
+
+	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
+
+	err = godotenv.Load()
+	if err != nil {
+		logger.Logger().Error.Panic(err)
 	}
 
 	r := gin.Default()
+	err = r.SetTrustedProxies(nil)
+	if err != nil {
+		logger.Logger().Error.Panic(err)
+	}
 
 	if os.Getenv("GIN_MODE") == "debug" {
 
@@ -41,7 +54,7 @@ func Serve() {
 
 		corsUrl := strings.Split(corsUrlConn, ",")
 
-		r.Use(cors.New(cors.Config{
+		config := cors.Config{
 			AllowMethods:     []string{"POST", "GET", "DELETE", "PUT"},
 			AllowHeaders:     []string{"Origin", "Content-Type", "X-Requested-With", "Accept"},
 			ExposeHeaders:    []string{"Content-Length", "Set-Cookie"},
@@ -50,11 +63,15 @@ func Serve() {
 				return funk.ContainsString(corsUrl, origin)
 			},
 			MaxAge: 12 * time.Hour,
-		}))
+		}
+
+		logger.Logger().Info.Printf("Cors urls config is %v", logger.ConvertToString(config))
+
+		r.Use(cors.New(config))
 	}
 
 	r.GET("/", func(c *gin.Context) {
-		c.Redirect(http.StatusPermanentRedirect, "/app")
+		c.Redirect(http.StatusTemporaryRedirect, "/app")
 	})
 
 	r.Use(static.Serve("/", static.LocalFile("./frontend/build", true)))
@@ -88,7 +105,7 @@ func Serve() {
 		port = ":" + portVar
 	}
 
-	fmt.Printf("Server running at http://%s%s\n", ip4Addresses[0], port)
+	logger.Logger().Info.Printf("Server running at http://%s%s", ip4Addresses[0], port)
 
 	err = r.Run(port)
 	if err != nil {

@@ -1,9 +1,9 @@
 package api
 
 import (
+	"bs-to-scrapper/server/logger"
 	"bs-to-scrapper/server/observer"
 	"bs-to-scrapper/server/services"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"net/http"
@@ -25,16 +25,19 @@ func RegisterProgress(api *gin.RouterGroup, hub *observer.ProgressObserverHub) {
 		progress.GET("", func(context *gin.Context) {
 			treeService := services.DB().ProgressTree()
 
-			context.JSON(200, gin.H{
+			res := gin.H{
 				"progress": treeService.Tree.Root.Value,
-			})
+			}
+
+			logger.Logger().Info.Println(res)
+			context.JSON(http.StatusOK, res)
 
 		})
 
 		progress.GET("/ws", func(context *gin.Context) {
 			conn, err := wsupgrader.Upgrade(context.Writer, context.Request, nil)
 			if err != nil {
-				fmt.Printf("failed to set ws upgrade: %+v\n", err)
+				logger.Logger().Error.Println(err)
 				return
 			}
 
@@ -48,6 +51,8 @@ func RegisterProgress(api *gin.RouterGroup, hub *observer.ProgressObserverHub) {
 
 			go client.ReadPump()
 			go client.WritePump()
+
+			logger.Logger().Info.Printf("New client %s connected", conn.RemoteAddr().String())
 
 		})
 	}
