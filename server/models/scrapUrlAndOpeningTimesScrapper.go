@@ -5,7 +5,7 @@ import (
 	"github.com/go-rod/rod"
 )
 
-type Scrapper interface {
+type ScrapUrlAndOpeningTimesScrapper interface {
 	OpenInNewBrowserAndJoin(headless bool) (*rod.Page, error)
 	Login(phoneNumber, password string, page *rod.Page) (*rod.Page, error)
 	SearchForRestaurant(name string, page *rod.Page) (*rod.Page, error)

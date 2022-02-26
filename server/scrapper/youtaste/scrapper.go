@@ -11,7 +11,7 @@ import (
 )
 
 type Scrapper struct {
-	models.Scrapper
+	models.ScrapUrlAndOpeningTimesScrapper
 }
 
 func (_ Scrapper) OpenInCurrentBrowserAndJoin() *rod.Page {
@@ -139,10 +139,10 @@ func (_ Scrapper) SearchForRestaurant(name string, page *rod.Page) (*rod.Page, e
 	return page, nil
 }
 
-func (_ Scrapper) SelectProduct(name string, variants []string, page *rod.Page) error {
+func (_ Scrapper) SelectProduct(name string, variants []string, page *rod.Page) (*rod.Page, error) {
 	element, err := page.ElementR("#search-content-div a", name)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	err = element.Click(proto.InputMouseButtonLeft)
@@ -151,25 +151,25 @@ func (_ Scrapper) SelectProduct(name string, variants []string, page *rod.Page) 
 		regex := fmt.Sprintf("/\\s*%s\\s*/gmi", variant)
 		element, err = page.ElementR("#productModalForm div.text-black", regex)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		err := element.Click(proto.InputMouseButtonLeft)
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 
 	submitBtn, err := page.Element("input[type=\"submit\"]")
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	err = submitBtn.Click(proto.InputMouseButtonLeft)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return page, nil
 }
 
 func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, error) {

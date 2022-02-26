@@ -4,6 +4,7 @@ import (
 	"bs-to-scrapper/server/datastructures"
 	"bs-to-scrapper/server/models"
 	"errors"
+	"fmt"
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
 	"github.com/go-rod/rod/lib/proto"
@@ -11,7 +12,7 @@ import (
 )
 
 type Scrapper struct {
-	models.Scrapper
+	models.ScrapUrlAndOpeningTimesScrapper
 }
 
 func (_ Scrapper) Login(_, _ string, page *rod.Page) (*rod.Page, error) {
@@ -196,4 +197,50 @@ func (_ Scrapper) GetUrl(page *rod.Page) (*string, error) {
 	res := rem.Value.Str()
 
 	return &res, nil
+}
+
+func (_ Scrapper) SelectProduct(name string, variants []string, page *rod.Page) (*rod.Page, error) {
+
+	searchToggleButton, err := page.Element("*[data-qa=\"menu-category-nav-categories-action-search\"]")
+	if err != nil {
+		return nil, err
+	}
+
+	err = searchToggleButton.Click(proto.InputMouseButtonLeft)
+	if err != nil {
+		return nil, err
+	}
+
+	inputSelector := "input[type=\"search\"]"
+
+	err = page.Wait(nil, fmt.Sprintf(`() => {
+				const element = document.querySelector("%s");
+				return Boolean(element);
+			}`, inputSelector), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	inputSearch, err := page.Element(inputSelector)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = inputSearch.Input(name)
+	if err != nil {
+		return nil, err
+	}
+
+	item, err := page.ElementR("*", name)
+	if err != nil {
+		return nil, err
+	}
+
+	err = item.Click(proto.InputMouseButtonLeft)
+	if err != nil {
+		return nil, err
+	}
+
+	return page, nil
 }

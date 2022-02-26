@@ -11,7 +11,7 @@ import (
 type ScrapperService struct {
 }
 
-func (_ ScrapperService) ScrapUrlAndOpeningTimes(scrapper models.Scrapper, highestPoll models.PollWithCount) (*datastructures.Weekdays, error) {
+func (_ ScrapperService) ScrapUrlAndOpeningTimes(scrapper models.ScrapUrlAndOpeningTimesScrapper, highestPoll models.PollWithCount) (*datastructures.Weekdays, error) {
 	page, err := scrapper.OpenInNewBrowserAndJoin(true)
 	if err != nil {
 		return nil, err
@@ -62,7 +62,7 @@ func (_ ScrapperService) ScrapUrlAndOpeningTimes(scrapper models.Scrapper, highe
 	return openingTimes, nil
 }
 
-func (_ ScrapperService) OrderMeals(scrapper models.Scrapper, highestPoll models.PollWithCount) {
+func (_ ScrapperService) OrderMeals(scrapper models.ScrapUrlAndOpeningTimesScrapper, highestPoll models.PollWithCount) {
 	page, err := scrapper.OpenInNewBrowserAndJoin(true)
 	if err != nil {
 		return
