@@ -36,6 +36,7 @@ func Logger() *Instance {
 
 func ConvertToString(inst interface{}) string {
 
+	//FIXME: Fix logic here
 	var result string
 
 	v := reflect.ValueOf(inst)

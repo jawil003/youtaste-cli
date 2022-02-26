@@ -203,3 +203,12 @@ func (_ Scrapper) GetUrl(page *rod.Page) (*string, error) {
 
 	return &res, nil
 }
+
+func (_ Scrapper) GoToUrl(url string, page *rod.Page) (*rod.Page, error) {
+	err := page.Navigate(url)
+	if err != nil {
+		return nil, err
+	}
+
+	return page, nil
+}

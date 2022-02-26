@@ -199,6 +199,15 @@ func (_ Scrapper) GetUrl(page *rod.Page) (*string, error) {
 	return &res, nil
 }
 
+func (_ Scrapper) GoToUrl(url string, page *rod.Page) (*rod.Page, error) {
+	err := page.Navigate(url)
+	if err != nil {
+		return nil, err
+	}
+
+	return page, nil
+}
+
 func (_ Scrapper) SelectProduct(name string, variants []string, page *rod.Page) (*rod.Page, error) {
 
 	searchToggleButton, err := page.Element("*[data-qa=\"menu-category-nav-categories-action-search\"]")

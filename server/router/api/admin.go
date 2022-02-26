@@ -100,33 +100,32 @@ func initializeVariables(timerService *services.TimerService) {
 	}
 	if openingTimes != "" {
 		_ = os.Setenv(enums.OpeningTimes, openingTimes)
-	}
 
-	var openingTime *datastructures.Weekdays
+		var openingTime *datastructures.Weekdays
 
-	err = json.Unmarshal([]byte(openingTimes), &openingTime)
-	if err != nil {
-		errorLogger.Panicln(err)
-	}
-
-	currentWeekday := time.Now().Weekday().String()
-
-	if err == nil {
-
-		val := reflect.ValueOf(openingTime).Elem().FieldByName(currentWeekday).String()
-
-		res, err := services.Time().ConvertOpeningTimeToDate(val)
-
+		err = json.Unmarshal([]byte(openingTimes), &openingTime)
 		if err != nil {
 			errorLogger.Panicln(err)
 		}
 
-		if res.After(time.Now()) {
-			timerService.Start(*res)
+		currentWeekday := time.Now().Weekday().String()
+
+		if err == nil {
+
+			val := reflect.ValueOf(openingTime).Elem().FieldByName(currentWeekday).String()
+
+			res, err := services.Time().ConvertOpeningTimeToDate(val)
+
+			if err != nil {
+				errorLogger.Panicln(err)
+			}
+
+			if res.After(time.Now()) {
+				timerService.Start(*res)
+			}
+
 		}
-
 	}
-
 }
 
 func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub *observer.ProgressObserverHub) {

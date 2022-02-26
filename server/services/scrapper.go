@@ -62,22 +62,29 @@ func (_ ScrapperService) ScrapUrlAndOpeningTimes(scrapper models.ScrapUrlAndOpen
 	return openingTimes, nil
 }
 
-func (_ ScrapperService) OrderMeals(scrapper models.ScrapUrlAndOpeningTimesScrapper, highestPoll models.PollWithCount) {
+func (_ ScrapperService) OrderMeals(scrapper models.SelectProductScrapper, highestPoll models.PollWithCount, orders []models.Order) error {
 	page, err := scrapper.OpenInNewBrowserAndJoin(true)
 	if err != nil {
-		return
+		return err
 	}
 
 	page, err = scrapper.Login(os.Getenv(enums.YoutastePhone), os.Getenv(enums.YoutastePassword), page)
 	if err != nil {
-		return
+		return err
 	}
 
-	page, err = scrapper.SearchForRestaurant(highestPoll.RestaurantName, page)
+	page, err = scrapper.GoToUrl(highestPoll.Url, page)
 	if err != nil {
-		return
+		return err
 	}
 
-	//TODO: Start Order Meals here
+	for _, order := range orders {
+		page, err = scrapper.SelectProduct(order.Name, order.Variants, page)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 
 }
