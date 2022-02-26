@@ -14,15 +14,20 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/thoas/go-funk"
+	"net/http"
 	"os"
 	"reflect"
 	"time"
 )
 
+var infoLogger = logger.Logger().Info
+var errorLogger = logger.Logger().Error
+var warnLogger = logger.Logger().Warn
+
 func initializeVariables(timerService *services.TimerService) {
 	ordertime, err := services.DB().Settings().Get(enums.OrderTime)
 	if err != nil {
-		logger.Logger().Error.Panicln(err)
+		errorLogger.Panicln(err)
 	}
 
 	if ordertime != "" {
@@ -32,7 +37,7 @@ func initializeVariables(timerService *services.TimerService) {
 
 	youtastePhone, err := services.DB().Settings().Get(enums.YoutastePhone)
 	if err != nil {
-		logger.Logger().Error.Panicln(err)
+		errorLogger.Panicln(err)
 	}
 
 	if youtastePhone != "" {
@@ -42,7 +47,7 @@ func initializeVariables(timerService *services.TimerService) {
 
 	youtastePassword, err := services.DB().Settings().Get(enums.YoutastePassword)
 	if err != nil {
-		logger.Logger().Error.Panicln(err)
+		errorLogger.Panicln(err)
 	}
 
 	if youtastePassword != "" {
@@ -52,7 +57,7 @@ func initializeVariables(timerService *services.TimerService) {
 
 	lieferandoUsername, err := services.DB().Settings().Get(enums.LieferandoUsername)
 	if err != nil {
-		logger.Logger().Error.Panicln(err)
+		errorLogger.Panicln(err)
 	}
 
 	if lieferandoUsername != "" {
@@ -62,7 +67,7 @@ func initializeVariables(timerService *services.TimerService) {
 
 	lieferandoPassword, err := services.DB().Settings().Get(enums.LieferandoPassword)
 	if err != nil {
-		logger.Logger().Error.Panic(err)
+		errorLogger.Panic(err)
 	}
 
 	if lieferandoPassword != "" {
@@ -74,7 +79,7 @@ func initializeVariables(timerService *services.TimerService) {
 
 		timeResolved, err := time.Parse(time.RFC3339, ordertime)
 		if err != nil {
-			logger.Logger().Error.Panic(err)
+			errorLogger.Panic(err)
 		}
 
 		timerService.Start(timeResolved)
@@ -82,7 +87,7 @@ func initializeVariables(timerService *services.TimerService) {
 
 	url, err := services.DB().Settings().Get(enums.RestaurantUrl)
 	if err != nil {
-		logger.Logger().Error.Panic(err)
+		errorLogger.Panic(err)
 	}
 
 	if url != "" {
@@ -91,7 +96,7 @@ func initializeVariables(timerService *services.TimerService) {
 
 	openingTimes, err := services.DB().Settings().Get(enums.OpeningTimes)
 	if err != nil {
-		logger.Logger().Error.Panicln(err)
+		errorLogger.Panicln(err)
 	}
 	if openingTimes != "" {
 		_ = os.Setenv(enums.OpeningTimes, openingTimes)
@@ -101,7 +106,7 @@ func initializeVariables(timerService *services.TimerService) {
 
 	err = json.Unmarshal([]byte(openingTimes), &openingTime)
 	if err != nil {
-		logger.Logger().Error.Panicln(err)
+		errorLogger.Panicln(err)
 	}
 
 	currentWeekday := time.Now().Weekday().String()
@@ -113,7 +118,7 @@ func initializeVariables(timerService *services.TimerService) {
 		res, err := services.Time().ConvertOpeningTimeToDate(val)
 
 		if err != nil {
-			logger.Logger().Error.Panicln(err)
+			errorLogger.Panicln(err)
 		}
 
 		if res.After(time.Now()) {
@@ -139,7 +144,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 		isAdmin := funk.ContainsString(localAddr, clientIp)
 
 		if err != nil {
-			logger.Logger().Error.Println(err)
+			errorLogger.Println(err)
 			context.Abort()
 			context.JSON(500, gin.H{
 				"error": err.Error(),
@@ -159,9 +164,12 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 
 		isAdmin := context.GetBool("isAdmin")
 
-		context.JSON(200, gin.H{
+		res := gin.H{
 			"isAdmin": isAdmin,
-		})
+		}
+
+		logger.Logger().Info.Println(logger.LogResponse(http.StatusOK, res))
+		context.JSON(200, res)
 	})
 
 	admin.POST("/set", func(context *gin.Context) {
@@ -169,6 +177,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 		progressTree := services.DB().ProgressTree()
 
 		if progressTree.Tree.Root.Value != progress.AdminNew {
+
 			context.JSON(400, gin.H{
 				"error": "progress tree is not in admin new state",
 			})
@@ -179,7 +188,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 
 		err := context.BindJSON(&createTimerRequest)
 		if err != nil {
-			logger.Logger().Error.Println(err)
+			errorLogger.Println(err)
 			context.JSON(400, gin.H{
 				"error": err.Error(),
 			})
@@ -187,7 +196,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 		}
 
 		if err != nil {
-			logger.Logger().Error.Println(err)
+			errorLogger.Println(err)
 			context.JSON(400, gin.H{
 				"error": err.Error(),
 			})
@@ -195,7 +204,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 		}
 		err = os.Setenv(enums.OrderTime, createTimerRequest.OrderTime.Format(time.RFC3339))
 		if err != nil {
-			logger.Logger().Error.Println(err)
+			errorLogger.Println(err)
 			context.JSON(400, gin.H{
 				"error": err.Error(),
 			})
@@ -203,7 +212,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 		}
 		err = services.DB().Settings().Create(enums.OrderTime, createTimerRequest.OrderTime.Format(time.RFC3339))
 		if err != nil {
-			logger.Logger().Error.Println(err)
+			errorLogger.Println(err)
 			context.JSON(400, gin.H{
 				"error": err.Error(),
 			})
@@ -212,7 +221,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 
 		err = os.Setenv(enums.YoutastePhone, createTimerRequest.YoutastePhone)
 		if err != nil {
-			logger.Logger().Error.Println(err)
+			errorLogger.Println(err)
 			context.JSON(400, gin.H{
 				"error": err.Error(),
 			})
@@ -220,7 +229,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 		}
 		err = services.DB().Settings().Create(enums.YoutastePhone, createTimerRequest.YoutastePhone)
 		if err != nil {
-			logger.Logger().Error.Println(err)
+			errorLogger.Println(err)
 			context.JSON(400, gin.H{
 				"error": err.Error(),
 			})
@@ -229,7 +238,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 
 		err = os.Setenv(enums.YoutastePassword, createTimerRequest.YoutastePassword)
 		if err != nil {
-			logger.Logger().Error.Println(err)
+			errorLogger.Println(err)
 			context.JSON(400, gin.H{
 				"error": err.Error(),
 			})
@@ -237,7 +246,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 		}
 		err = services.DB().Settings().Create(enums.YoutastePassword, createTimerRequest.YoutastePassword)
 		if err != nil {
-			logger.Logger().Error.Println(err)
+			errorLogger.Println(err)
 			context.JSON(400, gin.H{
 				"error": err.Error(),
 			})
@@ -246,7 +255,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 
 		err = os.Setenv(enums.LieferandoUsername, createTimerRequest.LieferandoUsername)
 		if err != nil {
-			logger.Logger().Error.Println(err)
+			errorLogger.Println(err)
 			context.JSON(400, gin.H{
 				"error": err.Error(),
 			})
@@ -254,7 +263,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 		}
 		err = services.DB().Settings().Create(enums.LieferandoUsername, createTimerRequest.LieferandoUsername)
 		if err != nil {
-			logger.Logger().Error.Println(err)
+			errorLogger.Println(err)
 			context.JSON(400, gin.H{
 				"error": err.Error(),
 			})
@@ -263,7 +272,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 
 		err = os.Setenv(enums.LieferandoPassword, createTimerRequest.LieferandoPassword)
 		if err != nil {
-			logger.Logger().Error.Println(err)
+			errorLogger.Println(err)
 			context.JSON(400, gin.H{
 				"error": err.Error(),
 			})
@@ -271,7 +280,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 		}
 		err = services.DB().Settings().Create(enums.LieferandoPassword, createTimerRequest.LieferandoPassword)
 		if err != nil {
-			logger.Logger().Error.Println(err)
+			errorLogger.Println(err)
 			context.JSON(400, gin.H{
 				"error": err.Error(),
 			})
@@ -285,16 +294,20 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 		timerService.Start(createTimerRequest.OrderTime)
 
 		if err != nil {
-			logger.Logger().Error.Println(err)
+			errorLogger.Println(err)
 			context.JSON(400, gin.H{
 				"error": err.Error(),
 			})
 			return
 		}
 
-		context.JSON(200, gin.H{
+		res := gin.H{
 			"message": "success",
-		})
+		}
+
+		infoLogger.Println(logger.LogResponse(http.StatusOK, res))
+
+		context.JSON(http.StatusOK, res)
 	})
 
 	admin.PUT("/next", func(context *gin.Context) {
@@ -303,7 +316,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 
 		if tree.Tree.Root.Value == progress.AdminNew {
 			err := errors.New("admin is only changeable by providing config")
-			logger.Logger().Error.Println(err)
+			errorLogger.Println(err)
 			context.JSON(400, gin.H{
 				"err": err.Error(),
 			})
@@ -318,7 +331,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 					highestPoll, err := services.DB().Poll().PersistFinalResult()
 
 					if err != nil {
-						logger.Logger().Error.Println(err)
+						errorLogger.Println(err)
 						context.JSON(400, gin.H{
 							"error": err.Error(),
 						})
@@ -352,7 +365,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 								}
 
 							} else {
-								logger.Logger().Error.Println(err)
+								errorLogger.Println(err)
 							}
 
 						}()
@@ -365,7 +378,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 
 								next, err := progressTreeService.Next(progressTreeService.Tree.Root.Steps[0].Value)
 								if err != nil {
-									logger.Logger().Error.Println(err)
+									errorLogger.Println(err)
 									return
 								}
 
@@ -384,7 +397,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 								res, err := services.Time().ConvertOpeningTimeToDate(val)
 
 								if err != nil {
-									logger.Logger().Error.Println(err)
+									errorLogger.Println(err)
 									return
 								}
 
@@ -393,7 +406,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 								}
 
 							} else {
-								logger.Logger().Error.Println(err)
+								errorLogger.Println(err)
 							}
 						}()
 					}
@@ -402,11 +415,13 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 				}
 			case progress.GetUrlAndOpeningTimes:
 				{
+					warnLogger.Printf("need to wait for server action %s to complete", progress.GetUrlAndOpeningTimes)
 					context.JSON(400, gin.H{"error": "need to wait for server action to complete"})
 					return
 				}
 			case progress.Order:
 				{
+					warnLogger.Printf("need to wait for server action %s to complete", progress.Order)
 					context.JSON(400, gin.H{"error": "need to wait for server action to complete"})
 					return
 				}
@@ -414,7 +429,7 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 
 			next, err := tree.Next(tree.Tree.Root.Steps[0].Value)
 			if err != nil {
-				logger.Logger().Error.Println(err)
+				errorLogger.Println(err)
 				context.JSON(400, gin.H{
 					"error": err.Error(),
 				})
@@ -422,15 +437,24 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 			}
 
 			hub.SendAll(next.Root.Value)
-			context.JSON(200, gin.H{
+			infoLogger.Printf("Broadcast client status %s", next.Root.Value)
+
+			res := gin.H{
 				"status": next.Root.Value,
-			})
+			}
+
+			infoLogger.Println(logger.LogResponse(http.StatusOK, res))
+			context.JSON(200, res)
 			return
 
 		} else {
-			context.JSON(400, gin.H{
+
+			res := gin.H{
 				"error": "end state reached",
-			})
+			}
+
+			errorLogger.Println(logger.LogResponse(http.StatusBadRequest, res))
+			context.JSON(http.StatusBadRequest, res)
 			return
 		}
 

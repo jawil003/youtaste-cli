@@ -29,7 +29,7 @@ func RegisterProgress(api *gin.RouterGroup, hub *observer.ProgressObserverHub) {
 				"progress": treeService.Tree.Root.Value,
 			}
 
-			logger.Logger().Info.Println(res)
+			logger.Logger().Info.Println(logger.LogResponse(http.StatusOK, res))
 			context.JSON(http.StatusOK, res)
 
 		})

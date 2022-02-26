@@ -6,7 +6,11 @@ import (
 	"bs-to-scrapper/server/services"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
+
+var infoLogger = logger.Logger().Info
+var errorLogger = logger.Logger().Error
 
 func RegisterOrders(api *gin.RouterGroup, orderTimer *services.TimerService) {
 
@@ -19,7 +23,7 @@ func RegisterOrders(api *gin.RouterGroup, orderTimer *services.TimerService) {
 		jwt, ok := context.Get("user")
 
 		if !ok {
-			logger.Logger().Error.Println("JWT not found")
+			infoLogger.Println("JWT not found")
 			context.JSON(401, gin.H{"error": "unauthorized"})
 			return
 		}
@@ -27,7 +31,7 @@ func RegisterOrders(api *gin.RouterGroup, orderTimer *services.TimerService) {
 		user := services.User().GetUsername(jwt.(models.Jwt).Firstname, jwt.(models.Jwt).Lastname)
 
 		if user == "" {
-			logger.Logger().Error.Println("JWT not found")
+			errorLogger.Println("JWT not found")
 			context.JSON(400, gin.H{
 				"error": "user is required",
 			})
@@ -37,25 +41,29 @@ func RegisterOrders(api *gin.RouterGroup, orderTimer *services.TimerService) {
 		orders, err := services.DB().Order().GetByUser(user)
 
 		if err != nil {
-			logger.Logger().Error.Println(err)
+			errorLogger.Println(err)
 			context.JSON(400, gin.H{
 				"error": err.Error(),
 			})
 			return
 		}
 
-		var res models.Order
+		var order models.Order
 
-		for _, order := range *orders {
+		for _, locOrder := range *orders {
 			if order.Name == context.Param("name") {
-				res = order
+				order = locOrder
 				break
 			}
 		}
 
-		context.JSON(200, gin.H{
-			"order": res,
-		})
+		res := gin.H{
+			"order": order,
+		}
+
+		infoLogger.Println(logger.LogResponse(http.StatusOK, res))
+
+		context.JSON(http.StatusOK, res)
 	})
 
 	orderGroup.GET("/user", func(context *gin.Context) {
@@ -177,14 +185,18 @@ func RegisterOrders(api *gin.RouterGroup, orderTimer *services.TimerService) {
 	orderGroup.DELETE("/all", func(context *gin.Context) {
 		err := services.DB().Order().ClearAll()
 		if err != nil {
-			context.JSON(400, gin.H{
+			errorLogger.Println(err)
+			context.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})
 			return
 		}
 
-		context.JSON(200, gin.H{
+		res := gin.H{
 			"status": "ok",
-		})
+		}
+
+		infoLogger.Println(logger.LogResponse(http.StatusOK, res))
+		context.JSON(http.StatusOK, res)
 	})
 }

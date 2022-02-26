@@ -27,6 +27,7 @@ func RegisterScrapper(ap *gin.RouterGroup) {
 				return
 			}
 
+			logger.Logger().Info.Printf("Response is 200 and body is weekdays=%v", weekdays)
 			context.JSON(200, gin.H{"weekdays": weekdays})
 
 		})

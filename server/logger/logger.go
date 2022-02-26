@@ -51,3 +51,10 @@ func ConvertToString(inst interface{}) string {
 	return result
 
 }
+
+func LogResponse(status int, response interface{}) string {
+
+	res := fmt.Sprintf("Response is %d and body is weekdays=%v", status, ConvertToString(response))
+
+	return res
+}
