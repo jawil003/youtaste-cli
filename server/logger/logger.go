@@ -36,17 +36,32 @@ func Logger() *Instance {
 
 func ConvertToString(inst interface{}) string {
 
-	//FIXME: Fix logic here
 	var result string
+
+	t := reflect.TypeOf(inst)
 
 	v := reflect.ValueOf(inst)
 
-	for i := 0; i < v.NumField(); i++ {
+	if t.Kind() == reflect.Struct {
+		for i := 0; i < t.NumField(); i++ {
 
-		varName := v.Type().Field(i).Name
-		varValue := v.Field(i).Interface()
+			if i == 0 {
+				result += "\n{\n"
+			}
 
-		result += fmt.Sprintf("%v=%v ", varName, varValue)
+			f := t.Field(i)
+
+			if f.Type.Kind() == reflect.Func {
+				continue
+			}
+
+			result += fmt.Sprintf("   %s: %v\n", f.Name, v.Field(i))
+
+			if i == t.NumField()-1 {
+				result += "}\n"
+			}
+
+		}
 	}
 
 	return result
