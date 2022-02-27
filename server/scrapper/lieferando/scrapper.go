@@ -121,16 +121,15 @@ func (_ Scrapper) SearchForRestaurant(name string, page *rod.Page) (*rod.Page, e
 
 func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, error) {
 
-	//FIXME: Fix getting Opening Times for Lieferando
-
 	button, err := page.Element("*[role=\"button\"][data-qa=\"restaurant-header-action-info\"]")
 	if err != nil {
-
+		errorLogger.Printf("Error while getting opening times button: %s", err)
 		return nil, err
 	}
 
 	err = button.Click(proto.InputMouseButtonLeft)
 	if err != nil {
+		errorLogger.Printf("Error while clicking opening times button: %s", err)
 		return nil, err
 	}
 
@@ -139,6 +138,7 @@ func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, err
 			return !!element;
 		}`, nil)
 	if err != nil {
+		errorLogger.Printf("Error while waiting for opening times modal: %s", err)
 		return nil, err
 	}
 
@@ -147,16 +147,20 @@ func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, err
 			return elements && elements.length > 0;
 		}`, nil)
 	if err != nil {
+		errorLogger.Printf("Error while waiting for opening times: %s", err)
 		return nil, err
 	}
 
 	elements, err := page.Elements("*[data-qa=\"restaurant-info-modal-info-shipping-times-element-element\"] *[data-qa=\"text\"]")
 	if err != nil {
+		errorLogger.Printf("Error while getting opening times: %s", err)
 		return nil, err
 	}
 
 	if len(elements) < 13 {
-		return nil, errors.New("no opening times found")
+		err = errors.New("no opening times found")
+		errorLogger.Printf("Error while getting opening times: %s", err)
+		return nil, err
 	}
 
 	openingTimes := datastructures.Weekdays{}
@@ -164,42 +168,49 @@ func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, err
 	openingTimes.Monday, err = elements[1].Text()
 
 	if err != nil {
+		errorLogger.Printf("Error while getting opening times: %s", err)
 		return nil, err
 	}
 
 	openingTimes.Tuesday, err = elements[3].Text()
 
 	if err != nil {
+		errorLogger.Printf("Error while getting opening times: %s", err)
 		return nil, err
 	}
 
 	openingTimes.Wednesday, err = elements[5].Text()
 
 	if err != nil {
+		errorLogger.Printf("Error while getting opening times: %s", err)
 		return nil, err
 	}
 
 	openingTimes.Thursday, err = elements[7].Text()
 
 	if err != nil {
+		errorLogger.Printf("Error while getting opening times: %s", err)
 		return nil, err
 	}
 
 	openingTimes.Friday, err = elements[9].Text()
 
 	if err != nil {
+		errorLogger.Printf("Error while getting opening times: %s", err)
 		return nil, err
 	}
 
 	openingTimes.Saturday, err = elements[11].Text()
 
 	if err != nil {
+		errorLogger.Printf("Error while getting opening times: %s", err)
 		return nil, err
 	}
 
 	openingTimes.Sunday, err = elements[13].Text()
 
 	if err != nil {
+		errorLogger.Printf("Error while getting opening times: %s", err)
 		return nil, err
 	}
 
@@ -210,6 +221,7 @@ func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, err
 func (_ Scrapper) GetUrl(page *rod.Page) (*string, error) {
 	rem, err := page.Eval("window.location.href")
 	if err != nil {
+		errorLogger.Printf("Error while getting url: %s", err)
 		return nil, err
 	}
 
@@ -221,6 +233,7 @@ func (_ Scrapper) GetUrl(page *rod.Page) (*string, error) {
 func (_ Scrapper) GoToUrl(url string, page *rod.Page) (*rod.Page, error) {
 	err := page.Navigate(url)
 	if err != nil {
+		errorLogger.Printf("Error while navigating to url %s: %s", url, err)
 		return nil, err
 	}
 
@@ -231,11 +244,13 @@ func (_ Scrapper) SelectProduct(name string, variants []string, page *rod.Page) 
 
 	searchToggleButton, err := page.Element("*[data-qa=\"menu-category-nav-categories-action-search\"]")
 	if err != nil {
+		errorLogger.Printf("Error while getting search toggle button: %s", err)
 		return nil, err
 	}
 
 	err = searchToggleButton.Click(proto.InputMouseButtonLeft)
 	if err != nil {
+		errorLogger.Printf("Error while clicking search toggle button: %s", err)
 		return nil, err
 	}
 
@@ -246,27 +261,32 @@ func (_ Scrapper) SelectProduct(name string, variants []string, page *rod.Page) 
 				return Boolean(element);
 			}`, inputSelector), nil)
 	if err != nil {
+		errorLogger.Printf("Error while waiting for search input: %s", err)
 		return nil, err
 	}
 
 	inputSearch, err := page.Element(inputSelector)
 
 	if err != nil {
+		errorLogger.Printf("Error while getting search input: %s", err)
 		return nil, err
 	}
 
 	err = inputSearch.Input(name)
 	if err != nil {
+		errorLogger.Printf("Error while inputing search input: %s", err)
 		return nil, err
 	}
 
 	item, err := page.ElementR("*", name)
 	if err != nil {
+		errorLogger.Printf("Error while getting item: %s", err)
 		return nil, err
 	}
 
 	err = item.Click(proto.InputMouseButtonLeft)
 	if err != nil {
+		errorLogger.Printf("Error while clicking item: %s", err)
 		return nil, err
 	}
 
