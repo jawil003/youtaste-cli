@@ -2,6 +2,7 @@ package lieferando
 
 import (
 	"bs-to-scrapper/server/datastructures"
+	"bs-to-scrapper/server/logger"
 	"bs-to-scrapper/server/models"
 	"errors"
 	"fmt"
@@ -10,6 +11,9 @@ import (
 	"github.com/go-rod/rod/lib/proto"
 	"time"
 )
+
+var infoLogger = logger.Logger().Info
+var errorLogger = logger.Logger().Error
 
 type Scrapper struct {
 	models.ScrapUrlAndOpeningTimesScrapper
@@ -27,20 +31,28 @@ func (_ Scrapper) OpenInNewBrowserAndJoin(headless bool) (*rod.Page, error) {
 		u, err := launcher.New().Headless(false).Launch()
 
 		if err != nil {
+			errorLogger.Printf("Error while launching browser: %s", err)
 			return nil, err
 		}
 
 		browser = rod.New().ControlURL(u)
+
+		infoLogger.Println("Opening browser in headed mode")
+
 	} else {
 		browser = rod.New()
+
+		infoLogger.Println("Opening browser in headless mode")
 	}
 
 	err := browser.Connect()
 	if err != nil {
+		errorLogger.Printf("Error while connecting to browser: %s", err)
 		return nil, err
 	}
 	page, err := browser.Page(proto.TargetCreateTarget{URL: "https://www.lieferando.de/lieferservice/essen/arnsberg-dortmund-44269"})
 	if err != nil {
+		errorLogger.Printf("Error while opening page: %s", err)
 		return nil, err
 	}
 
@@ -55,16 +67,19 @@ func (_ Scrapper) SearchForRestaurant(name string, page *rod.Page) (*rod.Page, e
 			}
 `, nil)
 	if err != nil {
+		errorLogger.Printf("Error while waiting for restaurant card: %s", err)
 		return nil, err
 	}
 
 	element, err := page.Element("input[type=search]")
 	if err != nil {
+		errorLogger.Printf("Error while getting search input: %s", err)
 		return nil, err
 	}
 
 	err = element.Input(name)
 	if err != nil {
+		errorLogger.Printf("Error while inputting search: %s", err)
 		return nil, err
 	}
 
@@ -79,6 +94,7 @@ func (_ Scrapper) SearchForRestaurant(name string, page *rod.Page) (*rod.Page, e
 
 	eval, err := page.Eval("window.location.href")
 	if err != nil {
+		errorLogger.Printf("Error while getting url: %s", err)
 		return nil, err
 	}
 
@@ -86,6 +102,7 @@ func (_ Scrapper) SearchForRestaurant(name string, page *rod.Page) (*rod.Page, e
 
 	err = element.Click(proto.InputMouseButtonLeft)
 	if err != nil {
+		errorLogger.Printf("Error while clicking link: %s", err)
 		return nil, err
 	}
 
@@ -94,6 +111,7 @@ func (_ Scrapper) SearchForRestaurant(name string, page *rod.Page) (*rod.Page, e
 	}`, []interface{}{oldUrl})
 
 	if err != nil {
+		errorLogger.Printf("Error while waiting for url change: %s", err)
 		return nil, err
 	}
 
@@ -107,6 +125,7 @@ func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, err
 
 	button, err := page.Element("*[role=\"button\"][data-qa=\"restaurant-header-action-info\"]")
 	if err != nil {
+
 		return nil, err
 	}
 
