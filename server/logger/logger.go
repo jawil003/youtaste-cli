@@ -28,9 +28,9 @@ func Logger() *Instance {
 	config := log.LstdFlags | log.Lshortfile
 
 	return &Instance{
-		Info:  log.New(writer, "INFO: ", config),
-		Error: log.New(writer, "ERROR: ", config),
-		Warn:  log.New(writer, "WARN: ", config),
+		Info:  log.New(writer, "[TastyFood] [INFO] ", config),
+		Error: log.New(writer, "[TastyFood] [ERROR] ", config),
+		Warn:  log.New(writer, "[TastyFood] [WARN] ", config),
 	}
 }
 

@@ -65,7 +65,7 @@ func Serve() {
 			MaxAge: 12 * time.Hour,
 		}
 
-		logger.Logger().Info.Printf("Cors urls config is %v", logger.ConvertToString(config))
+		logger.Logger().Info.Printf("Set CORS Config %v", logger.ConvertToString(config))
 
 		r.Use(cors.New(config))
 	}
