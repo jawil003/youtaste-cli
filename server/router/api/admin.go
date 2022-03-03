@@ -8,6 +8,7 @@ import (
 	"bs-to-scrapper/server/models"
 	"bs-to-scrapper/server/observer"
 	"bs-to-scrapper/server/scrapper/lieferando"
+	"bs-to-scrapper/server/scrapper/youtaste"
 	"bs-to-scrapper/server/services"
 	"bs-to-scrapper/server/services/db"
 	"encoding/json"
@@ -417,6 +418,45 @@ func RegisterAdmin(r *gin.RouterGroup, timerService *services.TimerService, hub 
 					warnLogger.Printf("need to wait for server action %s to complete", progress.GetUrlAndOpeningTimes)
 					context.JSON(400, gin.H{"error": "need to wait for server action to complete"})
 					return
+				}
+			case progress.ChooseMeals:
+				{
+
+					highestPoll, err := services.DB().Poll().PersistFinalResult()
+
+					jwt, ok := context.Get("user")
+
+					if !ok {
+						errorLogger.Println("user not found")
+						context.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+					}
+
+					user := jwt.(models.Jwt)
+
+					username := services.User().GetUsername(user.Firstname, user.Lastname)
+
+					orders, err := services.DB().Order().GetByUser(username)
+
+					if err != nil {
+						errorLogger.Println(err)
+						context.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+					}
+
+					if highestPoll.Provider == enums.YouTaste {
+						go func() {
+							err = services.Scrapper().OrderMeals(youtaste.Scrapper{}, *highestPoll, *orders)
+							if err != nil {
+								return
+							}
+						}()
+					} else {
+						go func() {
+							err = services.Scrapper().OrderMeals(lieferando.Scrapper{}, *highestPoll, *orders)
+							if err != nil {
+								return
+							}
+						}()
+					}
 				}
 			case progress.Order:
 				{
