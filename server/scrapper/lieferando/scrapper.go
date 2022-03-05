@@ -45,6 +45,8 @@ func (_ Scrapper) OpenInNewBrowserAndJoin(headless bool) (*rod.Page, error) {
 		infoLogger.Println("Opening browser in headless mode")
 	}
 
+	browser = browser.Timeout(time.Minute * 5)
+
 	err := browser.Connect()
 	if err != nil {
 		errorLogger.Printf("Error while connecting to browser: %s", err)

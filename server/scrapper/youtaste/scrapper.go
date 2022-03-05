@@ -9,6 +9,7 @@ import (
 	"github.com/go-rod/rod/lib/input"
 	"github.com/go-rod/rod/lib/launcher"
 	"github.com/go-rod/rod/lib/proto"
+	"time"
 )
 
 var errorLogger = logger.Logger().Error
@@ -22,6 +23,8 @@ func (_ Scrapper) OpenInCurrentBrowserAndJoin() *rod.Page {
 		MustLaunch()
 
 	controller := rod.New().ControlURL(u)
+
+	controller = controller.Timeout(time.Minute * 5)
 
 	page := controller.MustConnect().NoDefaultDevice().MustPage("https://youtaste.com/")
 
@@ -43,6 +46,8 @@ func (_ Scrapper) OpenInNewBrowserAndJoin(headless bool) (*rod.Page, error) {
 	} else {
 		browser = rod.New()
 	}
+
+	browser = browser.Timeout(time.Minute * 5)
 
 	err := browser.Connect()
 	if err != nil {
