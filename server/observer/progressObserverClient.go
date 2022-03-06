@@ -1,8 +1,8 @@
 package observer
 
 import (
+	"bs-to-scrapper/server/logger"
 	"github.com/gorilla/websocket"
-	"log"
 )
 
 type ProgressObserverClient struct {
@@ -25,7 +25,7 @@ func (c *ProgressObserverClient) WritePump() {
 			if !ok {
 				// The hub closed the channel.
 				err := c.Conn.WriteMessage(websocket.CloseMessage, []byte{})
-				log.Printf("ProgressObserverClient closed channel %v", c.Conn.RemoteAddr())
+				warnLogger.Printf("ProgressObserverClient closed channel %v", c.Conn.RemoteAddr())
 				if err != nil {
 					return
 				}
@@ -33,7 +33,7 @@ func (c *ProgressObserverClient) WritePump() {
 			}
 
 			err := c.Conn.WriteMessage(websocket.TextMessage, []byte(poll))
-			log.Printf("ProgressObserverClient broadcasted: %v", poll)
+			infoLogger.Printf("ProgressObserverClient broadcasted: %v", logger.ConvertToString(poll))
 			if err != nil {
 				return
 			}
@@ -55,7 +55,7 @@ func (c *ProgressObserverClient) ReadPump() {
 		_, _, err := c.Conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-				log.Printf("error: %v", err)
+				errorLogger.Println(err)
 			}
 			break
 		}

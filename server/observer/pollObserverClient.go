@@ -1,10 +1,15 @@
 package observer
 
 import (
+	"bs-to-scrapper/server/logger"
 	"bs-to-scrapper/server/models"
 	"github.com/gorilla/websocket"
 	"log"
 )
+
+var infoLogger = logger.Logger().Info
+var errorLogger = logger.Logger().Error
+var warnLogger = logger.Logger().Warn
 
 type PollObserverClient struct {
 	Hub  *PollObserverHub
@@ -26,13 +31,14 @@ func (c *PollObserverClient) WritePump() {
 			if !ok {
 				// The hub closed the channel.
 				err := c.Conn.WriteMessage(websocket.CloseMessage, []byte{})
-				log.Printf("PollObserverClient closed channel %v", c.Conn.RemoteAddr())
+				warnLogger.Printf("PollObserverClient closed channel %v", c.Conn.RemoteAddr())
 				if err != nil {
 					return
 				}
 				return
 			}
 
+			infoLogger.Println("PollObserverClient send poll to client %s with args %s", c.Conn.RemoteAddr(), logger.ConvertToString(poll))
 			err := c.Conn.WriteJSON(poll)
 			log.Printf("PollObserverClient broadcasted: %v", poll)
 			if err != nil {
@@ -56,7 +62,7 @@ func (c *PollObserverClient) ReadPump() {
 		_, _, err := c.Conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-				log.Printf("error: %v", err)
+				errorLogger.Println(err)
 			}
 			break
 		}
