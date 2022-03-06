@@ -4,6 +4,7 @@ import (
 	"bs-to-scrapper/server/datastructures"
 	"bs-to-scrapper/server/logger"
 	"bs-to-scrapper/server/models"
+	"bs-to-scrapper/server/scrapper"
 	"fmt"
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/input"
@@ -81,6 +82,7 @@ func (_ Scrapper) OpenInNewBrowserAndJoin(headless bool) (*rod.Page, error) {
 	page, err := browser.Page(proto.TargetCreateTarget{URL: "https://youtaste.com/"})
 	if err != nil {
 		errorLogger.Printf("Error while opening page: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -94,6 +96,7 @@ func (_ Scrapper) Login(phoneNumber, password string, page *rod.Page) (*rod.Page
 	element, err := page.ElementR("#navigation a", "Einloggen")
 	if err != nil {
 		errorLogger.Printf("Error while finding element: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -103,6 +106,7 @@ func (_ Scrapper) Login(phoneNumber, password string, page *rod.Page) (*rod.Page
 	err = element.Click(proto.InputMouseButtonLeft)
 	if err != nil {
 		errorLogger.Printf("Error while clicking element: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -115,6 +119,7 @@ func (_ Scrapper) Login(phoneNumber, password string, page *rod.Page) (*rod.Page
 	phoneInput, err := page.Element("input[placeholder=\"Telefonnummer\"]")
 	if err != nil {
 		errorLogger.Printf("Error while finding element: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -123,6 +128,7 @@ func (_ Scrapper) Login(phoneNumber, password string, page *rod.Page) (*rod.Page
 	err = phoneInput.Input(phoneNumber)
 	if err != nil {
 		errorLogger.Printf("Error while inputing phone number: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -131,6 +137,7 @@ func (_ Scrapper) Login(phoneNumber, password string, page *rod.Page) (*rod.Page
 	passwordInput, err := page.Element("input[placeholder=\"Passwort\"]")
 	if err != nil {
 		errorLogger.Printf("Error while finding element: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -139,6 +146,7 @@ func (_ Scrapper) Login(phoneNumber, password string, page *rod.Page) (*rod.Page
 	err = passwordInput.Input(password)
 	if err != nil {
 		errorLogger.Printf("Error while inputing password: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -147,6 +155,7 @@ func (_ Scrapper) Login(phoneNumber, password string, page *rod.Page) (*rod.Page
 	loginButton, err := page.ElementR("button", "Anmelden")
 	if err != nil {
 		errorLogger.Printf("Error while finding element: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -157,6 +166,7 @@ func (_ Scrapper) Login(phoneNumber, password string, page *rod.Page) (*rod.Page
 	err = loginButton.Click(proto.InputMouseButtonLeft)
 	if err != nil {
 		errorLogger.Printf("Error while clicking element: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -175,6 +185,7 @@ func (_ Scrapper) SearchForRestaurant(name string, page *rod.Page) (*rod.Page, e
 	searchInput, err := page.Element("input#search-restaurant-input")
 	if err != nil {
 		errorLogger.Printf("Error while finding element: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -183,6 +194,7 @@ func (_ Scrapper) SearchForRestaurant(name string, page *rod.Page) (*rod.Page, e
 	err = searchInput.Input(name)
 	if err != nil {
 		errorLogger.Printf("Error while inputing name: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -191,6 +203,7 @@ func (_ Scrapper) SearchForRestaurant(name string, page *rod.Page) (*rod.Page, e
 	err = searchInput.Press(input.Enter)
 	if err != nil {
 		errorLogger.Printf("Error while pressing enter: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -199,6 +212,7 @@ func (_ Scrapper) SearchForRestaurant(name string, page *rod.Page) (*rod.Page, e
 	resterauntElement, err := page.Element("#restaurantList a")
 	if err != nil {
 		errorLogger.Printf("Error while finding element: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -208,6 +222,7 @@ func (_ Scrapper) SearchForRestaurant(name string, page *rod.Page) (*rod.Page, e
 
 	if err != nil {
 		errorLogger.Printf("Error while clicking element: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -216,6 +231,7 @@ func (_ Scrapper) SearchForRestaurant(name string, page *rod.Page) (*rod.Page, e
 	err = page.WaitLoad()
 	if err != nil {
 		errorLogger.Printf("Error while waiting for load: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -228,6 +244,7 @@ func (_ Scrapper) SelectProduct(name string, variants []string, page *rod.Page) 
 	element, err := page.ElementR("#search-content-div a", name)
 	if err != nil {
 		errorLogger.Printf("Error while finding element: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -237,6 +254,7 @@ func (_ Scrapper) SelectProduct(name string, variants []string, page *rod.Page) 
 
 	if err != nil {
 		errorLogger.Printf("Error while clicking element: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -247,12 +265,14 @@ func (_ Scrapper) SelectProduct(name string, variants []string, page *rod.Page) 
 		element, err = page.ElementR("#productModalForm div.text-black", regex)
 		if err != nil {
 			errorLogger.Printf("Error while finding element: %s", err)
+			scrapper.ScreenshotOnError(page)
 			return nil, err
 		}
 		infoLogger.Printf("Found element with selector %s and regex %s", "#productModalForm div.text-black", regex)
 		err := element.Click(proto.InputMouseButtonLeft)
 		if err != nil {
 			errorLogger.Printf("Error while clicking element: %s", err)
+			scrapper.ScreenshotOnError(page)
 			return nil, err
 		}
 
@@ -262,6 +282,7 @@ func (_ Scrapper) SelectProduct(name string, variants []string, page *rod.Page) 
 	submitBtn, err := page.Element("input[type=\"submit\"]")
 	if err != nil {
 		errorLogger.Printf("Error while finding element: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -270,6 +291,7 @@ func (_ Scrapper) SelectProduct(name string, variants []string, page *rod.Page) 
 	err = submitBtn.Click(proto.InputMouseButtonLeft)
 	if err != nil {
 		errorLogger.Printf("Error while clicking element: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -288,6 +310,7 @@ func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, err
 
 	if err != nil {
 		errorLogger.Printf("Error while finding element: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -295,6 +318,7 @@ func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, err
 
 	if err != nil {
 		errorLogger.Printf("Error while getting text for monday: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -304,6 +328,7 @@ func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, err
 
 	if err != nil {
 		errorLogger.Printf("Error while getting text for tuesday: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -313,6 +338,7 @@ func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, err
 
 	if err != nil {
 		errorLogger.Printf("Error while getting text for wednesday: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -322,6 +348,7 @@ func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, err
 
 	if err != nil {
 		errorLogger.Printf("Error while getting text for thursday: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -331,6 +358,7 @@ func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, err
 
 	if err != nil {
 		errorLogger.Printf("Error while getting text for friday: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -340,6 +368,7 @@ func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, err
 
 	if err != nil {
 		errorLogger.Printf("Error while getting text for saturday: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -349,6 +378,7 @@ func (_ Scrapper) GetOpeningTimes(page *rod.Page) (*datastructures.Weekdays, err
 
 	if err != nil {
 		errorLogger.Printf("Error while getting text for sunday: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -361,6 +391,7 @@ func (_ Scrapper) GetUrl(page *rod.Page) (*string, error) {
 	rem, err := page.Eval("window.location.href")
 	if err != nil {
 		errorLogger.Printf("Error while getting url: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
@@ -375,6 +406,7 @@ func (_ Scrapper) GoToUrl(url string, page *rod.Page) (*rod.Page, error) {
 	err := page.Navigate(url)
 	if err != nil {
 		errorLogger.Printf("Error while navigating to url: %s", err)
+		scrapper.ScreenshotOnError(page)
 		return nil, err
 	}
 
