@@ -3,12 +3,14 @@ package progress
 import "bs-to-scrapper/server/datastructures"
 
 const (
-	AdminNew              = "ADMIN_NEW"
-	ChooseRestaurant      = "CHOOSE_RESTAURANT"
-	GetUrlAndOpeningTimes = "GET_URL_AND_OPENING_TIMES"
-	ChooseMeals           = "CHOOSE_MEALS"
-	Order                 = "ORDER"
-	Done                  = "DONE"
+	AdminNew                    = "ADMIN_NEW"
+	ChooseRestaurant            = "CHOOSE_RESTAURANT"
+	GetUrlAndOpeningTimes       = "GET_URL_AND_OPENING_TIMES"
+	ChooseMeals                 = "CHOOSE_MEALS"
+	Order                       = "ORDER"
+	Done                        = "DONE"
+	OrderFailed                 = "ORDER_FAILED"
+	GetUrlAndOpeningTimesFailed = "GET_URL_AND_OPENING_TIMES_FAILED"
 )
 
 func Tree() *datastructures.Tree {
